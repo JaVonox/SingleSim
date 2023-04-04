@@ -11,7 +11,7 @@ public class Movement : MonoBehaviour
         Cursor.visible = false;
     }
 
-    private const float moveSpeed = 12f;
+    private const float moveSpeed = 5f;
     public GameObject playerChar;
     public CharacterController playerMovement;
     public float sensitivity = 0.5f;
