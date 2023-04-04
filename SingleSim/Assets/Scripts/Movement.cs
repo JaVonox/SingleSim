@@ -28,6 +28,8 @@ public class Movement : MonoBehaviour
     {
         MoveChar();
     }
+
+    private Vector3 neutralVec = new Vector3(1, 0, 1);
     void MoveChar() //Handles char movement - Using https://www.youtube.com/watch?v=_QajrabyTJc code
     {
         isGrounded = Physics.CheckSphere(groundCollider.transform.position, gDistance, groundMask);   
@@ -45,6 +47,7 @@ public class Movement : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
         Vector3 move = transform.right * x + transform.forward * z;
+        move.y = 0; //Prevent upwards or downwards movement using mouse pos
         playerMovement.Move(move * moveSpeed * Time.deltaTime);
 
         //Gravity Calculations

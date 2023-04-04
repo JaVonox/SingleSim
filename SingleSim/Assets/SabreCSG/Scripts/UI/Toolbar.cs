@@ -10,12 +10,29 @@ namespace Sabresaurus.SabreCSG
 {
     public static class Toolbar
     {
-        const int BOTTOM_TOOLBAR_HEIGHT = 40;
+        public const int BOTTOM_TOOLBAR_HEIGHT = 20;
+		public const int PRIMITIVE_MENU_WIDTH = 200;
+		public const int PRIMITIVE_MENU_HEIGHT = 70;
+		public const int VIEW_MENU_WIDTH = 220;
+		public const int VIEW_MENU_HEIGHT = 244;
+
+		public static int bottomToolbarHeight;
 
         static CSGModel csgModel;
 
 		static string warningMessage = "Concave brushes detected";
 
+		public static bool primitiveMenuShowing = false;
+		public static bool viewMenuShowing = false;
+
+		public static Rect viewMenuRect;
+		public static Rect primitiveMenuRect;
+
+		// If the viewport is too squashed to show everything on one line
+		static bool showToolbarOnTwoLines = false;
+		const int SQUASH_WIDTH = 450;
+
+		// Rectangles used for GenericMenu dropdowns
 		static Rect gridRect;
 
         public static CSGModel CSGModel
@@ -49,12 +66,47 @@ namespace Sabresaurus.SabreCSG
 
 		private static void OnRepaint(SceneView sceneView, Event e)
         {
-            Rect rectangle = new Rect(0, sceneView.position.height - BOTTOM_TOOLBAR_HEIGHT, sceneView.position.width, BOTTOM_TOOLBAR_HEIGHT);
+			showToolbarOnTwoLines = sceneView.position.width < SQUASH_WIDTH;
+
+			bottomToolbarHeight = BOTTOM_TOOLBAR_HEIGHT;
+			if (showToolbarOnTwoLines) {
+				bottomToolbarHeight *= 2;
+			}
+
+#if !UNITY_2021_2_OR_NEWER
+            Rect rectangle = new Rect(0, sceneView.position.height - bottomToolbarHeight, sceneView.position.width, bottomToolbarHeight);
 
             GUIStyle style = new GUIStyle(EditorStyles.toolbar);
 
-            style.fixedHeight = BOTTOM_TOOLBAR_HEIGHT;
-			GUILayout.Window(140003, rectangle, OnBottomToolbarGUI, "", style);//, EditorStyles.textField);
+            style.fixedHeight = bottomToolbarHeight;
+			GUILayout.Window(140003, rectangle, OnBottomToolbarGUI, "", style);
+
+			if (primitiveMenuShowing) {
+				style = new GUIStyle(EditorStyles.toolbar);
+				primitiveMenuRect = new Rect(
+					0, 
+					(sceneView.position.height - bottomToolbarHeight) - PRIMITIVE_MENU_HEIGHT, 
+					PRIMITIVE_MENU_WIDTH,
+					PRIMITIVE_MENU_HEIGHT
+				);
+
+				style.fixedHeight = PRIMITIVE_MENU_HEIGHT;
+				GUILayout.Window(140006, primitiveMenuRect, OnPrimitiveMenuGUI, "", style);
+			}
+
+			if (viewMenuShowing) {
+				style = new GUIStyle(EditorStyles.toolbar);
+				viewMenuRect = new Rect(
+					sceneView.position.width - VIEW_MENU_WIDTH, 
+					(sceneView.position.height - bottomToolbarHeight) - VIEW_MENU_HEIGHT, 
+					VIEW_MENU_WIDTH,
+					VIEW_MENU_HEIGHT
+				);
+
+				style.fixedHeight = VIEW_MENU_HEIGHT;
+				GUILayout.Window(140012, viewMenuRect, OnViewMenuGUI, "", style);
+
+			}
 
 			style = new GUIStyle(EditorStyles.toolbar);
 
@@ -65,17 +117,25 @@ namespace Sabresaurus.SabreCSG
 			if(!string.IsNullOrEmpty(warningMessage))
 			{				
 				style.fixedHeight = 70;
-				rectangle = new Rect(0, sceneView.position.height - BOTTOM_TOOLBAR_HEIGHT - style.fixedHeight, sceneView.position.width, style.fixedHeight);
+				rectangle = new Rect(0, sceneView.position.height - bottomToolbarHeight - style.fixedHeight, sceneView.position.width, style.fixedHeight);
 				GUILayout.Window(140005, rectangle, OnWarningToolbar, "", style);
 			}
-            
-        }
+#endif
+		}
 
-        private static void OnTopToolbarGUI(int windowID)
+		public static void OnTopToolbarGUI(int windowID)
         {
 			EditorGUILayout.BeginHorizontal();
-//			csgModel.SetCurrentMode(SabreGUILayout.DrawEnumGrid(CurrentSettings.CurrentMode, GUILayout.Width(67)));
-			csgModel.SetCurrentMode(SabreGUILayout.DrawEnumGrid(CurrentSettings.CurrentMode, GUILayout.Width(50)));
+            MainMode currentMode = CurrentSettings.CurrentMode;
+            if(CurrentSettings.OverrideMode != OverrideMode.None)
+            {
+                currentMode = (MainMode)(-1);
+            }
+            MainMode newMainMode = SabreGUILayout.DrawPartialEnumGrid(currentMode, CurrentSettings.enabledModes, GUILayout.Width(50));
+            if(newMainMode != currentMode)
+            {
+                csgModel.SetCurrentMode(newMainMode);
+            }
 
 			/*
 			bool isClipMode = (CurrentSettings.OverrideMode == OverrideMode.Clip);
@@ -109,7 +169,7 @@ namespace Sabresaurus.SabreCSG
 			EditorGUILayout.EndHorizontal();
         }
 
-		private static void OnWarningToolbar(int windowID)
+		public static void OnWarningToolbar(int windowID)
 		{
 			GUIStyle style = SabreGUILayout.GetOverlayStyle();
 			Vector2 size = style.CalcSize(new GUIContent(warningMessage));
@@ -121,42 +181,118 @@ namespace Sabresaurus.SabreCSG
 			GUILayout.EndHorizontal();
 		}
 
-		static void CreateBrush(PrimitiveBrushType brushType)
+		static Vector3 GetPositionForNewBrush()
 		{
-			GameObject newBrushObject = csgModel.CreateBrush(brushType, Vector3.zero);
-
+			Vector3 newPosition = Vector3.zero;
 			if(SceneView.lastActiveSceneView != null)
 			{
 				Transform cameraTransform = SceneView.lastActiveSceneView.camera.transform;
 				Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
-				List<PolygonRaycastHit> hits = csgModel.RaycastBrushesAll(ray);
+
+                // First of all try to cast against existing brushes
+				List<PolygonRaycastHit> hits = csgModel.RaycastBrushesAll(ray, false);
 				if(hits.Count > 0)
 				{
-					Vector3 newPosition = hits[0].Point;
+					newPosition = hits[0].Point;
 					// Back a unit, since the brush is around 2 units in each dimensions
-					newPosition += hits[0].Normal;
+					newPosition += hits[0].Normal * CurrentSettings.PositionSnapDistance;
+					newPosition -= csgModel.GetComponent<Transform>().position;
+
 					if(CurrentSettings.PositionSnappingEnabled)
 					{
 						float snapDistance = CurrentSettings.PositionSnapDistance;
 						newPosition = MathHelper.RoundVector3(newPosition, snapDistance);
-
-						newBrushObject.transform.position = newPosition;
 					}
 				}
 				else
 				{
-					Vector3 newPosition = SceneView.lastActiveSceneView.pivot;
-					if(CurrentSettings.PositionSnappingEnabled)
-					{
-						float snapDistance = CurrentSettings.PositionSnapDistance;
-						newPosition = MathHelper.RoundVector3(newPosition, snapDistance);
+                    // Couldn't hit an existing brush, so try to cast against the grid
+                    float hitDistance = 0;
+                    Plane activePlane = GetActivePlane();
+                    if(activePlane.Raycast(ray, out hitDistance))
+                    {
+                        newPosition = ray.GetPoint(hitDistance);
+                        // Back a unit, since the brush is around 2 units in each dimensions
+                        newPosition += activePlane.normal;
+						newPosition -= csgModel.GetComponent<Transform>().position;
 
-						newBrushObject.transform.position = newPosition;
-					}
+                        if (CurrentSettings.PositionSnappingEnabled)
+                        {
+                            float snapDistance = CurrentSettings.PositionSnapDistance;
+                            newPosition = MathHelper.RoundVector3(newPosition, snapDistance);
+                        }
+                    }
+                    else
+                    {
+                        // Couldn't hit the grid, probably because they're looking up at the sky, so fallback to the camera pivot point
+                        newPosition = SceneView.lastActiveSceneView.pivot;
+                        if (CurrentSettings.PositionSnappingEnabled)
+                        {
+                            float snapDistance = CurrentSettings.PositionSnapDistance;
+                            newPosition = MathHelper.RoundVector3(newPosition, snapDistance);
+                        }
+                    }
 				}
 			}
+			return newPosition;
+		}
 
-			newBrushObject.GetComponent<Brush>().Invalidate(true);
+        static Plane GetActivePlane()
+        {
+            SceneView activeSceneView = SceneView.lastActiveSceneView;
+            if (activeSceneView != null 
+                && activeSceneView.camera != null 
+                && activeSceneView.camera.orthographic 
+                && EditorHelper.GetSceneViewCamera(activeSceneView.camera) != EditorHelper.SceneViewCamera.Other)
+            {
+                // Axis aligned iso view
+                return new Plane() { normal = -SceneView.lastActiveSceneView.camera.transform.forward, distance = 0 };
+            }
+            else
+            {
+                // No plane override, so use ground plane
+                return new Plane() { normal = Vector3.up, distance = 0 };
+            }
+        }
+
+        static void CreatePrimitiveBrush(PrimitiveBrushType brushType)
+		{
+			Vector3 position = GetPositionForNewBrush();
+			GameObject newBrushObject = csgModel.CreateBrush(
+				brushType, 
+				position,
+				Vector3.one * CurrentSettings.PositionSnapDistance * 2f
+			);
+
+			// Set the selection to the new object
+			Selection.activeGameObject = newBrushObject;
+
+			Undo.RegisterCreatedObjectUndo(newBrushObject, "Create Brush");
+		}
+
+		static void CreateCompoundBrush(object compoundBrushType)
+		{
+			// Make sure we're actually being asked to create a compound brush
+			if(compoundBrushType != null 
+				&& compoundBrushType is Type
+				&& !typeof(CompoundBrush).IsAssignableFrom((Type)compoundBrushType))
+			{
+				throw new ArgumentException("Specified type must be derived from CompoundBrush");
+			}
+
+			Vector3 position = GetPositionForNewBrush();
+			GameObject newBrushObject = csgModel.CreateCompoundBrush((Type) compoundBrushType, position);
+
+			// Set the selection to the new object
+			Selection.activeGameObject = newBrushObject;
+
+			Undo.RegisterCreatedObjectUndo(newBrushObject, "Create Brush");
+		}
+
+		static void CreateCompoundBrush<T>() where T : CompoundBrush
+		{
+			Vector3 position = GetPositionForNewBrush();
+			GameObject newBrushObject = csgModel.CreateCompoundBrush<T>(position);
 
 			// Set the selection to the new object
 			Selection.activeGameObject = newBrushObject;
@@ -173,243 +309,122 @@ namespace Sabresaurus.SabreCSG
 			}
 		}
 
-        private static void OnBottomToolbarGUI(int windowID)
-        {
-            GUILayout.BeginHorizontal();
+		public static void OnViewMenuGUI(int windowID) {
 
-			// For debugging frame rate
-//			GUILayout.Label(((int)(1 / csgModel.CurrentFrameDelta)).ToString(), SabreGUILayout.GetLabelStyle());
+			float left_pad = 90f;
+			EditorGUIUtility.labelWidth = 118f;
 
-			GUIStyle createBrushStyle = new GUIStyle(EditorStyles.toolbarButton);
-			createBrushStyle.fixedHeight = 20;
-			if(GUI.Button(new Rect(0,0, 30, createBrushStyle.fixedHeight), SabreCSGResources.ButtonCubeTexture, createBrushStyle))
-			{
-				CreateBrush(PrimitiveBrushType.Cube);
-			}
+			GUILayout.Space(4);
 
-			if(GUI.Button(new Rect(30,0, 30, createBrushStyle.fixedHeight), SabreCSGResources.ButtonPrismTexture, createBrushStyle))
-			{
-				CreateBrush(PrimitiveBrushType.Prism);
-			}
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("Viewport Settings", EditorStyles.boldLabel);
+			GUILayout.FlexibleSpace();
+			GUILayout.EndHorizontal();
 
-			GUILayout.Space(62);
-
-
-            if (SabreGUILayout.Button("Rebuild"))
-            {
-				csgModel.Build(false, false);
-            }
-
-			if (SabreGUILayout.Button("Force Rebuild"))
-			{
-				csgModel.Build(true, false);
-			}
-
-			GUI.color = Color.white;
-
-			if(csgModel.AutoRebuild)
-			{
-				GUI.color = Color.green;
-			}
-			csgModel.AutoRebuild = SabreGUILayout.Toggle(csgModel.AutoRebuild, "Auto Rebuild");
-			GUI.color = Color.white;
-
-			GUILayout.Label(csgModel.BuildMetrics.BuildMetaData.ToString(), SabreGUILayout.GetForeStyle(), GUILayout.Width(140));
-
-            bool lastBrushesHidden = CurrentSettings.BrushesHidden;
-			if(lastBrushesHidden)
-			{
-				GUI.color = Color.red;
-			}
-            CurrentSettings.BrushesHidden = SabreGUILayout.Toggle(CurrentSettings.BrushesHidden, "Brushes Hidden");
+			GUILayout.BeginHorizontal();
+			bool lastBrushesHidden = CurrentSettings.BrushesHidden;
+            CurrentSettings.BrushesHidden = EditorGUILayout.Toggle(
+				new GUIContent("Hide Brushes", "Hotkey: "+KeyMappings.Instance.ToggleBrushesHidden),
+				CurrentSettings.BrushesHidden
+			);
             if (CurrentSettings.BrushesHidden != lastBrushesHidden)
             {
                 // Has changed
-                csgModel.UpdateBrushVisibility();
+                CSGModel.UpdateAllBrushesVisibility();
                 SceneView.RepaintAll();
             }
-			GUI.color = Color.white;
-
+			GUILayout.EndHorizontal();
 
 			bool lastMeshHidden = CurrentSettings.MeshHidden;
-			if(lastMeshHidden)
-			{
-				GUI.color = Color.red;
-			}
-			CurrentSettings.MeshHidden = SabreGUILayout.Toggle(CurrentSettings.MeshHidden, "Mesh Hidden");
+			CurrentSettings.MeshHidden = EditorGUILayout.Toggle("Hide Meshes", CurrentSettings.MeshHidden);
 			if (CurrentSettings.MeshHidden != lastMeshHidden)
 			{
 				// Has changed
-				csgModel.UpdateBrushVisibility();
+                CSGModel.UpdateAllBrushesVisibility();
 				SceneView.RepaintAll();
 			}
 
-			GUI.color = Color.white;
+			EditorGUI.BeginChangeCheck();
+            CurrentSettings.ShowExcludedPolygons = EditorGUILayout.Toggle("Show excluded faces", CurrentSettings.ShowExcludedPolygons);
+            if (EditorGUI.EndChangeCheck())
+            {
+                // What's shown in the SceneView has potentially changed, so force it to repaint
+                SceneView.RepaintAll();
+            }
 
-			
-			if(GUILayout.Button("Grid " + CurrentSettings.GridMode.ToString(), EditorStyles.toolbarDropDown, GUILayout.Width(90)))
-			{
-				GenericMenu menu = new GenericMenu ();
-				
-				string[] names = Enum.GetNames(typeof(GridMode));
-				
-				for (int i = 0; i < names.Length; i++) 
-				{
-					GridMode value = (GridMode)Enum.Parse(typeof(GridMode),names[i]);
-					bool selected = false;
-					if(CurrentSettings.GridMode == value)
-					{
-						selected = true;
-					}
-					menu.AddItem (new GUIContent (names[i]), selected, OnSelectedGridOption, value);
-				}
-				
-				menu.DropDown(gridRect);
+			EditorGUI.BeginChangeCheck();
+            CurrentSettings.ShowBrushBoundsGuideLines = EditorGUILayout.Toggle("Show brush guides", CurrentSettings.ShowBrushBoundsGuideLines);
+            if (EditorGUI.EndChangeCheck())
+            {
+                // What's shown in the SceneView has potentially changed, so force it to repaint
+                CSGModel.UpdateAllBrushesVisibility();
+                SceneView.RepaintAll();
+            }
+
+			EditorGUI.BeginChangeCheck();
+            CurrentSettings.ShowBrushesAsWireframes = EditorGUILayout.Toggle("Wireframe", CurrentSettings.ShowBrushesAsWireframes);
+            if (EditorGUI.EndChangeCheck())
+            {
+                // What's shown in the SceneView has potentially changed, so force it to repaint
+                CSGModel.UpdateAllBrushesVisibility();
+                SceneView.RepaintAll();
+            }
+
+			GUILayout.Space(10);
+
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("Grid Settings", EditorStyles.boldLabel);
+			GUILayout.FlexibleSpace();
+			GUILayout.EndHorizontal();
+
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("Grid type", EditorStyles.label);
+			GUILayout.FlexibleSpace();
+
+			GridMode lastMode = CurrentSettings.GridMode;
+			CurrentSettings.GridMode = (GridMode) EditorGUILayout.EnumPopup(CurrentSettings.GridMode, GUILayout.Width(left_pad));
+			if (CurrentSettings.GridMode != lastMode) {
+				OnSelectedGridOption(CurrentSettings.GridMode);
 			}
+			GUILayout.EndHorizontal();
 
-			if (Event.current.type == EventType.Repaint)
+			// Projected grid
+            bool lastProjectedGridEnabled = CurrentSettings.ProjectedGridEnabled;
+            CurrentSettings.ProjectedGridEnabled = EditorGUILayout.Toggle(
+				new GUIContent("Projected Grid", "Hotkey: "+KeyMappings.Instance.ToggleProjectedGrid.Replace("#", "Shift+")),
+				CurrentSettings.ProjectedGridEnabled
+			);
+            if (CurrentSettings.ProjectedGridEnabled != lastProjectedGridEnabled)
+            {
+                SceneView.RepaintAll();
+            }
+            if (Event.current.type == EventType.Repaint)
 			{
 				gridRect = GUILayoutUtility.GetLastRect();
 				gridRect.width = 100;
 			}
 
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            // Line Two
-            GUILayout.BeginHorizontal();
-
-			if(GUI.Button(new Rect(0,createBrushStyle.fixedHeight, 30, createBrushStyle.fixedHeight), SabreCSGResources.ButtonCylinderTexture, createBrushStyle))
-			{
-				CreateBrush(PrimitiveBrushType.Cylinder);
-			}
-
-			if(GUI.Button(new Rect(30,createBrushStyle.fixedHeight, 30, createBrushStyle.fixedHeight), SabreCSGResources.ButtonSphereTexture, createBrushStyle))
-			{
-				CreateBrush(PrimitiveBrushType.Sphere);
-			}
-
-			GUILayout.Space(62);
-
-			// Display brush count
-			GUILayout.Label(csgModel.BrushCount.ToStringWithSuffix(" brush", " brushes"), SabreGUILayout.GetLabelStyle());
-//			CurrentSettings.GridMode = (GridMode)EditorGUILayout.EnumPopup(CurrentSettings.GridMode, EditorStyles.toolbarPopup, GUILayout.Width(80));
-
-            if (Selection.activeGameObject != null)
-            {
-				Brush primaryBrush = Selection.activeGameObject.GetComponent<Brush>();
-				List<Brush> brushes = new List<Brush>();
-				for (int i = 0; i < Selection.gameObjects.Length; i++) 
-				{
-					Brush brush = Selection.gameObjects[i].GetComponent<Brush>();
-					if (brush != null)
-					{
-						brushes.Add(brush);
-					}
-				}
-                if (primaryBrush != null)
-                {
-					CSGMode brushMode = (CSGMode)EditorGUILayout.EnumPopup(primaryBrush.Mode, EditorStyles.toolbarPopup, GUILayout.Width(80));
-					if(brushMode != primaryBrush.Mode)
-					{
-						bool anyChanged = false;
-
-						foreach (Brush brush in brushes) 
-						{
-							Undo.RecordObject(brush, "Change Brush To " + brushMode);
-							brush.Mode = brushMode;
-							anyChanged = true;
-						}
-						if(anyChanged)
-						{
-							// Need to update the icon for the csg mode in the hierarchy
-							EditorApplication.RepaintHierarchyWindow();
-						}
-					}
-
-
-					bool[] noCSGStates = brushes.Select(brush => brush.IsNoCSG).Distinct().ToArray();
-					bool isNoCSG = (noCSGStates.Length == 1) ? noCSGStates[0] : false;
-
-					bool newIsNoCSG = SabreGUILayout.ToggleMixed(noCSGStates, "NoCSG", GUILayout.Width(53));
-
-
-					bool[] collisionStates = brushes.Select(item => item.HasCollision).Distinct().ToArray();
-					bool hasCollision = (collisionStates.Length == 1) ? collisionStates[0] : false;
-
-					bool newHasCollision = SabreGUILayout.ToggleMixed(collisionStates, "Collision", GUILayout.Width(53));
-
-
-					bool[] visibleStates = brushes.Select(item => item.IsVisible).Distinct().ToArray();
-					bool isVisible = (visibleStates.Length == 1) ? visibleStates[0] : false;
-
-					bool newIsVisible = SabreGUILayout.ToggleMixed(visibleStates, "Visible", GUILayout.Width(53));
-
-					if(newIsNoCSG != isNoCSG)
-					{
-						foreach (Brush brush in brushes) 
-						{
-							Undo.RecordObject(brush, "Change Brush NoCSG Mode");
-							brush.IsNoCSG = newIsNoCSG;						
-						}
-						// Tell the brushes that they have changed and need to recalc intersections
-						foreach (Brush brush in brushes) 
-						{
-							brush.Invalidate(true);
-						}
-
-						EditorApplication.RepaintHierarchyWindow();
-					}
-					if(newHasCollision != hasCollision)
-					{
-						foreach (Brush brush in brushes) 
-						{
-							Undo.RecordObject(brush, "Change Brush Collision Mode");
-							brush.HasCollision = newHasCollision;
-						}
-						// Tell the brushes that they have changed and need to recalc intersections
-						foreach (Brush brush in brushes) 
-						{
-							brush.Invalidate(true);
-						}
-					}
-					if(newIsVisible != isVisible)
-					{
-						foreach (Brush brush in brushes) 
-						{
-							Undo.RecordObject(brush, "Change Brush Visible Mode");
-							brush.IsVisible = newIsVisible;
-						}
-						// Tell the brushes that they have changed and need to recalc intersections
-						foreach (Brush brush in brushes) 
-						{
-							brush.Invalidate(true);
-						}
-						if(newIsVisible == false)
-						{
-							csgModel.NotifyPolygonsRemoved();
-						}
-					}
-                }
-            }
-
-			GUILayout.Space(10);
+			// Position snapping UI
+			CurrentSettings.PositionSnappingEnabled = EditorGUILayout.Toggle(
+				new GUIContent("Grid snapping", "Hotkey: "+KeyMappings.Instance.TogglePosSnapping.Replace("#", "Shift+")),
+				CurrentSettings.PositionSnappingEnabled
+			);
 
 			// Position snapping UI
-			CurrentSettings.PositionSnappingEnabled = SabreGUILayout.Toggle(CurrentSettings.PositionSnappingEnabled, "Pos Snapping");
-			CurrentSettings.PositionSnapDistance = EditorGUILayout.FloatField(CurrentSettings.PositionSnapDistance, GUILayout.Width(50));
-			
-			if (SabreGUILayout.Button("-", EditorStyles.miniButtonLeft))
-			{
-				CurrentSettings.ChangePosSnapDistance(.5f);
-			}
-			if (SabreGUILayout.Button("+", EditorStyles.miniButtonRight))
-			{
-				CurrentSettings.ChangePosSnapDistance(2f);
-			}
+			CurrentSettings.AngleSnappingEnabled = EditorGUILayout.Toggle(
+				new GUIContent("Rotation snapping", "Hotkey: "+KeyMappings.Instance.ToggleAngSnapping.Replace("#", "Shift+")),
+				CurrentSettings.AngleSnappingEnabled
+			);
 
 			// Rotation snapping UI
-			CurrentSettings.AngleSnappingEnabled = SabreGUILayout.Toggle(CurrentSettings.AngleSnappingEnabled, "Ang Snapping");
+			GUILayout.BeginHorizontal();
+			GUILayout.Label(new GUIContent(
+				"Rotation size",
+				"Hotkeys: " + KeyMappings.Instance.DecreaseAngSnapping.Replace("#", "Shift+") + "  " + KeyMappings.Instance.IncreaseAngSnapping.Replace("#", "Shift+")
+			), EditorStyles.label);
+			GUILayout.FlexibleSpace();
+
+			// CurrentSettings.AngleSnappingEnabled = SabreGUILayout.Toggle(CurrentSettings.AngleSnappingEnabled, "Ang Snapping");
 			CurrentSettings.AngleSnapDistance = EditorGUILayout.FloatField(CurrentSettings.AngleSnapDistance, GUILayout.Width(50));
 
 			if (SabreGUILayout.Button("-", EditorStyles.miniButtonLeft))
@@ -434,23 +449,168 @@ namespace Sabresaurus.SabreCSG
 					CurrentSettings.AngleSnapDistance += 5;
 				}
 			}
+			GUILayout.EndHorizontal();
+		}
 
-// Disabled test build options
-//			CurrentSettings.RestoreOriginalPolygons = SabreGUILayout.Toggle(CurrentSettings.RestoreOriginalPolygons, "Restore Original Polygons", GUILayout.Width(153));
-//			CurrentSettings.RemoveHiddenGeometry = SabreGUILayout.Toggle(CurrentSettings.RemoveHiddenGeometry, "Remove Hidden Geometry", GUILayout.Width(153));
+		public static void OnPrimitiveMenuGUI(int windowID) {
+			GUIStyle createBrushStyle = new GUIStyle(EditorStyles.toolbarButton);
+			createBrushStyle.fixedHeight = 20;
+
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("Create primitive", EditorStyles.boldLabel);
+			GUILayout.FlexibleSpace();
+
+			GUILayout.EndHorizontal();
+
+			GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button(SabreCSGResources.ButtonSphereTexture, createBrushStyle))
+            {
+                CreatePrimitiveBrush(PrimitiveBrushType.Sphere);
+				primitiveMenuShowing = false;
+            }
+
+            if (GUILayout.Button(SabreCSGResources.ButtonIcoSphereTexture, createBrushStyle))
+            {
+                CreatePrimitiveBrush(PrimitiveBrushType.IcoSphere);
+				primitiveMenuShowing = false;
+            }
+
+            if (GUILayout.Button(SabreCSGResources.ButtonStairsTexture, createBrushStyle))
+            {
+                CreateCompoundBrush<StairBrush>();
+				primitiveMenuShowing = false;
+            }
+			
+            if (GUILayout.Button(SabreCSGResources.ButtonCurvedStairsTexture, createBrushStyle))
+            {
+                CreateCompoundBrush<CurvedStairBrush>();
+				primitiveMenuShowing = false;
+            }
+
+			GUILayout.EndHorizontal();
+			GUILayout.BeginHorizontal(GUILayout.ExpandHeight(true));
+
+            if (GUILayout.Button(SabreCSGResources.ButtonCylinderTexture, createBrushStyle))
+			{
+				CreatePrimitiveBrush(PrimitiveBrushType.Cylinder);
+				primitiveMenuShowing = false;
+			}
+
+            if (GUILayout.Button(SabreCSGResources.ButtonConeTexture, createBrushStyle))
+            {
+                CreatePrimitiveBrush(PrimitiveBrushType.Cone);
+				primitiveMenuShowing = false;
+            }
+
+            if (GUILayout.Button(SabreCSGResources.ButtonShapeEditorTexture, createBrushStyle))
+            {
+                CreateCompoundBrush<ShapeEditor.ShapeEditorBrush>();
+				primitiveMenuShowing = false;
+            }
+
+			if (GUILayout.Button(SabreCSGResources.ButtonMoreTexture, createBrushStyle))
+			{
+				GenericMenu menu = new GenericMenu ();
+
+				List<Type> compoundBrushTypes = CompoundBrush.FindAllInAssembly();
+				for (int i = 0; i < compoundBrushTypes.Count; i++) 
+				{
+                    int j = i; // Closure causes "i" to be "2" in the lambda expression unless we assign it to a scoped variable.
+					menu.AddItem (
+						new GUIContent (compoundBrushTypes[i].Name), 
+						false, 
+						() => {
+							CreateCompoundBrush(compoundBrushTypes[j]);
+							primitiveMenuShowing = false;
+						} 
+					);
+				}
+
+                menu.AddSeparator("");
+                
+                menu.AddItem(
+					new GUIContent("Add More?"), 
+					false, 
+					() => { 
+						EditorUtility.DisplayDialog("SabreCSG - About Compound Brushes", "Any custom compound brushes in your project are automatically detected and added to this list. Simply inherit from 'Sabresaurus.SabreCSG.CompoundBrush'.", "Okay");
+						primitiveMenuShowing = false;
+					}
+				);
+
+				menu.DropDown(new Rect(60,createBrushStyle.fixedHeight, 100, createBrushStyle.fixedHeight));
+			}
+
+			GUILayout.EndHorizontal();
+		}
+
+		public static void OnBottomToolbarGUI(int windowID)
+		{
+			GUILayout.BeginHorizontal();
+
+			GUIStyle createBrushStyle = new GUIStyle(EditorStyles.toolbarButton);
+			createBrushStyle.fixedHeight = 20;
+			if(GUILayout.Button(SabreCSGResources.ButtonCubeTexture, createBrushStyle))
+			{
+				CreatePrimitiveBrush(PrimitiveBrushType.Cube);
+			}
+
+			primitiveMenuShowing = GUILayout.Toggle(primitiveMenuShowing, primitiveMenuShowing?"▼": "▲", createBrushStyle);
+
+#if DEBUG_SABRECSG_PERF
+			// For debugging frame rate
+			GUILayout.Label(((int)(1 / csgModel.CurrentFrameDelta)).ToString(), SabreGUILayout.GetLabelStyle());
+#endif
+
+            if (SabreGUILayout.Button("Rebuild", createBrushStyle))
+            {
+				csgModel.Build(false, false);
+            }
+
+			if (SabreGUILayout.Button("Force Rebuild", createBrushStyle))
+			{
+				csgModel.Build(true, false);
+			}
+
+			GUI.color = Color.white;
+
+			csgModel.AutoRebuild = GUILayout.Toggle(csgModel.AutoRebuild, "Auto Rebuild", createBrushStyle);
+
+			GUI.color = Color.white;
+#if SABRE_CSG_DEBUG
+            GUILayout.Label(csgModel.BuildMetrics.BuildMetaData.ToString(), SabreGUILayout.GetForeStyle(), GUILayout.Width(140));
+#else
+            EditorGUILayout.Space();
+#endif
+            
+			if (showToolbarOnTwoLines) {
+				GUILayout.FlexibleSpace();
+				GUILayout.EndHorizontal();
+				GUILayout.BeginHorizontal();
+			}
+
 
 			GUILayout.FlexibleSpace();
 
-			if (SabreGUILayout.Button("Prefs"))
+			GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
+			labelStyle.fontSize = 9;
+			labelStyle.fixedHeight = 16;
+			labelStyle.alignment = TextAnchor.MiddleCenter;
+
+			GUILayout.Label("Grid size", labelStyle);
+
+			CurrentSettings.PositionSnapDistance = EditorGUILayout.FloatField(CurrentSettings.PositionSnapDistance, GUILayout.MaxWidth(70f),GUILayout.MinWidth(30f));
+			
+			if (SabreGUILayout.Button("-", EditorStyles.miniButtonLeft))
 			{
-				SabreCSGPreferences.CreateAndShow();
+				CurrentSettings.ChangePosSnapDistance(.5f);
+			}
+			if (SabreGUILayout.Button("+", EditorStyles.miniButtonRight))
+			{
+				CurrentSettings.ChangePosSnapDistance(2f);
 			}
 
-			if (SabreGUILayout.Button("Disable"))
-			{
-				Selection.activeGameObject = null;
-				csgModel.EditMode = false;
-			}
+			viewMenuShowing = GUILayout.Toggle(viewMenuShowing, "Viewport settings", createBrushStyle);
 
             GUILayout.EndHorizontal();
         }

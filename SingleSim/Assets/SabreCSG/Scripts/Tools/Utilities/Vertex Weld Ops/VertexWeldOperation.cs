@@ -34,6 +34,7 @@ namespace Sabresaurus.SabreCSG
 
 		protected void BeginWeld()
 		{
+			//polygons = new List<Polygon>(sourcePolygons.DeepCopy());
 			polygons = new List<Polygon>(sourcePolygons);
 
 			// Cache the previous polygon normals, so we can correctly calculate the new vertex normals
@@ -55,7 +56,7 @@ namespace Sabresaurus.SabreCSG
 			for (int i = 0; i < polygons.Count; i++) 
 			{
 				// Remove any duplicate vertices
-				polygons[i].RemoveExtraneousVertices();
+				polygons[i].TryRemoveExtraneousVertices();
 
 				// Update the vertex normals
 				if(polygons[i].Vertices.Length >= 3)

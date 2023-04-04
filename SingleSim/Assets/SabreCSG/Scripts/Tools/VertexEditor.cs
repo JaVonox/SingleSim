@@ -16,8 +16,9 @@ namespace Sabresaurus.SabreCSG
 		bool moveInProgress = false; 
 
 		bool isMarqueeSelection = false; // Whether the user is (or could be) dragging a marquee box
+        bool marqueeCancelled = false;
 
-		Vector2 marqueeStart;
+        Vector2 marqueeStart;
 		Vector2 marqueeEnd;
 
 		bool pivotNeedsReset = false;
@@ -26,8 +27,16 @@ namespace Sabresaurus.SabreCSG
 
 		// Configured by the user
 		float weldTolerance = 0.1f;
+		float scale = 1f;
 
-		void ClearSelection()
+        float chamferDistance = 0.1f;
+        int chamferIterations = 3;
+
+        Vertex movingVertex;
+
+        private bool inverseSnapSelectionToCurrentGridLogic = false;
+
+        void ClearSelection()
 		{
 			selectedEdges.Clear();
 			selectedVertices.Clear();
@@ -76,8 +85,11 @@ namespace Sabresaurus.SabreCSG
 			RemoveDisjointedVertices();
 		}
 
-		void AutoWeld()
+		List<PrimitiveBrush> AutoWeld()
 		{
+            // Track the brushes that welding has changed
+            List<PrimitiveBrush> changedBrushes = new List<PrimitiveBrush>();
+
 			// Automatically weld any vertices that have been brought too close together
 			if(primaryTargetBrush != null && selectedVertices.Count > 0)
 			{
@@ -94,17 +106,38 @@ namespace Sabresaurus.SabreCSG
 
 				foreach (PrimitiveBrush brush in targetBrushes) 
 				{
-					Polygon[] sourcePolygons = brush.GetPolygons().DeepCopy();
+                    Polygon[] sourcePolygons = brush.GetPolygons();
+                    // Make a copy so that we can differentiate newPolygons from the original, since welding updates affected polygons in place
+                    Polygon[] sourcePolygonsCopy = sourcePolygons.DeepCopy();
 
 					List<Vertex> allVertices = new List<Vertex>();
-					for (int i = 0; i < sourcePolygons.Length; i++) 
+					for (int i = 0; i < sourcePolygonsCopy.Length; i++) 
 					{
-						allVertices.AddRange(sourcePolygons[i].Vertices);
+						allVertices.AddRange(sourcePolygonsCopy[i].Vertices);
 					}
 
-					Polygon[] newPolygons = VertexUtility.WeldNearbyVertices(autoWeldTolerance, sourcePolygons, allVertices);
+					Polygon[] newPolygons = VertexUtility.WeldNearbyVertices(autoWeldTolerance, sourcePolygonsCopy, allVertices);
 
-					if(newPolygons != null && newPolygons.Length != sourcePolygons.Length)
+                    bool hasChanged = false;
+
+                    if(newPolygons.Length != sourcePolygons.Length)
+                    {
+                        hasChanged = true;
+                    }
+
+                    if(!hasChanged)
+                    {
+                        for (int i = 0; i < sourcePolygons.Length; i++)
+                        {
+                            if(sourcePolygons[i].Vertices.Length != newPolygons[i].Vertices.Length)
+                            {
+                                hasChanged = true;
+                                break;
+                            }
+                        }
+                    }
+
+					if(hasChanged)
 					{
 						Undo.RecordObject(brush.transform, "Auto Weld Vertices");
 						Undo.RecordObject(brush, "Auto Weld Vertices");
@@ -117,7 +150,93 @@ namespace Sabresaurus.SabreCSG
 						brush.SetPolygons(newPolygons);
 
 						SelectVertices(brush, newPolygons, refinedSelections[brush]);
+
+                        // Brush has changed so mark it to be returned
+                        changedBrushes.Add(brush);
+                    }
+				}
+			}
+            // Return the brushes that welding has changed
+            return changedBrushes;
+        }
+
+		public void ScaleSelectedVertices(float scalar)
+		{	
+			Vector3 scalarCenter = GetSelectedCenter();
+
+			// So we know which polygons need to have their normals recalculated
+			List<Polygon> affectedPolygons = new List<Polygon>();
+
+			foreach (PrimitiveBrush brush in targetBrushes) 
+			{
+				Polygon[] polygons = brush.GetPolygons();
+
+				for (int i = 0; i < polygons.Length; i++) 
+				{
+					Polygon polygon = polygons[i];
+
+					int vertexCount = polygon.Vertices.Length;
+
+					Vector3[] newPositions = new Vector3[vertexCount];
+					Vector2[] newUV = new Vector2[vertexCount];
+
+					for (int j = 0; j < vertexCount; j++) 
+					{
+						newPositions[j] = polygon.Vertices[j].Position;
+						newUV[j] = polygon.Vertices[j].UV;
 					}
+
+					bool polygonAffected = false;
+					for (int j = 0; j < vertexCount; j++) 
+					{
+						Vertex vertex = polygon.Vertices[j];
+						if(selectedVertices.ContainsKey(vertex))
+						{
+							Vector3 newPosition = vertex.Position;
+							newPosition = brush.transform.TransformPoint(newPosition);
+							newPosition -= scalarCenter;
+							newPosition *= scalar;
+							newPosition += scalarCenter;
+
+							newPosition = brush.transform.InverseTransformPoint(newPosition);
+
+							newPositions[j] = newPosition;
+
+							newUV[j] = GeometryHelper.GetUVForPosition(polygon, newPosition);
+
+							polygonAffected = true;
+						}
+					}
+
+					if(polygonAffected)
+					{
+						affectedPolygons.Add(polygon);
+					}
+
+					// Apply all the changes to the polygon
+					for (int j = 0; j < vertexCount; j++) 
+					{
+						Vertex vertex = polygon.Vertices[j];
+						vertex.Position = newPositions[j];
+						vertex.UV = newUV[j];
+					}
+
+					polygon.CalculatePlane();
+				}
+			}
+
+			if(affectedPolygons.Count > 0)
+			{
+				for (int i = 0; i < affectedPolygons.Count; i++) 
+				{
+					affectedPolygons[i].ResetVertexNormals();
+				}
+
+				foreach (PrimitiveBrush brush in targetBrushes) 
+				{
+					brush.Invalidate(true);
+
+					brush.BreakTypeRelation();
 				}
 			}
 		}
@@ -218,6 +337,10 @@ namespace Sabresaurus.SabreCSG
 					// Assume that the brush no longer resembles it's base shape, this has false positives but that's not a big issue
 					brush.BreakTypeRelation();
 				}
+			}
+
+			if (CurrentSettings.PositionSnappingEnabled && (CurrentSettings.AlwaysSnapToCurrentGrid != inverseSnapSelectionToCurrentGridLogic)) {
+				SnapSelectedVertices(true);
 			}
 		}
 
@@ -352,7 +475,17 @@ namespace Sabresaurus.SabreCSG
 		{
 			base.OnSceneGUI(sceneView, e); // Allow the base logic to calculate first
 
-			if(primaryTargetBrush != null && AnySelected)
+            if (e.type == EventType.MouseUp || e.rawType == EventType.MouseUp)
+            {
+                moveInProgress = false;
+            }
+
+            if (e.type == EventType.KeyDown || e.type == EventType.KeyUp)
+            {
+                OnKeyAction(sceneView, e);
+            }
+
+            if (primaryTargetBrush != null && AnySelected)
 			{
 				if(startPositions.Count == 0)
 				{
@@ -369,7 +502,8 @@ namespace Sabresaurus.SabreCSG
 					handleDirection = primaryTargetBrush.transform.rotation;
 				}
 				
-				// Grab a source point and convert from local space to world
+				// Grab a source point and convert from local space to world.
+                // This is the emergency fall-back solution when no vertex is found.
 				Vector3 sourceWorldPosition = GetSelectedCenter();
 
 
@@ -378,9 +512,10 @@ namespace Sabresaurus.SabreCSG
 					Undo.RecordObjects(targetBrushTransforms, "Moved Vertices");
 					Undo.RecordObjects(targetBrushes, "Moved Vertices");
 
-					AutoWeld();
+					List<PrimitiveBrush> changedBrushes = AutoWeld();
 
-					foreach (PrimitiveBrush brush in targetBrushes) 
+                    // Only invalidate the brushes that have actually changed
+					foreach (PrimitiveBrush brush in changedBrushes) 
 					{
 						brush.Invalidate(true);
 
@@ -389,9 +524,27 @@ namespace Sabresaurus.SabreCSG
 				}
 
 				EditorGUI.BeginChangeCheck();
+
+                // If not moving a vertex yet:
+                if (!moveInProgress)
+                {
+                    // Find a selected vertex close to the mouse cursor.
+                    Vector3 vpos;
+                    Brush currentBrush;
+                    if (FindClosestSelectedVertexAtMousePosition(out vpos, out movingVertex))
+                        if (selectedVertices.TryGetValue(movingVertex, out currentBrush))
+                            sourceWorldPosition = currentBrush.transform.TransformPoint(movingVertex.Position);
+                }
+                else
+                {
+                    // Move the last selected vertex.
+                    Brush currentBrush;
+                    if (selectedVertices.TryGetValue(movingVertex, out currentBrush))
+                        sourceWorldPosition = currentBrush.transform.TransformPoint(movingVertex.Position);
+                }
+
 				// Display a handle and allow the user to determine a new position in world space
 				Vector3 newWorldPosition = Handles.PositionHandle(sourceWorldPosition, handleDirection);
-
 
 				if(EditorGUI.EndChangeCheck())
 				{
@@ -434,32 +587,41 @@ namespace Sabresaurus.SabreCSG
 
 			if(primaryTargetBrush != null)
 			{
-				if(!EditorHelper.IsMousePositionNearSceneGizmo(e.mousePosition))
+				
+				if (e.type == EventType.MouseDown) 
 				{
-					if (e.type == EventType.MouseDown) 
-					{
-						OnMouseDown(sceneView, e);
-					}
-					else if (e.type == EventType.MouseDrag) 
-					{
-						OnMouseDrag(sceneView, e);
-					}
-					// If you mouse up on a different scene view to the one you started on it's surpressed as Ignore, when
-					// doing marquee selection make sure to check the real type
-					else if (e.type == EventType.MouseUp || (isMarqueeSelection && e.rawType == EventType.MouseUp))
-					{
-						OnMouseUp(sceneView, e);
-					}
+					OnMouseDown(sceneView, e);
+				}
+				else if (e.type == EventType.MouseDrag) 
+				{
+					OnMouseDrag(sceneView, e);
+				}
+                // If you mouse up on a different scene view to the one you started on it's surpressed as Ignore, when
+                // doing marquee selection make sure to check the real type
+                else if (e.type == EventType.MouseUp || (isMarqueeSelection && e.rawType == EventType.MouseUp))
+                {
+					OnMouseUp(sceneView, e);
 				}
 			}
 
-//			if(e.type == EventType.Repaint)
-			{
+            //			if(e.type == EventType.Repaint)
+            {
 				OnRepaint(sceneView, e);
 			}
 		}
 
-		void SelectEdges(Brush brush, Polygon[] polygons, Edge newEdge)
+        void SelectEdges(Polygon polygon, IDictionary<Vertex, Brush> selectedVertices)
+        {
+            for (int j = 0; j < polygon.Vertices.Length; j++)
+            {
+                Vertex vertex1 = polygon.Vertices[j];
+                Vertex vertex2 = polygon.Vertices[(j + 1) % polygon.Vertices.Length];
+                if (selectedVertices.ContainsKey(vertex1) && selectedVertices.ContainsKey(vertex2))
+                    selectedEdges.Add(new Edge(vertex1, vertex2));
+            }
+        }
+
+        void SelectEdges(Brush brush, Polygon[] polygons, Edge newEdge)
 		{
 			// Can only select a valid edge, if it's not valid early out
 			if(newEdge == null || newEdge.Vertex1 == null || newEdge.Vertex2 == null)
@@ -618,9 +780,17 @@ namespace Sabresaurus.SabreCSG
 			}
 
 			EditorGUILayout.BeginHorizontal();
+
+
+			GUI.SetNextControlName("weldToleranceField");
 			weldTolerance = EditorGUILayout.FloatField(weldTolerance);
 
-			if (GUILayout.Button("Weld with Tolerance", EditorStyles.miniButton))
+			bool keyboardEnter = Event.current.isKey 
+				&& Event.current.keyCode == KeyCode.Return 
+				&& Event.current.type == EventType.KeyUp 
+				&& GUI.GetNameOfFocusedControl() == "weldToleranceField";
+
+			if (GUILayout.Button("Weld with Tolerance", EditorStyles.miniButton) || keyboardEnter)
 			{
 				if(selectedVertices != null)
 				{
@@ -674,6 +844,28 @@ namespace Sabresaurus.SabreCSG
 				}
 
 				SnapSelectedVertices(false);
+			}
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.BeginHorizontal();
+
+			GUI.SetNextControlName("scaleField");
+			scale = EditorGUILayout.FloatField(scale);
+
+			keyboardEnter = Event.current.isKey 
+				&& Event.current.keyCode == KeyCode.Return 
+				&& Event.current.type == EventType.KeyUp 
+				&& GUI.GetNameOfFocusedControl() == "scaleField";
+
+			if (GUILayout.Button("Scale", EditorStyles.miniButton) || keyboardEnter)
+			{
+				foreach (PrimitiveBrush brush in targetBrushes) 
+				{
+					Undo.RecordObject(brush.transform, "Scale Vertices");
+					Undo.RecordObject(brush, "Scale Vertices");
+				}
+
+				ScaleSelectedVertices(scale);
 			}
 			EditorGUILayout.EndHorizontal();
 
@@ -753,9 +945,18 @@ namespace Sabresaurus.SabreCSG
 			}
 		
 			GUILayout.EndHorizontal();
-		}
 
-		List<Vertex> SelectedVerticesOfBrush(Brush brush)
+            GUILayout.BeginHorizontal();
+
+            SabreGUILayout.RightClickMiniButton("Chamfer", "Bevels or rounds sharp edges.",
+                () => OnEdgeChamfer(false),
+                () => OnEdgeChamfer(true)
+            );
+
+            GUILayout.EndHorizontal();
+        }
+
+        List<Vertex> SelectedVerticesOfBrush(Brush brush)
 		{
 			List<Vertex> refinedSelection = new List<Vertex>();
 
@@ -769,7 +970,22 @@ namespace Sabresaurus.SabreCSG
 			return refinedSelection;
 		}
 
-		public void OnRepaint (SceneView sceneView, Event e)
+        private void OnKeyAction(SceneView sceneView, Event e)
+        {
+            if (KeyMappings.EventsMatch(e, Event.KeyboardEvent(KeyMappings.Instance.SnapSelectionToCurrentGrid)))
+            {
+                if (e.type == EventType.KeyDown)
+                {
+                    inverseSnapSelectionToCurrentGridLogic = true;
+                }
+                else
+                {
+                    inverseSnapSelectionToCurrentGridLogic = false;
+                }
+            }
+        }
+
+        public void OnRepaint (SceneView sceneView, Event e)
 		{
 			if(isMarqueeSelection && sceneView == SceneView.lastActiveSceneView)
 			{
@@ -781,12 +997,20 @@ namespace Sabresaurus.SabreCSG
 				DrawVertices(sceneView, e);
 			}
 
-			// Draw UI specific to this editor
-			Rect rectangle = new Rect(0, 50, 140, 140);
-			GUIStyle toolbar = new GUIStyle(EditorStyles.toolbar);
+            // Draw UI specific to this editor
+#if UNITY_2019_3_OR_NEWER
+            Rect rectangle = new Rect(0, 50, 185, 195);
+#else
+            Rect rectangle = new Rect(0, 50, 175, 180);
+#endif
+            GUIStyle toolbar = new GUIStyle(EditorStyles.toolbar);
 			toolbar.normal.background = SabreCSGResources.ClearTexture;
 			toolbar.fixedHeight = rectangle.height;
+#if UNITY_2021_2_OR_NEWER
+			SabreToolsOverlay.window1 = () => OnToolbarGUI(0);
+#else
 			GUILayout.Window(140002, rectangle, OnToolbarGUI, "", toolbar);
+#endif
 		}
 
 		void OnMouseDown (SceneView sceneView, Event e)
@@ -795,17 +1019,29 @@ namespace Sabresaurus.SabreCSG
 			moveInProgress = false;
 
 			marqueeStart = e.mousePosition;
-		}
+
+            if (EditorHelper.IsMousePositionInInvalidRects(e.mousePosition))
+            {
+                marqueeCancelled = true;
+            }
+            else
+            {
+                marqueeCancelled = false;
+            }
+        }
 
 		void OnMouseDrag (SceneView sceneView, Event e)
 		{
 			if(!CameraPanInProgress)
 			{
-				marqueeEnd = e.mousePosition;
 				if(!moveInProgress && e.button == 0)
 				{
-					isMarqueeSelection = true;
-					sceneView.Repaint();
+                    if (!marqueeCancelled)
+                    {
+                        marqueeEnd = e.mousePosition;
+                        isMarqueeSelection = true;
+                        sceneView.Repaint();
+                    }
 				}
 			}
 		}
@@ -868,12 +1104,14 @@ namespace Sabresaurus.SabreCSG
 									{
 										selectedVertices.Remove(vertex);
 									}
-								}
-							}
-						}
+                                }
+                                SelectEdges(polygon, selectedVertices);
+                            }
+                        }
+                        SceneView.RepaintAll();
 					}
-					else // Clicking style vertex selection
-					{
+					else if (!EditorHelper.IsMousePositionInInvalidRects(e.mousePosition) && !marqueeCancelled) // Clicking style vertex selection
+                    {
 						Vector2 mousePosition = e.mousePosition;
 
 						bool clickedAnyPoints = false;
@@ -950,7 +1188,8 @@ namespace Sabresaurus.SabreCSG
 										selectedVertices.Remove(vertex);
 									}
 								}
-							}
+                                SelectEdges(polygon, selectedVertices);
+                            }
 						}
 
 
@@ -1114,9 +1353,151 @@ namespace Sabresaurus.SabreCSG
 			GL.PopMatrix();
 		}
 
-		public override void Deactivated ()
+        /// <summary>Finds a selected vertex at the current mouse position.</summary>
+        /// <param name="closestVertexWorldPosition">The closest selected vertex world position.</param>
+        /// <returns>True if a vertex was found else false.</returns>
+        private bool FindClosestSelectedVertexAtMousePosition(out Vector3 closestVertexWorldPosition, out Vertex closestVertex)
+        {
+            // find a vertex close to the mouse cursor.
+            Transform sceneViewTransform = SceneView.currentDrawingSceneView.camera.transform;
+            Vector3 sceneViewPosition = sceneViewTransform.position;
+            Vector2 mousePosition = Event.current.mousePosition;
+
+            bool foundAnyPoints = false;
+            closestVertex = null;
+            closestVertexWorldPosition = Vector3.zero;
+            float closestDistanceSquare = float.PositiveInfinity;
+
+            foreach (PrimitiveBrush brush in selectedVertices.Values)
+            {
+                Polygon[] polygons = brush.GetPolygons();
+                for (int i = 0; i < polygons.Length; i++)
+                {
+                    Polygon polygon = polygons[i];
+
+                    for (int j = 0; j < polygon.Vertices.Length; j++)
+                    {
+                        Vertex vertex = polygon.Vertices[j];
+                        if (!selectedVertices.ContainsKey(vertex)) continue;
+
+                        Vector3 worldPosition = brush.transform.TransformPoint(vertex.Position);
+
+                        float vertexDistanceSquare = (sceneViewPosition - worldPosition).sqrMagnitude;
+
+                        if (EditorHelper.InClickZone(mousePosition, worldPosition) && vertexDistanceSquare < closestDistanceSquare)
+                        {
+                            closestVertex = vertex;
+                            closestVertexWorldPosition = worldPosition;
+                            foundAnyPoints = true;
+                            closestDistanceSquare = vertexDistanceSquare;
+                        }
+                    }
+                }
+            }
+
+            if (foundAnyPoints == false)
+            {
+                // None matched, next try finding the closest by distance
+                Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+                closestVertexWorldPosition = Vector3.zero;
+                closestDistanceSquare = float.PositiveInfinity;
+
+                foreach (PrimitiveBrush brush in selectedVertices.Values)
+                {
+                    Polygon[] polygons = brush.GetPolygons();
+                    for (int i = 0; i < polygons.Length; i++)
+                    {
+                        Polygon polygon = polygons[i];
+
+                        for (int j = 0; j < polygon.Vertices.Length; j++)
+                        {
+                            Vertex vertex = polygon.Vertices[j];
+                            if (!selectedVertices.ContainsKey(vertex)) continue;
+
+                            Vector3 vertexWorldPosition = brush.transform.TransformPoint(vertex.Position);
+
+                            Vector3 closestPoint = MathHelper.ProjectPointOnLine(ray.origin, ray.direction, vertexWorldPosition);
+
+                            float vertexDistanceSquare = (closestPoint - vertexWorldPosition).sqrMagnitude;
+
+                            if (vertexDistanceSquare < closestDistanceSquare)
+                            {
+                                closestVertex = vertex;
+                                closestVertexWorldPosition = vertexWorldPosition;
+                                foundAnyPoints = true;
+                                closestDistanceSquare = vertexDistanceSquare;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return foundAnyPoints;
+        }
+
+        /// <summary>
+        /// Called when the chamfer edge button is pressed.
+        /// </summary>
+        /// <param name="popup">If set to <c>true</c> displays the configuration popup.</param>
+        private void OnEdgeChamfer(bool popup)
+        {
+            if (selectedEdges == null) return;
+
+            if (popup)
+            {
+                // create a chamfer configuration popup window.
+                ToolSettingsPopup.Create("Chamfer Settings", 205, (rect) => {
+                    chamferDistance = EditorGUILayout.FloatField(new GUIContent("Distance", "The size of the chamfered curve."), chamferDistance);
+                    if (chamferDistance < 0.0f) chamferDistance = 0.0f;
+                    chamferIterations = EditorGUILayout.IntField(new GUIContent("Iterations", "The amount of iterations determines how detailed the chamfer is (e.g. 1 is a simple bevel)."), chamferIterations);
+                    if (chamferIterations < 1) chamferIterations = 1;
+                })
+                .AddConfirmButton("Chamfer", () => OnEdgeChamfer(false))
+                .SetWikiLink("Brush-Tools-Vertex#chamfer-edges")
+                .Show();
+
+                return;
+            }
+
+            List<KeyValuePair<Vertex, Brush>> newSelectedVertices = new List<KeyValuePair<Vertex, Brush>>();
+            foreach (PrimitiveBrush brush in targetBrushes)
+            {
+                Undo.RecordObject(brush.transform, "Chamfer Edge");
+                Undo.RecordObject(brush, "Chamfer Edge");
+                Polygon[] polygons = brush.GetPolygons();
+
+                for (int j = 0; j < selectedEdges.Count; j++)
+                {
+                    // First check if this edge actually belongs to the brush
+                    Brush parentBrush = selectedVertices[selectedEdges[j].Vertex1];
+
+                    if (parentBrush == brush)
+                    {
+                        List<Polygon> resultPolygons;
+                        if (PolygonFactory.ChamferPolygons(new List<Polygon>(polygons), selectedEdges, chamferDistance, chamferIterations, out resultPolygons))
+                        {
+                            brush.SetPolygons(resultPolygons.ToArray());
+                        }
+                    }
+                }
+
+                brush.Invalidate(true);
+            }
+
+            ClearSelection();
+
+            for (int i = 0; i < newSelectedVertices.Count; i++)
+            {
+                Brush brush = newSelectedVertices[i].Value;
+                Vertex vertex = newSelectedVertices[i].Key;
+
+                SelectVertices(brush, brush.GetPolygons(), new List<Vertex>() { vertex });
+            }
+        }
+
+        public override void Deactivated ()
 		{
-			
+			base.Deactivated();
 		}
 	}
 }

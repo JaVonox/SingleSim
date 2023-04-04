@@ -34,9 +34,12 @@ namespace Sabresaurus.SabreCSG
 		public string ToggleMode = "Space";
 		public string ToggleModeBack = "#Space";
 
-		public string ActivateDrawMode = "d";
-
-		public string ActivateClipMode = "c";
+		public string ActivateDrawMode = "#d";
+		public string ActivateClipMode = "#c";
+        public string ActivateResizeMode = "#r";
+        public string ActivateFaceMode = "#f";
+        public string ActivateVertexMode = "#v";
+        public string ActivatePaintMode = "#p";
 
 		[Header("Main Toolbar")]
 		public string TogglePosSnapping = "/";
@@ -48,6 +51,8 @@ namespace Sabresaurus.SabreCSG
 		public string IncreaseAngSnapping = "#.";
 
 		public string ToggleBrushesHidden = "h";
+		public string ToggleProjectedGrid = "0";
+		public string ToggleBrushesAsWireframes = "9";
 
 		[Header("General")]
 		public string ChangeBrushToAdditive = "a";
@@ -60,6 +65,7 @@ namespace Sabresaurus.SabreCSG
 		public string Ungroup = "#g";
 
 		public string EnableRadialMenu = "j";
+		public string SnapSelectionToCurrentGrid = "y";
 
 		[Header("Clip Tool")]
 		public string ApplyClip = "Return";
