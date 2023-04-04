@@ -7,35 +7,58 @@ public class Movement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    private const float moveSpeed = 0.05f;
+    private const float moveSpeed = 12f;
     public GameObject playerChar;
+    public CharacterController playerMovement;
+    public float sensitivity = 0.5f;
+    float rotateX = 0f;
+    private const float gravity = -9.81f; 
+    public Vector3 vel; //Velocity of gravity
+    private const float gDistance = 0.4f;
+    public LayerMask groundMask;
+    bool isGrounded;
 
-    // Update is called once per frame
+    private const float jumpHeight = 1f;
+    public GameObject groundCollider; //Checks for ground below the player
     void Update()
     {
         MoveChar();
     }
-    void MoveChar()
+    void MoveChar() //Handles char movement - Using https://www.youtube.com/watch?v=_QajrabyTJc code
     {
-        if (Input.GetKey(KeyCode.W))
+        isGrounded = Physics.CheckSphere(groundCollider.transform.position, gDistance, groundMask);   
+        //Mouse movement
+        float mouseX = Input.GetAxis("Mouse X") * sensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * sensitivity;
+
+        rotateX -= mouseY;
+        rotateX = Mathf.Clamp(rotateX, -90f, 90f);
+
+        transform.localRotation = Quaternion.Euler(rotateX, 0f, 0f);
+        playerChar.transform.Rotate(Vector3.up * mouseX);
+
+        //Player movement
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+        Vector3 move = transform.right * x + transform.forward * z;
+        playerMovement.Move(move * moveSpeed * Time.deltaTime);
+
+        //Gravity Calculations
+        if(isGrounded && vel.y < 0)
         {
-            playerChar.transform.position += new Vector3(0,0,moveSpeed);
+            vel.y = -2f;
         }
-        if (Input.GetKey(KeyCode.A))
+
+        if(Input.GetButtonDown("Jump") && isGrounded)
         {
-            playerChar.transform.position += new Vector3(-moveSpeed, 0, 0);
+            vel.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
-        if (Input.GetKey(KeyCode.D))
-        {
-            playerChar.transform.position += new Vector3(moveSpeed, 0, 0);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            playerChar.transform.position += new Vector3(0, 0, -moveSpeed);
-        }
+        vel.y += gravity * Time.deltaTime;
+        playerMovement.Move(vel * Time.deltaTime);
     }
 
 }
