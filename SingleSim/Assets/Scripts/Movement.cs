@@ -38,7 +38,7 @@ public class Movement : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y") * sensitivity;
 
         rotateX -= mouseY;
-        rotateX = Mathf.Clamp(rotateX, -90f, 90f);
+        rotateX = Mathf.Clamp(rotateX, -80f, 80f);
 
         transform.localRotation = Quaternion.Euler(rotateX, 0f, 0f);
         playerChar.transform.Rotate(Vector3.up * mouseX);
@@ -56,10 +56,10 @@ public class Movement : MonoBehaviour
             vel.y = -2f;
         }
 
-        if(Input.GetButtonDown("Jump") && isGrounded)
-        {
-            vel.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
+        //if(Input.GetButtonDown("Jump") && isGrounded)
+        //{
+        //    vel.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        //}
         vel.y += gravity * Time.deltaTime;
         playerMovement.Move(vel * Time.deltaTime);
     }
