@@ -22,11 +22,27 @@ public class Movement : MonoBehaviour
     public LayerMask groundMask;
     bool isGrounded;
 
-    private const float jumpHeight = 1f;
     public GameObject groundCollider; //Checks for ground below the player
+
+    public GameObject camera;
+    public BoxCollider interactionCollider; //When intersecting with interactible objects collider, it will open the appropriate UI element
+    public LayerMask interactablesMask; //Ensures interactables only collide with eachother
+
+    public Dictionary<BoxCollider, string> interactables = new Dictionary<BoxCollider, string>(); //Colliders and their associated ids
     void Update()
     {
         MoveChar();
+
+        //Debug.DrawRay(camera.transform.position, camera.transform.TransformDirection(Vector3.forward) * 1.5f,Color.green);
+
+        if (Input.GetButtonDown("Fire1")) //After the player presses E (the interaction button) send a raycast to detect any colliders infront of them
+        {
+            RaycastHit rHit;
+            if (Physics.Raycast(camera.transform.position, camera.transform.TransformDirection(Vector3.forward), out rHit, 1.5f, (1 << 9)))
+            {
+                Debug.Log(rHit.collider);
+            }
+        }
     }
 
     private Vector3 neutralVec = new Vector3(1, 0, 1);
@@ -55,11 +71,6 @@ public class Movement : MonoBehaviour
         {
             vel.y = -2f;
         }
-
-        //if(Input.GetButtonDown("Jump") && isGrounded)
-        //{
-        //    vel.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        //}
         vel.y += gravity * Time.deltaTime;
         playerMovement.Move(vel * Time.deltaTime);
     }
