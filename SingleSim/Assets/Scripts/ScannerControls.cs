@@ -32,31 +32,28 @@ public class ScannerControls : MonoBehaviour
 
         if(Gameplay.scanSpotsAreAvailable && mapSpotsPanel.transform.childCount == 0) //If there are scan spots to be spawned and none currently on the map
         {
-            int i = 0;
             foreach((float x, float y) posScanSpot in Gameplay.scanCoords)
             {
-                Debug.Log("x " + posScanSpot.x + "," + posScanSpot.y);
                 GameObject newScan = Instantiate(scanSpot,mapSpotsPanel.transform,false);
-                //newScan.transform.SetParent(mapSpotsPanel.transform,false);
-                newScan.transform.position = new Vector3(0, 0);
-                //newScan.transform.Rotate(new Vector3(-180, 180, 0));
+                Vector3 newPos = new Vector3((-Gameplay.bounds.xBound / 2) + posScanSpot.x, (Gameplay.bounds.yBound / 2) - posScanSpot.y, 0); //Position isnt perfect but its close
+                newScan.transform.Translate(newPos);
                 loadedScanSpots.Add(newScan);
-                i++;
-                //new Vector3(posScanSpot.x, posScanSpot.y), Quaternion.identity
             }
         }
+
+        if(startScan.interactable == false && Gameplay.scanProg == -1) { startScan.interactable = true; }
     }
     void BeginScanMode()
     {
         startScan.interactable = false;
         Gameplay.scanProg = 0;
         Gameplay.scanSpotsAreAvailable = false;
+        Gameplay.scanCoords.Clear();
         if(mapSpotsPanel.transform.childCount > 0)
         {
-            int childCount = mapSpotsPanel.transform.childCount;
-            for (int i = 0; i < childCount; i++)
+            foreach (Transform child in mapSpotsPanel.transform)
             {
-                GameObject.Destroy(mapSpotsPanel.transform.GetChild(0)); //Destroy each child
+                Destroy(child.gameObject);
             }
         }
         loadedScanSpots.Clear();

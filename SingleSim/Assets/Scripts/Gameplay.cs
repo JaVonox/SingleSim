@@ -8,7 +8,7 @@ public class Gameplay : MonoBehaviour
     public static float scanProg = -1; //-1 for not started. locked to 0-1
     public static List<(float x, float y)> scanCoords = new List<(float x, float y)>(); //Stores available positions of scan coordinates
     public static bool scanSpotsAreAvailable = false; //Bool says if there are available scan coordinates on screen
-    public static int numberOfScansSpots = 3; //how many scan spots can appear at once
+    public static int numberOfScansSpots = 5; //how many scan spots can appear at once
     public static (float xBound, float yBound) bounds; //Stores the boundaries of the scanSet
     public static bool isBoundsSet = false;
     private float secsSinceLastUpdate = 0;
@@ -46,5 +46,10 @@ public class Gameplay : MonoBehaviour
             //MUST BE LAST IN QUEUE
             secsSinceLastUpdate = 0;
         }
+    }
+
+    public static void AddNewScan() //Starts a new scan - triggered by pressing one of the scan spots on the map
+    {
+
     }
 }
