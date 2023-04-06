@@ -11,38 +11,66 @@ public class Movement : MonoBehaviour
         Cursor.visible = false;
     }
 
+    public bool playerMovementLocked = false;
+    public bool isInMenu = false;
+    public GameObject loadedUIElement;
+
     private const float moveSpeed = 5f;
     public GameObject playerChar;
     public CharacterController playerMovement;
     public float sensitivity = 0.5f;
-    float rotateX = 0f;
+    private float rotateX = 0f;
+
     private const float gravity = -9.81f; 
-    public Vector3 vel; //Velocity of gravity
+    private Vector3 vel; //Velocity of gravity
     private const float gDistance = 0.4f;
     public LayerMask groundMask;
-    bool isGrounded;
-
+    private bool isGrounded;
     public GameObject groundCollider; //Checks for ground below the player
 
     public GameObject camera;
-    public BoxCollider interactionCollider; //When intersecting with interactible objects collider, it will open the appropriate UI element
-    public LayerMask interactablesMask; //Ensures interactables only collide with eachother
 
-    public Dictionary<BoxCollider, string> interactables = new Dictionary<BoxCollider, string>(); //Colliders and their associated ids
+    public List<Collider> interactables = new List<Collider>(); //Colliders with their indexes representing their UI ids
+    public List<GameObject> uiPrefabs = new List<GameObject>(); //prefabs with their associated index IDs
     void Update()
     {
-        MoveChar();
-
         //Debug.DrawRay(camera.transform.position, camera.transform.TransformDirection(Vector3.forward) * 1.5f,Color.green);
 
         if (Input.GetButtonDown("Fire1")) //After the player presses E (the interaction button) send a raycast to detect any colliders infront of them
         {
             RaycastHit rHit;
-            if (Physics.Raycast(camera.transform.position, camera.transform.TransformDirection(Vector3.forward), out rHit, 1.5f, (1 << 9)))
+            if (Physics.Raycast(camera.transform.position, camera.transform.TransformDirection(Vector3.forward), out rHit, 1.5f, (1 << 9))) //(1 << 9) sets the layer to only check interactables layer
             {
-                Debug.Log(rHit.collider);
+                //Debug.Log(interactables.IndexOf(rHit.collider));
+
+                int loadIndex = interactables.IndexOf(rHit.collider); //the index to load
+
+                if (loadIndex != -1)
+                {
+                    ToggleMenuState();
+                    loadedUIElement = Instantiate(uiPrefabs[0],camera.transform);
+                    loadedUIElement.GetComponent<UIDestroy>().objectDestroyMethod += ToggleMenuState; //makes it so when the UI element is destroyed movement is reenabled
+                }
+                else
+                {
+                    Debug.LogError("Invalid Interactable");
+                }
             }
         }
+
+        if(!playerMovementLocked)
+        {
+            MoveChar();
+        }
+    }
+
+    private void ToggleMenuState() //Simple function to lock player in place while in a menu
+    {
+        isInMenu = !isInMenu;
+        playerMovementLocked = !playerMovementLocked;
+        if(Cursor.lockState == CursorLockMode.Locked) { Cursor.lockState = CursorLockMode.Confined; }
+        else { Cursor.lockState = CursorLockMode.Locked; }
+        Cursor.visible = !Cursor.visible;
     }
 
     private Vector3 neutralVec = new Vector3(1, 0, 1);
