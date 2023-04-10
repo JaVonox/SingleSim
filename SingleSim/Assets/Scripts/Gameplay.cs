@@ -58,8 +58,7 @@ public class Gameplay : MonoBehaviour
                 scanSpotsAreAvailable = true;
 
             }
-
-            if (currentTextPos != -1) //Setting UI update text
+            else if (currentTextPos != -1) //Setting UI update text
             {
                 if(currentTextPos == 0)
                 {

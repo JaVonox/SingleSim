@@ -127,7 +127,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1001701752529168694
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1060,6 +1060,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Scan Complete
-
-    Uploaded target signal to decoder console'
+  m_Text: ---

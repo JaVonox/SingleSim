@@ -25,10 +25,22 @@ public class ScannerControls : MonoBehaviour
             RectTransform r = mapSpotsPanel.transform.GetComponent<RectTransform>();
             Gameplay.bounds = (r.rect.width,r.rect.height); //Set the boundaries for where scan locations can appear when scan completes
         }
-    }
 
-    // Update is called once per frame
-    void Update()
+        if (Gameplay.scanProg == -1 && !Gameplay.scanSpotsAreAvailable)
+        {
+            scannerUploaded.GetComponentInChildren<Text>().text = "Scanner console active\n" +
+                "Press 'Perform Scan' to begin scanning for signals";
+            scannerUploaded.SetActive(true);
+        }
+        else
+        {
+            scannerUploaded.SetActive(false);
+        }
+
+        }
+
+        // Update is called once per frame
+        void Update()
     {
         progSlider.value = Gameplay.scanProg; //Update the value of the scan progress slider
 
@@ -110,7 +122,8 @@ public class ScannerControls : MonoBehaviour
             "Downloaded signal (" + Gameplay.UIcoordinates.x + " , " + Gameplay.UIcoordinates.y + ")\n"
             + "Data uploaded to decoder console...\n\n\n"
             + "Raw stream:\n\n"
-            + GenerateRawData();
+            + GenerateRawData()
+            + "\nPress 'Perform Scan' to scan for new signals";
 
         Gameplay.currentTextPos = 0;
     }
@@ -122,7 +135,7 @@ public class ScannerControls : MonoBehaviour
         {
             rawData += (char)(Random.Range(33, 126));
         }
-        rawData += "\n\n (Cont. " + Random.Range(200, 100000).ToString() + " bytes)";
+        rawData += "\n\n (Cont. " + Random.Range(200, 4000).ToString() + " bytes)";
         return rawData;
     }
     void LoadConsoleText()
