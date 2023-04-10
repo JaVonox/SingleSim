@@ -9,11 +9,13 @@ public class ScannerControls : MonoBehaviour
     public Button startScan;
     public GameObject mapSpotsPanel;
     public GameObject scanSpot;
+    public GameObject scannerUploaded;
     private List<GameObject> loadedScanSpots = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
+        //scannerUploaded.SetActive(false);
         //Make button activate the scanning - unless it has already started
         if (Gameplay.scanProg != -1) { startScan.interactable = false; }
         startScan.onClick.AddListener(() => BeginScanMode());
@@ -32,19 +34,30 @@ public class ScannerControls : MonoBehaviour
 
         if(Gameplay.scanSpotsAreAvailable && mapSpotsPanel.transform.childCount == 0) //If there are scan spots to be spawned and none currently on the map
         {
+            int i = 0; //spotID counter
             foreach((float x, float y) posScanSpot in Gameplay.scanCoords)
             {
                 GameObject newScan = Instantiate(scanSpot,mapSpotsPanel.transform,false);
                 Vector3 newPos = new Vector3((-Gameplay.bounds.xBound / 2) + posScanSpot.x, (Gameplay.bounds.yBound / 2) - posScanSpot.y, 0); //Position isnt perfect but its close
                 newScan.transform.Translate(newPos);
+                newScan.name = "ScanSpot_" + i;
+                newScan.GetComponentInChildren<Button>().onClick.AddListener(() => SelectScanSpot(newScan));
                 loadedScanSpots.Add(newScan);
+                i++;
             }
+        }
+
+        if (Gameplay.scannerConsolePopupEnabled == true && scannerUploaded.activeSelf == false)
+        {
+            Debug.Log("A");
+            scannerUploaded.SetActive(true);
         }
 
         if(startScan.interactable == false && Gameplay.scanProg == -1) { startScan.interactable = true; }
     }
     void BeginScanMode()
     {
+        if(scannerUploaded.activeSelf == true) { scannerUploaded.SetActive(false); Gameplay.scannerConsolePopupEnabled = false; }
         startScan.interactable = false;
         Gameplay.scanProg = 0;
         Gameplay.scanSpotsAreAvailable = false;
@@ -57,5 +70,29 @@ public class ScannerControls : MonoBehaviour
             }
         }
         loadedScanSpots.Clear();
+    }
+    void SelectScanSpot(GameObject selectedScanSpot) //When a spot is selected
+    {
+        scannerUploaded.SetActive(true);
+        Gameplay.scannerConsolePopupEnabled = true;
+        Gameplay.scanProg = -1;
+        Gameplay.scanSpotsAreAvailable = false;
+        Gameplay.scanCoords.Clear();
+
+        if (mapSpotsPanel.transform.childCount > 0)
+        {
+            foreach (Transform child in mapSpotsPanel.transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        loadedScanSpots.Clear();
+
+        Gameplay.AddNewAlien();
+    }
+    void WriteScannerConsoleText()
+    {
+        string scannerConsoleText = "";
+
     }
 }

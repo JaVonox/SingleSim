@@ -13,6 +13,10 @@ public class Gameplay : MonoBehaviour
     public static bool isBoundsSet = false;
     private float secsSinceLastUpdate = 0;
 
+    public static Alien activeAlien = new Alien(); //The current alien stats loaded by the scanner
+    public static List<Alien> storedAliens = new List<Alien>(); //The previously completed alien scans placed in storage
+    
+    public static bool scannerConsolePopupEnabled = false; //Checks if the scanner console pop up should be enabled when loadewd
     // Start is called before the first frame update
     void Start()
     {
@@ -48,8 +52,13 @@ public class Gameplay : MonoBehaviour
         }
     }
 
-    public static void AddNewScan() //Starts a new scan - triggered by pressing one of the scan spots on the map
+    public static void AddNewAlien() //Starts a new scan - triggered by pressing one of the scan spots on the map
     {
 
     }
+}
+
+public class Alien //The alien generated when a scanspot is selected. Information is decoded using the signal decoder
+{
+
 }
