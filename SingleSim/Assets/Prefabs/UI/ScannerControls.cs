@@ -63,8 +63,7 @@ public class ScannerControls : MonoBehaviour
         if(scannerUploaded.activeSelf == true) { scannerUploaded.SetActive(false); Gameplay.scannerConsolePopupEnabled = false; }
         startScan.interactable = false;
         Gameplay.scanProg = 0;
-        Gameplay.currentTextPos = 1;
-        hasFinishedLoadingUIText = false;
+        Gameplay.currentTextPos = -1;
         Gameplay.textTime = 0;
         Gameplay.scanSpotsAreAvailable = false;
         Gameplay.scanCoords.Clear();
@@ -79,9 +78,9 @@ public class ScannerControls : MonoBehaviour
     }
     void SelectScanSpot(GameObject selectedScanSpot, (float x, float y) position) //When a spot is selected
     {
-        Gameplay.UIcoordinates.x = position.x;
-        Gameplay.UIcoordinates.y = position.y;
-
+        //Convert numbers to coordinates, giving them some obfuscated digits in the process 
+        Gameplay.UIcoordinates.x = double.Parse(position.x.ToString() + Random.Range(0,10000).ToString());
+        Gameplay.UIcoordinates.y = double.Parse(position.y.ToString() + Random.Range(0,10000).ToString());
         StoreConsoleText();
 
         Gameplay.scannerConsolePopupEnabled = true;
@@ -108,28 +107,13 @@ public class ScannerControls : MonoBehaviour
         //Scan Complete
         //Uploaded target signal to decoder console
         Gameplay.UItext = "Scan Complete \n" +
-            "Recieved signal (" + Gameplay.UIcoordinates.x + "," + Gameplay.UIcoordinates.y + ")\n"
+            "Recieved signal (" + Gameplay.UIcoordinates.x + " , " + Gameplay.UIcoordinates.y + ")\n"
             + "Uploading data to decoder console...\n";
-    }
 
-    bool hasFinishedLoadingUIText = false; //This will check on the console data side if the UI has loaded. will be reset on unloading and reloading the UI but reset
+        Gameplay.currentTextPos = 0;
+    }
     void LoadConsoleText()
     {
-        if (!hasFinishedLoadingUIText)
-        {
-            Gameplay.textTime += Time.deltaTime;
-            if (Gameplay.textTime > 0.03)
-            {
-                Gameplay.currentTextPos += 1;
-                if (Gameplay.currentTextPos >= Gameplay.UItext.Length)
-                {
-                    Gameplay.currentTextPos = Gameplay.UItext.Length;
-                    hasFinishedLoadingUIText = false;
-                }
-                Gameplay.textTime = 0;
-        }
-            scannerUploaded.GetComponentInChildren<Text>().text = Gameplay.UItext.Substring(0, Gameplay.currentTextPos).ToString();
-
-        }
+        scannerUploaded.GetComponentInChildren<Text>().text = Gameplay.UItext.Substring(0, Gameplay.currentTextPos).ToString();
     }
 }

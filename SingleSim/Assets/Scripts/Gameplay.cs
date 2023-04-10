@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class Gameplay : MonoBehaviour
 {
     public static float scanSpeed = 0.05f; //How fast scanning occurs
@@ -17,9 +16,9 @@ public class Gameplay : MonoBehaviour
     public static List<Alien> storedAliens = new List<Alien>(); //The previously completed alien scans placed in storage
     
     public static bool scannerConsolePopupEnabled = false; //Checks if the scanner console pop up should be enabled when loaded
-    public static (float x, float y) UIcoordinates; //Stores the coordinates for the last completed signal for the UI popup to handle
+    public static (double x, double y) UIcoordinates; //Stores the coordinates for the last completed signal for the UI popup to handle
     public static string UItext;
-    public static int currentTextPos = 1;
+    public static int currentTextPos = -1;
     public static float textTime = 0;
 
     // Start is called before the first frame update
@@ -51,6 +50,14 @@ public class Gameplay : MonoBehaviour
 
             }
 
+            if (currentTextPos != -1) //Setting UI update text
+            {
+                currentTextPos += 4 ;
+                if (currentTextPos >= UItext.Length)
+                {
+                    currentTextPos = UItext.Length;
+                }
+            }
 
             //MUST BE LAST IN QUEUE
             secsSinceLastUpdate = 0;
