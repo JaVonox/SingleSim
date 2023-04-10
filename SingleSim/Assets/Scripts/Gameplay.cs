@@ -16,7 +16,12 @@ public class Gameplay : MonoBehaviour
     public static Alien activeAlien = new Alien(); //The current alien stats loaded by the scanner
     public static List<Alien> storedAliens = new List<Alien>(); //The previously completed alien scans placed in storage
     
-    public static bool scannerConsolePopupEnabled = false; //Checks if the scanner console pop up should be enabled when loadewd
+    public static bool scannerConsolePopupEnabled = false; //Checks if the scanner console pop up should be enabled when loaded
+    public static (float x, float y) UIcoordinates; //Stores the coordinates for the last completed signal for the UI popup to handle
+    public static string UItext;
+    public static int currentTextPos = 1;
+    public static float textTime = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -60,5 +65,5 @@ public class Gameplay : MonoBehaviour
 
 public class Alien //The alien generated when a scanspot is selected. Information is decoded using the signal decoder
 {
-
+    public (float x, float y) coordinates; //Stores the coordinates for the alien signal
 }
