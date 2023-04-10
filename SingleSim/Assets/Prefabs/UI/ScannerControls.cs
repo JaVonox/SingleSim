@@ -107,10 +107,23 @@ public class ScannerControls : MonoBehaviour
         //Scan Complete
         //Uploaded target signal to decoder console
         Gameplay.UItext = "Scan Complete \n" +
-            "Recieved signal (" + Gameplay.UIcoordinates.x + " , " + Gameplay.UIcoordinates.y + ")\n"
-            + "Uploading data to decoder console...\n";
+            "Downloaded signal (" + Gameplay.UIcoordinates.x + " , " + Gameplay.UIcoordinates.y + ")\n"
+            + "Data uploaded to decoder console...\n\n\n"
+            + "Raw stream:\n\n"
+            + GenerateRawData();
 
         Gameplay.currentTextPos = 0;
+    }
+    string GenerateRawData()
+    {
+        string rawData = "";
+        
+        for(int i = 0;i <= 255;i++)
+        {
+            rawData += (char)(Random.Range(33, 126));
+        }
+        rawData += "\n\n (Cont. " + Random.Range(200, 100000).ToString() + " bytes)";
+        return rawData;
     }
     void LoadConsoleText()
     {
