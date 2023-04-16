@@ -9,7 +9,7 @@ public class DecoderControls : MonoBehaviour
     public GameObject splitPrefab;
     private List<GameObject> imageSplits = new List<GameObject>();
 
-    private const float prog = 0.5f; //temporary progress constant, will be replaced with a static in gameplay
+    private const float prog = 1f; //temporary progress constant, will be replaced with a static in gameplay
 
     // Start is called before the first frame update
     void Start()
@@ -51,8 +51,7 @@ public class DecoderControls : MonoBehaviour
         float originX = alienImage.transform.localPosition.x;
         float originY = alienImage.transform.localPosition.y;
 
-        Debug.Log(widthPerSplit + "," + heightPerSplit);
-        Debug.Log(splitsTotal + ":" + splitPerSide);
+        Texture2D alienImgTexture = alienImage.GetComponent<Image>().sprite.texture;
 
         for (int y = 1; y < splitPerSide + 1; y++)
         {
@@ -62,10 +61,15 @@ public class DecoderControls : MonoBehaviour
                 RectTransform rt = newSplit.GetComponentInChildren<RectTransform>();
 
                 rt.sizeDelta = new Vector2(widthPerSplit, heightPerSplit); //Set width and height to precalculated values
-                Debug.Log(originX + "+ (" + widthPerSplit + " * " + (x - 1) + ")");
-                rt.localPosition = new Vector3((widthPerSplit * (x - 1)), - (heightPerSplit * (y - 1)), 0);
+                rt.localPosition = new Vector3((widthPerSplit * (x - 1)), -(heightPerSplit * (y - 1)), 0);
+                
+                Color locColour = alienImgTexture.GetPixel((int)Mathf.Floor(widthPerSplit * (x - 1)), (int)Mathf.Floor(alienImgTexture.height - heightPerSplit * (y - 1))); //Get colour at top left of split
 
+                //Set colour for image
+                newSplit.GetComponentInChildren<Image>().color = new Color32((byte)Mathf.Floor(locColour.r * 255), (byte)Mathf.Floor(locColour.g * 255), (byte)Mathf.Floor(locColour.b * 255), 255);
                 imageSplits.Add(newSplit);
+
+
             }
         }
     }
