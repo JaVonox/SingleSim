@@ -7,9 +7,9 @@ public class DecoderControls : MonoBehaviour
 {
     public GameObject alienImage;
     public GameObject splitPrefab;
-    private List<GameObject> imageSplits = new List<GameObject>();
 
-    private const float prog = 1f; //temporary progress constant, will be replaced with a static in gameplay
+    private float prog = 0; //temporary progress constant, will be replaced with a static in gameplay
+    private float dTime = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +20,14 @@ public class DecoderControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        dTime += Time.deltaTime;
+
+        if (dTime > 0.5f && prog != -1)
+        {
+            prog += 0.01f;
+            UpdateImage();
+            dTime = 0;
+        }
     }
 
     void UpdateImage()
@@ -38,39 +45,49 @@ public class DecoderControls : MonoBehaviour
             }
         }
 
-        alienImage.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
-
-        int stage = (int)Mathf.Floor(prog / 0.25f); //0-4 stages
-
-        int splitsTotal = (int)Mathf.Pow(4, stage); //Total number of splits
-        int splitPerSide = (int)Mathf.Sqrt(splitsTotal);
-
-        float widthPerSplit = ((RectTransform)alienImage.transform).rect.width / splitPerSide;
-        float heightPerSplit = ((RectTransform)alienImage.transform).rect.height / splitPerSide;
-
-        float originX = alienImage.transform.localPosition.x;
-        float originY = alienImage.transform.localPosition.y;
-
-        Texture2D alienImgTexture = alienImage.GetComponent<Image>().sprite.texture;
-
-        for (int y = 1; y < splitPerSide + 1; y++)
+        if (prog < 1)
         {
-            for (int x = 1; x < splitPerSide + 1; x++)
+
+            alienImage.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
+
+            int stage = (int)Mathf.Round(prog / 0.25f) + 1; //0-5 stages
+
+            int splitsTotal = (int)Mathf.Pow(4, stage); //Total number of splits
+            int splitPerSide = (int)Mathf.Sqrt(splitsTotal);
+
+            float widthPerSplit = ((RectTransform)alienImage.transform).rect.width / splitPerSide;
+            float heightPerSplit = ((RectTransform)alienImage.transform).rect.height / splitPerSide;
+
+            float originX = alienImage.transform.localPosition.x;
+            float originY = alienImage.transform.localPosition.y;
+
+            Texture2D alienImgTexture = alienImage.GetComponent<Image>().sprite.texture;
+
+            for (int y = 1; y < splitPerSide + 1; y++)
             {
-                GameObject newSplit = Instantiate(splitPrefab, alienImage.transform);
-                RectTransform rt = newSplit.GetComponentInChildren<RectTransform>();
+                for (int x = 1; x < splitPerSide + 1; x++)
+                {
+                    GameObject newSplit = Instantiate(splitPrefab, alienImage.transform);
+                    RectTransform rt = newSplit.GetComponentInChildren<RectTransform>();
 
-                rt.sizeDelta = new Vector2(widthPerSplit, heightPerSplit); //Set width and height to precalculated values
-                rt.localPosition = new Vector3((widthPerSplit * (x - 1)), -(heightPerSplit * (y - 1)), 0);
-                
-                Color locColour = alienImgTexture.GetPixel((int)Mathf.Floor(widthPerSplit * (x - 1)), (int)Mathf.Floor(alienImgTexture.height - heightPerSplit * (y - 1))); //Get colour at top left of split
+                    rt.sizeDelta = new Vector2(widthPerSplit, heightPerSplit); //Set width and height to precalculated values
+                    rt.localPosition = new Vector3((widthPerSplit * (x - 1)), -(heightPerSplit * (y - 1)), 0);
 
-                //Set colour for image
-                newSplit.GetComponentInChildren<Image>().color = new Color32((byte)Mathf.Floor(locColour.r * 255), (byte)Mathf.Floor(locColour.g * 255), (byte)Mathf.Floor(locColour.b * 255), 255);
-                imageSplits.Add(newSplit);
+                    Color locColour = alienImgTexture.GetPixel((int)Mathf.Floor(widthPerSplit * (x - 1)), (int)Mathf.Floor(alienImgTexture.height - heightPerSplit * (y - 1))); //Get colour at top left of split
+
+                    //Set colour for image
+                    
+                    newSplit.GetComponentInChildren<Image>().color = new Color32((byte)Mathf.Floor(locColour.r * 255), (byte)Mathf.Floor(locColour.g * 255), (byte)Mathf.Floor(locColour.b * 255), 255);
+                    newSplit.name = "Split (" + x + "," + y + ")";
 
 
+                }
             }
+        }
+        else
+        {
+            alienImage.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
+            prog = -1;
         }
     }
 }
