@@ -36,7 +36,7 @@ public class Movement : MonoBehaviour
     {
         //Debug.DrawRay(camera.transform.position, camera.transform.TransformDirection(Vector3.forward) * 1.5f,Color.green);
 
-        if (Input.GetButtonDown("Fire1")) //After the player presses E (the interaction button) send a raycast to detect any colliders infront of them
+        if (Input.GetButtonDown("Fire1") && !playerMovementLocked) //After the player presses E (the interaction button) send a raycast to detect any colliders infront of them
         {
             RaycastHit rHit;
             if (Physics.Raycast(camera.transform.position, camera.transform.TransformDirection(Vector3.forward), out rHit, 1.5f, (1 << 9))) //(1 << 9) sets the layer to only check interactables layer
@@ -48,7 +48,7 @@ public class Movement : MonoBehaviour
                 if (loadIndex != -1)
                 {
                     ToggleMenuState();
-                    loadedUIElement = Instantiate(uiPrefabs[0],camera.transform);
+                    loadedUIElement = Instantiate(uiPrefabs[loadIndex],camera.transform);
                     loadedUIElement.GetComponent<UIDestroy>().objectDestroyMethod += ToggleMenuState; //makes it so when the UI element is destroyed movement is reenabled
                 }
                 else
