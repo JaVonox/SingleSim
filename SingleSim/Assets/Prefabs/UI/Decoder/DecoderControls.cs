@@ -7,29 +7,95 @@ public class DecoderControls : MonoBehaviour
 {
     public GameObject alienImage;
     public GameObject splitPrefab;
+    public Slider progSlider;
+    public Button startDecode;
+    public Button uploadDecoded;
+    public Text console;
 
-    private float prog = 0; //temporary progress constant, will be replaced with a static in gameplay
-    private float dTime = 0;
+    private bool isLoaded = false;
 
+    private float updateTime = 0.2f;
     // Start is called before the first frame update
     void Start()
     {
-        UpdateImage(); 
+        LoadDecoder();
     }
 
     // Update is called once per frame
     void Update()
     {
-        dTime += Time.deltaTime;
-
-        if (dTime > 0.5f && prog != -1)
+        if (!isLoaded) //If nothing is loaded, check if something needs to be loaded
         {
-            prog += 0.01f;
+            if(Gameplay.activeAlien != null)
+            {
+                LoadDecoder();
+            }
+            updateTime = 0.2f;
+        }
+        else
+        {
+            progSlider.value = Gameplay.activeAlien.decoderProgress;
+
+            updateTime += Time.deltaTime;
+
+            if(updateTime >= 0.2f)
+            {
+                UpdateImage();
+                updateTime = 0;
+            }
+        }
+    }
+    void LoadDecoder()
+    {
+        if(Gameplay.activeAlien == null)
+        {
+            alienImage.SetActive(false);
+            progSlider.gameObject.SetActive(false);
+            progSlider.value = 0;
+            startDecode.gameObject.SetActive(false);
+            startDecode.interactable = false;
+            uploadDecoded.gameObject.SetActive(false);
+            uploadDecoded.interactable = false;
+            console.text = "No signal loaded. Find a signal using the scanner to begin.";
+            isLoaded = false;
+        }
+        else
+        {
+            alienImage.SetActive(true);
+            alienImage.GetComponent<Image>().sprite = Gameplay.activeAlien.ReturnImage();
             UpdateImage();
-            dTime = 0;
+
+            progSlider.gameObject.SetActive(true);
+            progSlider.value = Gameplay.activeAlien.decoderProgress;
+
+            startDecode.gameObject.SetActive(true);
+            startDecode.onClick.AddListener(() => BeginDecode());
+            uploadDecoded.gameObject.SetActive(true);
+
+            if (Gameplay.activeAlien.decoderProgress == -1)
+            {
+                startDecode.interactable = true;
+            }
+            else
+            {
+                startDecode.interactable = false;
+
+                if(Gameplay.activeAlien.decoderProgress == 1)
+                {
+                    uploadDecoded.interactable = true;
+                }
+            }
+
+            console.text = "Decoding...\n (There will be a minigame here in future releases)";
+            isLoaded = true;
         }
     }
 
+    void BeginDecode()
+    {
+        Gameplay.activeAlien.decoderProgress = 0;
+        startDecode.interactable = true;
+    }
     void UpdateImage()
     {
         //Algorithm - make a split of images based on the progress - update each with an appropriate colour based on the pixel in the image
@@ -45,12 +111,12 @@ public class DecoderControls : MonoBehaviour
             }
         }
 
-        if (prog < 1)
+        if (Gameplay.activeAlien.decoderProgress < 1)
         {
 
             alienImage.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
 
-            int stage = (int)Mathf.Round(prog / 0.25f) + 1; //0-5 stages
+            int stage = (int)Mathf.Round(Gameplay.activeAlien.decoderProgress / 0.25f) + 1; //0-5 stages
 
             int splitsTotal = (int)Mathf.Pow(4, stage); //Total number of splits
             int splitPerSide = (int)Mathf.Sqrt(splitsTotal);
@@ -87,7 +153,7 @@ public class DecoderControls : MonoBehaviour
         else
         {
             alienImage.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
-            prog = -1;
+            Gameplay.activeAlien.decoderProgress = 1;
         }
     }
 }

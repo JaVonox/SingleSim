@@ -40,7 +40,7 @@ public class ScannerControls : MonoBehaviour
         }
 
         // Update is called once per frame
-        void Update()
+    void Update()
     {
         progSlider.value = Gameplay.scanProg; //Update the value of the scan progress slider
 

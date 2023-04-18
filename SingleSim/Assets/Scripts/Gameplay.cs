@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 public class Gameplay : MonoBehaviour
 {
     public static float scanSpeed = 0.05f; //How fast scanning occurs
@@ -12,9 +13,9 @@ public class Gameplay : MonoBehaviour
     public static bool isBoundsSet = false;
     private float secsSinceLastUpdate = 0;
 
-    public static Alien activeAlien = new Alien(); //The current alien stats loaded by the scanner
+    public static Alien activeAlien; //The current alien stats loaded by the scanner into the decoder. when decoded it is loaded into storedAliens
     public static List<Alien> storedAliens = new List<Alien>(); //The previously completed alien scans placed in storage
-    
+
     public static bool scannerConsolePopupEnabled = false; //Checks if the scanner console pop up should be enabled when loaded
     public static (double x, double y) UIcoordinates; //Stores the coordinates for the last completed signal for the UI popup to handle
     public static string UItext;
@@ -24,9 +25,16 @@ public class Gameplay : MonoBehaviour
     public GameObject scannerObject;
     public List<Sprite> scannerSpriteStates;
 
+    public List<Sprite> alienSpritesToLoad; //Non static field to import the sprites and load them into the static loaded
+    public static List<Sprite> alienSprites;
+
     // Start is called before the first frame update
     void Start()
     {
+        //Load alien sprites into static space to allow access from methods
+        alienSprites = alienSpritesToLoad.GetRange(0,alienSpritesToLoad.Count);
+        alienSpritesToLoad.Clear();
+
         SetScannerState("idle");
     }
 
@@ -71,6 +79,10 @@ public class Gameplay : MonoBehaviour
                 }
             }
 
+            if(activeAlien != null && activeAlien.decoderProgress >= 0)
+            {
+                activeAlien.decoderProgress += activeAlien.baseDecodeSpeed;
+            }
             //MUST BE LAST IN QUEUE
             secsSinceLastUpdate = 0;
         }
@@ -78,9 +90,12 @@ public class Gameplay : MonoBehaviour
 
     public static void AddNewAlien() //Starts a new scan - triggered by pressing one of the scan spots on the map
     {
-
+        activeAlien = new Alien(ReturnImage);
     }
-    
+    public static Sprite ReturnImage(int imageID)
+    {
+        return alienSprites[imageID];
+    }
     public void SetScannerState(string state)
     {
         switch(state)
@@ -103,5 +118,22 @@ public class Gameplay : MonoBehaviour
 
 public class Alien //The alien generated when a scanspot is selected. Information is decoded using the signal decoder
 {
-    public (float x, float y) coordinates; //Stores the coordinates for the alien signal
+    public int imageID; //The image ID 
+    private System.Func<int,Sprite> retImageMethod;
+    public float decoderProgress = -1;
+    public float baseDecodeSpeed;
+    public Alien(System.Func<int,Sprite> spriteMethod)
+    {
+        imageID = Random.Range(0, Gameplay.alienSprites.Count - 1); //Load a random image to represent the alien
+        baseDecodeSpeed = Random.Range(0.001f, 0.01f); //Set random speed for decoding the signal
+        retImageMethod = spriteMethod; //Attach the method that returns the sprite
+    }
+    public void BeginDecode()
+    {
+        decoderProgress = 0;
+    }
+    public Sprite ReturnImage()
+    {
+        return retImageMethod(imageID);
+    }
 }
