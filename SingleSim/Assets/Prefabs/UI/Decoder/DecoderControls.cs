@@ -18,6 +18,9 @@ public class DecoderControls : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        startDecode.onClick.AddListener(() => BeginDecode());
+        uploadDecoded.onClick.AddListener(() => EndDecode());
+
         LoadDecoder();
     }
 
@@ -42,6 +45,15 @@ public class DecoderControls : MonoBehaviour
             {
                 UpdateImage();
                 updateTime = 0;
+
+                if(Gameplay.activeAlien.decoderProgress >= 1)
+                {
+                    startDecode.gameObject.SetActive(true);
+                    uploadDecoded.gameObject.SetActive(true);
+
+                    startDecode.interactable = false;
+                    uploadDecoded.interactable = true;
+                }
             }
         }
     }
@@ -69,7 +81,6 @@ public class DecoderControls : MonoBehaviour
             progSlider.value = Gameplay.activeAlien.decoderProgress;
 
             startDecode.gameObject.SetActive(true);
-            startDecode.onClick.AddListener(() => BeginDecode());
             uploadDecoded.gameObject.SetActive(true);
 
             if (Gameplay.activeAlien.decoderProgress == -1)
@@ -80,7 +91,7 @@ public class DecoderControls : MonoBehaviour
             {
                 startDecode.interactable = false;
 
-                if(Gameplay.activeAlien.decoderProgress == 1)
+                if(Gameplay.activeAlien.decoderProgress >= 1)
                 {
                     uploadDecoded.interactable = true;
                 }
@@ -94,7 +105,16 @@ public class DecoderControls : MonoBehaviour
     void BeginDecode()
     {
         Gameplay.activeAlien.decoderProgress = 0;
-        startDecode.interactable = true;
+        startDecode.interactable = false;
+    }
+    void EndDecode()
+    {
+        if(Gameplay.activeAlien.decoderProgress >= 1)
+        {
+            Gameplay.storedAliens.Add(new Alien(Gameplay.activeAlien)); //Store completed alien
+            Gameplay.activeAlien = null; //Delete active alien
+            LoadDecoder();
+        }
     }
     void UpdateImage()
     {

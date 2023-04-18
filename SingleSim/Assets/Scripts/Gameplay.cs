@@ -81,7 +81,14 @@ public class Gameplay : MonoBehaviour
 
             if(activeAlien != null && activeAlien.decoderProgress >= 0)
             {
-                activeAlien.decoderProgress += activeAlien.baseDecodeSpeed;
+                if (activeAlien.decoderProgress > 1)
+                {
+                    activeAlien.decoderProgress = 1;
+                }
+                else
+                {
+                    activeAlien.decoderProgress += activeAlien.baseDecodeSpeed;
+                }
             }
             //MUST BE LAST IN QUEUE
             secsSinceLastUpdate = 0;
@@ -119,14 +126,23 @@ public class Gameplay : MonoBehaviour
 public class Alien //The alien generated when a scanspot is selected. Information is decoded using the signal decoder
 {
     public int imageID; //The image ID 
-    private System.Func<int,Sprite> retImageMethod;
+    public System.Func<int,Sprite> retImageMethod;
     public float decoderProgress = -1;
-    public float baseDecodeSpeed;
+    public float baseDecodeSpeed = 0;
     public Alien(System.Func<int,Sprite> spriteMethod)
     {
         imageID = Random.Range(0, Gameplay.alienSprites.Count - 1); //Load a random image to represent the alien
-        baseDecodeSpeed = Random.Range(0.001f, 0.01f); //Set random speed for decoding the signal
+        //baseDecodeSpeed = Random.Range(0.001f, 0.01f); //Set random speed for decoding the signal
+        baseDecodeSpeed = 0.1f;
         retImageMethod = spriteMethod; //Attach the method that returns the sprite
+    }
+
+    public Alien(Alien copy)
+    {
+        imageID = copy.imageID;
+        retImageMethod = copy.retImageMethod;
+        decoderProgress = copy.decoderProgress;
+        baseDecodeSpeed = copy.baseDecodeSpeed;
     }
     public void BeginDecode()
     {
