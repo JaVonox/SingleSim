@@ -131,9 +131,8 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     public float baseDecodeSpeed = 0;
     public Alien(System.Func<int,Sprite> spriteMethod)
     {
-        imageID = Random.Range(0, Gameplay.alienSprites.Count - 1); //Load a random image to represent the alien
-        //baseDecodeSpeed = Random.Range(0.001f, 0.01f); //Set random speed for decoding the signal
-        baseDecodeSpeed = 0.1f;
+        imageID = Random.Range(0, Gameplay.alienSprites.Count); //Load a random image to represent the alien
+        baseDecodeSpeed = Random.Range(0.001f, 0.01f); //Set random speed for decoding the signal
         retImageMethod = spriteMethod; //Attach the method that returns the sprite
     }
 

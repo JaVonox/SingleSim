@@ -11,11 +11,8 @@ public class ScannerControls : MonoBehaviour
     public GameObject scanSpot;
     public GameObject scannerUploaded; //Console for after the scan has been uploaded
     private List<GameObject> loadedScanSpots = new List<GameObject>();
-
-    // Start is called before the first frame update
     void Start()
     {
-        //scannerUploaded.SetActive(false);
         //Make button activate the scanning - unless it has already started
         if (Gameplay.scanProg != -1) { startScan.interactable = false; }
         startScan.onClick.AddListener(() => BeginScanMode());
@@ -38,8 +35,6 @@ public class ScannerControls : MonoBehaviour
         }
 
         }
-
-        // Update is called once per frame
     void Update()
     {
         progSlider.value = Gameplay.scanProg; //Update the value of the scan progress slider
@@ -58,6 +53,7 @@ public class ScannerControls : MonoBehaviour
                 i++;
             }
         }
+
 
         if (Gameplay.scannerConsolePopupEnabled == true)
         {

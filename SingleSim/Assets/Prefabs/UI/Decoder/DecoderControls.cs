@@ -114,6 +114,8 @@ public class DecoderControls : MonoBehaviour
             Gameplay.storedAliens.Add(new Alien(Gameplay.activeAlien)); //Store completed alien
             Gameplay.activeAlien = null; //Delete active alien
             LoadDecoder();
+            Gameplay.scannerConsolePopupEnabled = false;
+            Gameplay.UItext = "...";
         }
     }
     void UpdateImage()
