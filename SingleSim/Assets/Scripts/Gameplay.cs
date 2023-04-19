@@ -18,9 +18,11 @@ public class Gameplay : MonoBehaviour
 
     public static bool scannerConsolePopupEnabled = false; //Checks if the scanner console pop up should be enabled when loaded
     public static (double x, double y) UIcoordinates; //Stores the coordinates for the last completed signal for the UI popup to handle
-    public static string UItext;
-    public static int currentTextPos = -1;
+    public static string ScanUItext;
+    public static int currentScanTextPos = -1;
     public static float textTime = 0;
+
+    public static int textSpeed = 4;
 
     public GameObject scannerObject;
     public List<Sprite> scannerSpriteStates;
@@ -66,16 +68,16 @@ public class Gameplay : MonoBehaviour
                 scanSpotsAreAvailable = true;
 
             }
-            else if (currentTextPos != -1) //Setting UI update text
+            else if (currentScanTextPos != -1) //Setting UI update text
             {
-                if(currentTextPos == 0)
+                if(currentScanTextPos == 0)
                 {
                     SetScannerState("idle");
                 }
-                currentTextPos += 4 ;
-                if (currentTextPos >= UItext.Length)
+                currentScanTextPos += textSpeed;
+                if (currentScanTextPos > ScanUItext.Length)
                 {
-                    currentTextPos = UItext.Length;
+                    currentScanTextPos = ScanUItext.Length;
                 }
             }
 
@@ -84,10 +86,25 @@ public class Gameplay : MonoBehaviour
                 if (activeAlien.decoderProgress > 1)
                 {
                     activeAlien.decoderProgress = 1;
+
                 }
                 else
                 {
                     activeAlien.decoderProgress += activeAlien.baseDecodeSpeed;
+                }
+
+                if(activeAlien.decoderProgress >= 1)
+                {
+                    if(activeAlien.decodeTextProg == -1 ) { activeAlien.decodeTextProg = 1; }
+                    else
+                    {
+                        activeAlien.decodeTextProg += textSpeed;
+
+                        if (activeAlien.decodeTextProg > activeAlien.decodeTextMessage.Length)
+                        {
+                            activeAlien.decodeTextProg = activeAlien.decodeTextMessage.Length;
+                        }
+                    }
                 }
             }
             //MUST BE LAST IN QUEUE
@@ -129,6 +146,8 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     public System.Func<int,Sprite> retImageMethod;
     public float decoderProgress = -1;
     public float baseDecodeSpeed = 0;
+    public int decodeTextProg = -1;
+    public string decodeTextMessage;
 
     public AlienStats selfParams; //The aliens own stats
     public AlienStats preferenceParams; //The preferred stats of an alien
@@ -140,6 +159,8 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
 
         selfParams = new AlienStats(this);
         preferenceParams = new AlienStats(ref selfParams);
+
+        decodeTextMessage = GenerateText();
     }
 
     public Alien(Alien copy)
@@ -148,6 +169,11 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         retImageMethod = copy.retImageMethod;
         decoderProgress = copy.decoderProgress;
         baseDecodeSpeed = copy.baseDecodeSpeed;
+        decodeTextProg = copy.decodeTextProg;
+        decodeTextMessage = copy.decodeTextMessage;
+
+        selfParams = copy.selfParams;
+        preferenceParams = copy.preferenceParams;
     }
     public void BeginDecode()
     {

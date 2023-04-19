@@ -116,7 +116,7 @@ public class DecoderControls : MonoBehaviour
             Gameplay.activeAlien = null; //Delete active alien
             LoadDecoder();
             Gameplay.scannerConsolePopupEnabled = false;
-            Gameplay.UItext = "...";
+            Gameplay.ScanUItext = "...";
         }
     }
     void DecoderUpdate()
@@ -165,7 +165,7 @@ public class DecoderControls : MonoBehaviour
                     Color locColour = alienImgTexture.GetPixel((int)Mathf.Floor(widthPerSplit * (x - 1)), (int)Mathf.Floor(alienImgTexture.height - heightPerSplit * (y - 1))); //Get colour at top left of split
 
                     //Set colour for image
-                    
+
                     newSplit.GetComponentInChildren<Image>().color = new Color32((byte)Mathf.Floor(locColour.r * 255), (byte)Mathf.Floor(locColour.g * 255), (byte)Mathf.Floor(locColour.b * 255), 255);
                     newSplit.name = "Split (" + x + "," + y + ")";
 
@@ -178,7 +178,14 @@ public class DecoderControls : MonoBehaviour
             alienImage.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
             Gameplay.activeAlien.decoderProgress = 1;
 
-            console.text = "Decoded message:\n" + Gameplay.activeAlien.GenerateText();
+            if (Gameplay.activeAlien.decodeTextProg > 1)
+            {
+                console.text = "Decoded message:\n" + Gameplay.activeAlien.decodeTextMessage.Substring(0, Gameplay.activeAlien.decodeTextProg).ToString();
+            }
+            else
+            {
+                console.text = "Finishing decoding procedure...";
+            }
         }
     }
 }

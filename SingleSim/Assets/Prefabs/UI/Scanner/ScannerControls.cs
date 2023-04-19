@@ -71,7 +71,7 @@ public class ScannerControls : MonoBehaviour
         if(scannerUploaded.activeSelf == true) { scannerUploaded.SetActive(false); Gameplay.scannerConsolePopupEnabled = false; }
         startScan.interactable = false;
         Gameplay.scanProg = 0;
-        Gameplay.currentTextPos = -1;
+        Gameplay.currentScanTextPos = -1;
         Gameplay.textTime = 0;
         Gameplay.scanSpotsAreAvailable = false;
         Gameplay.scanCoords.Clear();
@@ -114,14 +114,14 @@ public class ScannerControls : MonoBehaviour
     {
         //Scan Complete
         //Uploaded target signal to decoder console
-        Gameplay.UItext = "Scan Complete \n" +
+        Gameplay.ScanUItext = "Scan Complete \n" +
             "Downloaded signal (" + Gameplay.UIcoordinates.x + " , " + Gameplay.UIcoordinates.y + ")\n"
             + "Data uploaded to decoder console...\n\n\n"
             + "Raw stream:\n\n"
             + GenerateRawData()
             + "\nPress 'Perform Scan' to scan for new signals";
 
-        Gameplay.currentTextPos = 0;
+        Gameplay.currentScanTextPos = 0;
     }
     string GenerateRawData()
     {
@@ -136,6 +136,6 @@ public class ScannerControls : MonoBehaviour
     }
     void LoadConsoleText()
     {
-        scannerUploaded.GetComponentInChildren<Text>().text = Gameplay.UItext.Substring(0, Gameplay.currentTextPos).ToString();
+        scannerUploaded.GetComponentInChildren<Text>().text = Gameplay.ScanUItext.Substring(0, Gameplay.currentScanTextPos).ToString();
     }
 }
