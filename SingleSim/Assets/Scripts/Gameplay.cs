@@ -129,11 +129,17 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     public System.Func<int,Sprite> retImageMethod;
     public float decoderProgress = -1;
     public float baseDecodeSpeed = 0;
+
+    public AlienStats selfParams; //The aliens own stats
+    public AlienStats preferenceParams; //The preferred stats of an alien
     public Alien(System.Func<int,Sprite> spriteMethod)
     {
         imageID = Random.Range(0, Gameplay.alienSprites.Count); //Load a random image to represent the alien
         baseDecodeSpeed = Random.Range(0.001f, 0.01f); //Set random speed for decoding the signal
         retImageMethod = spriteMethod; //Attach the method that returns the sprite
+
+        selfParams = new AlienStats(this);
+        preferenceParams = new AlienStats(ref selfParams);
     }
 
     public Alien(Alien copy)
@@ -150,5 +156,86 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     public Sprite ReturnImage()
     {
         return retImageMethod(imageID);
+    }
+    public string GenerateText()
+    {
+        return "Hi, im just a simple " + (selfParams.age) + " " + (selfParams.body) 
+            + " looking for a " + (preferenceParams.body == BodyType.NoPref ? "like minded person " : preferenceParams.body + " ") + "to spend some alone time with. " +
+            "I currently " + (selfParams.job == OccupationType.unemployed ? "am in search of a job" : "work as a " + selfParams.job) +
+            ". Ideally, id like to meet a " + (preferenceParams.age == AgeType.NoPref ? "" : preferenceParams.age + " " ) +
+            (preferenceParams.job == OccupationType.NoPref ? "loving partner" : (preferenceParams.job == OccupationType.unemployed ? "with a lot of free time" : preferenceParams.job +"")) +
+            " interested in " + (selfParams.relationshipGoal == GoalsType.NoPref ? "seeing how far things go." : "a " + selfParams.relationshipGoal + ".");
+    }
+}
+
+//Enums for various alien typings - used for both an aliens own profile and their preferences
+//No pref is always the last value for two reasons - to stop it being generated as an alien value and also to dictate what the enum length is
+public enum BodyType
+{
+    humanoid,
+    automaton,
+    cephalopod,
+    insectoid,
+    NoPref
+}
+public enum AgeType
+{
+    adult,
+    mature,
+    senior,
+    ancient,
+    primordial,
+    NoPref
+}
+
+public enum OccupationType
+{
+    unemployed,
+    labourer,
+    engineer,
+    soldier,
+    NoPref
+}
+
+public enum GoalsType
+{
+    fling,
+    relationship,
+    partnership,
+    marriage,
+    deathbond,
+    NoPref
+}
+public class AlienStats
+{
+    public BodyType body;
+    public AgeType age;
+    public OccupationType job;
+    public GoalsType relationshipGoal;
+    public AlienStats(Alien self) //Constructor for generating a new aliens preferences
+    {
+        body = (BodyType)(Random.Range(0, (int)(BodyType.NoPref)));
+        age = (AgeType)(Random.Range(0, (int)(AgeType.NoPref)));
+        job = (OccupationType)(Random.Range(0, (int)(OccupationType.NoPref)));
+        relationshipGoal = (GoalsType)(Random.Range(0, (int)(GoalsType.NoPref) + 1)); //goal type may include no pref
+    }
+
+    public AlienStats(ref AlienStats self) //Constructor for generating an aliens prefrences
+    {   
+        byte randomGen = (byte)Random.Range(0,256); //make a random byte - each 1 represents a possible change in values and each 0 a same value. this gives a 50/50 chance of wanting to keep the same value
+        //Properties are ordered in right to left, with relationship goal excluded as it will always be the same
+
+        relationshipGoal = self.relationshipGoal;
+
+        if ((randomGen & (byte)1) == (byte)1) { body =(BodyType)(Random.Range(0, (int)(BodyType.NoPref) + 1)); }
+        else { body = self.body; }
+
+        if ((randomGen & (byte)2) == (byte)2) { age = (AgeType)(Random.Range(0, (int)(AgeType.NoPref) + 1)); }
+        else { age = self.age; }
+
+        if ((randomGen & (byte)4) == (byte)4) { job = (OccupationType)(Random.Range(0, (int)(OccupationType.NoPref) + 1)); }
+        else { job = self.job; }
+
+
     }
 }
