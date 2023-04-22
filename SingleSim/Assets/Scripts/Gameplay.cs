@@ -26,6 +26,8 @@ public class Gameplay : MonoBehaviour
 
     public GameObject scannerObject;
     public List<Sprite> scannerSpriteStates;
+    public GameObject decoderObject;
+    public List<Sprite> decoderSpriteStates;
 
     public List<Sprite> alienSpritesToLoad; //Non static field to import the sprites and load them into the static loaded
     public static List<Sprite> alienSprites;
@@ -92,11 +94,13 @@ public class Gameplay : MonoBehaviour
                 }
                 else
                 {
+                    SetDecoderState("decoding");
                     activeAlien.decoderProgress += activeAlien.baseDecodeSpeed;
                 }
 
                 if(activeAlien.decoderProgress >= 1)
                 {
+                    SetDecoderState("finished");
                     if(activeAlien.decodeTextProg == -1 ) { activeAlien.decodeTextProg = 1; }
                     else
                     {
@@ -108,6 +112,10 @@ public class Gameplay : MonoBehaviour
                         }
                     }
                 }
+            }
+            else
+            {
+                SetDecoderState("idle");
             }
             //MUST BE LAST IN QUEUE
             secsSinceLastUpdate = 0;
@@ -137,6 +145,25 @@ public class Gameplay : MonoBehaviour
                 break;
             default:
                 Debug.LogError("Invalid scanner state");
+                break;
+        }
+    }
+
+    public void SetDecoderState(string state)
+    {
+        switch (state)
+        {
+            case "idle":
+                decoderObject.GetComponent<SpriteRenderer>().sprite = decoderSpriteStates[0];
+                break;
+            case "decoding":
+                decoderObject.GetComponent<SpriteRenderer>().sprite = decoderSpriteStates[1];
+                break;
+            case "finished":
+                decoderObject.GetComponent<SpriteRenderer>().sprite = decoderSpriteStates[2];
+                break;
+            default:
+                Debug.LogError("Invalid decoder state");
                 break;
         }
     }
