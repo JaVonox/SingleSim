@@ -153,6 +153,8 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
 
     public AlienStats selfParams; //The aliens own stats
     public AlienStats preferenceParams; //The preferred stats of an alien
+
+    public string signalName;
     public Alien(System.Func<int,Sprite> spriteMethod)
     {
         imageID = Random.Range(0, Gameplay.alienSprites.Count); //Load a random image to represent the alien
@@ -163,6 +165,8 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         preferenceParams = new AlienStats(ref selfParams);
 
         decodeTextMessage = GenerateText();
+
+        signalName = System.DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
     }
 
     public Alien(Alien copy)
@@ -176,6 +180,7 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
 
         selfParams = copy.selfParams;
         preferenceParams = copy.preferenceParams;
+        signalName = copy.signalName;
     }
     public void BeginDecode()
     {

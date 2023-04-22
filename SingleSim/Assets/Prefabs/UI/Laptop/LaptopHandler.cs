@@ -20,7 +20,6 @@ public class LaptopHandler : MonoBehaviour
     public GameObject profilesTab;
     private LaptopModes currentMode;
 
-    private List<GameObject> loadedProfiles;
     // Start is called before the first frame update
 
     private float dtTime;
@@ -96,21 +95,28 @@ public class LaptopHandler : MonoBehaviour
     }
     void LoadProfiles() //Iterate through each alien in the stored aliens list and spawn a tab marker for each
     {
-        for (int i = 0; i < 8; i++)
+        if (Gameplay.storedAliens.Count > 0)
         {
-            GameObject profile = Instantiate(profileSmallPrefab, profilesContainer.transform,false);
+            for (int i = 0; i < Gameplay.storedAliens.Count; i++)
+            {
+                GameObject profile = Instantiate(profileSmallPrefab, profilesContainer.transform, false);
 
-            RectTransform pfrt = (RectTransform)profilesContainer.transform; //profile container rect
+                RectTransform pfrt = (RectTransform)profilesContainer.transform; //profile container rect
 
-            float width = (((RectTransform)profilesTab.transform).rect.width - 40) / 3.0f;
-            float height = (((RectTransform)profilesTab.transform).rect.height) / 2.0f;
+                float width = (((RectTransform)profilesTab.transform).rect.width - 40) / 3.0f;
+                float height = (((RectTransform)profilesTab.transform).rect.height) / 2.0f;
 
-            profile.name = "Profile" + i;
-            RectTransform rt = profile.GetComponentInChildren<RectTransform>(); //profile rect
+                profile.name = "Profile" + i;
+                RectTransform rt = profile.GetComponentInChildren<RectTransform>(); //profile rect
 
-            rt.localPosition = new Vector3(20 + (width * ((i % 3))), -(height * (((int)Mathf.Floor(i/3)))), 0);
+                rt.localPosition = new Vector3(20 + (width * ((i % 3))), -(height * (((int)Mathf.Ceil(i / 3)))), 0);
+                pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, 50 + (Mathf.Ceil((i + 1) / 3.0f) * height));
 
-            pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, 50 + ((i/3.0f) * height)); //TODO change this to apply after the loop completes
+                Transform profileBox = profile.transform.Find("ProfileBox");
+
+                profileBox.Find("ProfileImage").GetComponent<Image>().sprite = Gameplay.storedAliens[i].ReturnImage(); //Set the image as the alien image
+                profileBox.Find("SignalName").GetComponent<Text>().text = Gameplay.storedAliens[i].signalName;
+            }
         }
 
     }
