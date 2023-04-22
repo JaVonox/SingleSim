@@ -30,6 +30,8 @@ public class Gameplay : MonoBehaviour
     public List<Sprite> alienSpritesToLoad; //Non static field to import the sprites and load them into the static loaded
     public static List<Sprite> alienSprites;
 
+    public static int credits = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -207,10 +209,8 @@ public enum BodyType
 public enum AgeType
 {
     adult,
-    mature,
     senior,
-    ancient,
-    primordial,
+    immortal,
     NoPref
 }
 
