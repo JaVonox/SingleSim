@@ -17,7 +17,7 @@ public class LaptopHandler : MonoBehaviour
     public Text creditsText;
     public GameObject profileSmallPrefab;
     public GameObject profilesContainer;
-    public GameObject profilesContent;
+    public GameObject profilesTab;
     private LaptopModes currentMode;
 
     private List<GameObject> loadedProfiles;
@@ -34,9 +34,9 @@ public class LaptopHandler : MonoBehaviour
     }
     void SwitchUI()
     {
-        if (profilesContent.transform.childCount > 0) //Unload all profiles
+        if (profilesContainer.transform.childCount > 0) //Unload all profiles
         {
-            foreach (Transform child in profilesContent.transform)
+            foreach (Transform child in profilesContainer.transform)
             {
                 Destroy(child.gameObject);
             }
@@ -96,19 +96,23 @@ public class LaptopHandler : MonoBehaviour
     }
     void LoadProfiles() //Iterate through each alien in the stored aliens list and spawn a tab marker for each
     {
-        
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < 8; i++)
         {
-            GameObject profile = Instantiate(profileSmallPrefab, profilesContent.transform,false);
+            GameObject profile = Instantiate(profileSmallPrefab, profilesContainer.transform,false);
 
-            float width = (((RectTransform)profilesContent.transform).rect.width - 40) / 3.0f;
-            float height = (((RectTransform)profilesContent.transform).rect.height) / 2.0f;
+            RectTransform pfrt = (RectTransform)profilesContainer.transform; //profile container rect
+
+            float width = (((RectTransform)profilesTab.transform).rect.width - 40) / 3.0f;
+            float height = (((RectTransform)profilesTab.transform).rect.height) / 2.0f;
 
             profile.name = "Profile" + i;
-            RectTransform rt = profile.GetComponentInChildren<RectTransform>();
+            RectTransform rt = profile.GetComponentInChildren<RectTransform>(); //profile rect
 
             rt.localPosition = new Vector3(20 + (width * ((i % 3))), -(height * (((int)Mathf.Floor(i/3)))), 0);
+
+            pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, 50 + ((i/3.0f) * height)); //TODO change this to apply after the loop completes
         }
+
     }
     void Update()
     {
