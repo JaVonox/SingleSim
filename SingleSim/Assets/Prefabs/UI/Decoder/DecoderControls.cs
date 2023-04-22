@@ -147,9 +147,6 @@ public class DecoderControls : MonoBehaviour
             float widthPerSplit = ((RectTransform)alienImage.transform).rect.width / splitPerSide;
             float heightPerSplit = ((RectTransform)alienImage.transform).rect.height / splitPerSide;
 
-            float originX = alienImage.transform.localPosition.x;
-            float originY = alienImage.transform.localPosition.y;
-
             Texture2D alienImgTexture = alienImage.GetComponent<Image>().sprite.texture;
 
             for (int y = 1; y < splitPerSide + 1; y++)

@@ -15,7 +15,12 @@ public class LaptopHandler : MonoBehaviour
     public Button shopMode;
     public Button consoleMode;
     public Text creditsText;
+    public GameObject profileSmallPrefab;
+    public GameObject profilesContainer;
+    public GameObject profilesContent;
     private LaptopModes currentMode;
+
+    private List<GameObject> loadedProfiles;
     // Start is called before the first frame update
 
     private float dtTime;
@@ -29,12 +34,21 @@ public class LaptopHandler : MonoBehaviour
     }
     void SwitchUI()
     {
+        if (profilesContent.transform.childCount > 0) //Unload all profiles
+        {
+            foreach (Transform child in profilesContent.transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
         switch (currentMode)
         {
             case LaptopModes.Profiles:
                 profilesMode.interactable = false;
                 shopMode.interactable = true;
                 consoleMode.interactable = true;
+                LoadProfiles();
                 break;
             case LaptopModes.Matchup:
                 profilesMode.interactable = true;
@@ -58,6 +72,7 @@ public class LaptopHandler : MonoBehaviour
     }
     void SwitchMode(string sender)
     {
+
         switch (sender)
         {
             case "profilesMode":
@@ -79,7 +94,22 @@ public class LaptopHandler : MonoBehaviour
 
         SwitchUI();
     }
+    void LoadProfiles() //Iterate through each alien in the stored aliens list and spawn a tab marker for each
+    {
+        
+        for (int i = 0; i < 9; i++)
+        {
+            GameObject profile = Instantiate(profileSmallPrefab, profilesContent.transform,false);
 
+            float width = (((RectTransform)profilesContent.transform).rect.width - 40) / 3.0f;
+            float height = (((RectTransform)profilesContent.transform).rect.height) / 2.0f;
+
+            profile.name = "Profile" + i;
+            RectTransform rt = profile.GetComponentInChildren<RectTransform>();
+
+            rt.localPosition = new Vector3(20 + (width * ((i % 3))), -(height * (((int)Mathf.Floor(i/3)))), 0);
+        }
+    }
     void Update()
     {
         dtTime += Time.deltaTime;
