@@ -15,11 +15,17 @@ public class LaptopHandler : MonoBehaviour
     public Button shopMode;
     public Button consoleMode;
     public Text creditsText;
+
     public GameObject profileSmallPrefab;
     public GameObject profilesContainer;
 
+    public GameObject shopItemPrefab;
+    public GameObject shopItemContainer;
+
     public GameObject profilesTab;
     public GameObject specificProfileTab;
+
+    public GameObject shopTab;
 
     private Alien comparitorAlien;
     private LaptopModes currentMode;
@@ -45,6 +51,14 @@ public class LaptopHandler : MonoBehaviour
             }
         }
 
+        if (shopItemContainer.transform.childCount > 0) //Unload all shop items
+        {
+            foreach (Transform child in shopItemContainer.transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
         switch (currentMode)
         {
             case LaptopModes.Profiles:
@@ -53,6 +67,7 @@ public class LaptopHandler : MonoBehaviour
                 consoleMode.interactable = true;
                 profilesTab.SetActive(true);
                 specificProfileTab.SetActive(false);
+                shopTab.SetActive(false);
                 LoadProfiles();
                 break;
             case LaptopModes.Specific:
@@ -61,6 +76,7 @@ public class LaptopHandler : MonoBehaviour
                 consoleMode.interactable = true;
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(true);
+                shopTab.SetActive(false);
                 break;
             case LaptopModes.Shop:
                 profilesMode.interactable = true;
@@ -68,6 +84,8 @@ public class LaptopHandler : MonoBehaviour
                 consoleMode.interactable = true;
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(false);
+                shopTab.SetActive(true);
+                LoadShop();
                 break;
             case LaptopModes.Console:
                 profilesMode.interactable = true;
@@ -75,6 +93,7 @@ public class LaptopHandler : MonoBehaviour
                 consoleMode.interactable = false;
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(false);
+                shopTab.SetActive(false);
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
@@ -147,7 +166,7 @@ public class LaptopHandler : MonoBehaviour
                     profileBox.Find("LoadProfile").GetComponentInChildren<Text>().text = "Load Profile";
                     profileBox.Find("LoadProfile").GetComponentInChildren<Text>().color = new Color(0.12f, 0.72f, 0.05f);
                 }
-        }
+            }
         }
 
     }
@@ -227,13 +246,35 @@ public class LaptopHandler : MonoBehaviour
         specificProfileTab.transform.Find("ShowComparitor").GetComponent<Button>().onClick.RemoveAllListeners();
         specificProfileTab.transform.Find("ShowComparitor").GetComponent<Button>().onClick.AddListener(() => LoadSpecificProfile(passedAlien));
     }
-
     void StartMatchup(Alien selectedMatch) //Matches up the two profiles, removing them from memory and awarding some credits based on their compatability
     {
         SwitchMode("profilesMode");
         Gameplay.MatchAliens(comparitorAlien, selectedMatch);
         comparitorAlien = null;
         SwitchMode("profilesMode");
+    }
+
+    void LoadShop()
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            GameObject profile = Instantiate(shopItemPrefab, shopItemContainer.transform, false);
+
+            RectTransform pfrt = (RectTransform)shopItemContainer.transform; //shop item container rect
+
+
+            profile.name = "Item" + i;
+            RectTransform rt = profile.GetComponentInChildren<RectTransform>(); //item rect
+
+            rt.localPosition = new Vector3(0, -(30 + (65 * i)), 0);
+            pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, (70 + (65 * i)));
+
+            //Transform profileBox = profile.transform.Find("ProfileBox");
+
+            //profileBox.Find("ProfileImage").GetComponent<Image>().sprite = Gameplay.storedAliens[i].ReturnImage(); //Set the image as the alien image
+            //profileBox.Find("SignalName").GetComponent<Text>().text = Gameplay.storedAliens[i].signalName;
+
+        }
     }
 
     void Update()

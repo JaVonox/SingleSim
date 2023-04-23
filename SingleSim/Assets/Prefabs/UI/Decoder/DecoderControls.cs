@@ -53,7 +53,12 @@ public class DecoderControls : MonoBehaviour
                     uploadDecoded.gameObject.SetActive(true);
 
                     startDecode.interactable = false;
-                    uploadDecoded.interactable = true;
+
+                    if (Gameplay.activeAlien.decodeTextProg >= Gameplay.activeAlien.decodeTextMessage.Length)
+                    {
+                        uploadDecoded.interactable = true;
+                    }
+
                 }
             }
         }
@@ -92,7 +97,7 @@ public class DecoderControls : MonoBehaviour
             {
                 startDecode.interactable = false;
 
-                if(Gameplay.activeAlien.decoderProgress >= 1)
+                if(Gameplay.activeAlien.decodeTextProg >= Gameplay.activeAlien.decodeTextMessage.Length)
                 {
                     uploadDecoded.interactable = true;
                 }
@@ -175,9 +180,14 @@ public class DecoderControls : MonoBehaviour
             alienImage.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
             Gameplay.activeAlien.decoderProgress = 1;
 
-            if (Gameplay.activeAlien.decodeTextProg > 1)
+            if(Gameplay.activeAlien.decodeTextProg >= Gameplay.activeAlien.decodeTextMessage.Length)
             {
-                console.text = "Decoded message:\n" + Gameplay.activeAlien.decodeTextMessage.Substring(0, Gameplay.activeAlien.decodeTextProg).ToString();
+                console.text = "Decoding message... \n" + Gameplay.activeAlien.decodeTextMessage.Substring(0, Gameplay.activeAlien.decodeTextProg).ToString() + 
+                    "\n\n\nMessage processed. Select upload to add signal to the database";
+            }
+            else if (Gameplay.activeAlien.decodeTextProg > 1)
+            {
+                console.text = "Decoding message... \n" + Gameplay.activeAlien.decodeTextMessage.Substring(0, Gameplay.activeAlien.decodeTextProg).ToString();
             }
             else
             {
