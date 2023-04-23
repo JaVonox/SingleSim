@@ -5,7 +5,7 @@ using UnityEngine.UI;
 enum LaptopModes
 {
     Profiles,
-    Matchup,
+    Specific,
     Shop,
     Console
 }
@@ -17,7 +17,10 @@ public class LaptopHandler : MonoBehaviour
     public Text creditsText;
     public GameObject profileSmallPrefab;
     public GameObject profilesContainer;
+
     public GameObject profilesTab;
+    public GameObject specificProfileTab;
+
     private LaptopModes currentMode;
 
     // Start is called before the first frame update
@@ -31,7 +34,7 @@ public class LaptopHandler : MonoBehaviour
         consoleMode.onClick.AddListener(() => SwitchMode("consoleMode"));
         SwitchMode("profilesMode");
     }
-    void SwitchUI()
+    void SwitchUI() //Apply UI Changes
     {
         if (profilesContainer.transform.childCount > 0) //Unload all profiles
         {
@@ -47,31 +50,38 @@ public class LaptopHandler : MonoBehaviour
                 profilesMode.interactable = false;
                 shopMode.interactable = true;
                 consoleMode.interactable = true;
+                profilesTab.SetActive(true);
+                specificProfileTab.SetActive(false);
                 LoadProfiles();
                 break;
-            case LaptopModes.Matchup:
+            case LaptopModes.Specific:
                 profilesMode.interactable = true;
                 shopMode.interactable = true;
                 consoleMode.interactable = true;
+                profilesTab.SetActive(false);
+                specificProfileTab.SetActive(true);
                 break;
             case LaptopModes.Shop:
                 profilesMode.interactable = true;
                 shopMode.interactable = false;
                 consoleMode.interactable = true;
+                profilesTab.SetActive(false);
+                specificProfileTab.SetActive(false);
                 break;
             case LaptopModes.Console:
                 profilesMode.interactable = true;
                 shopMode.interactable = true;
                 consoleMode.interactable = false;
+                profilesTab.SetActive(false);
+                specificProfileTab.SetActive(false);
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
                 break;
         }
     }
-    void SwitchMode(string sender)
+    void SwitchMode(string sender) //Switch between modes based on button presses
     {
-
         switch (sender)
         {
             case "profilesMode":
@@ -83,8 +93,8 @@ public class LaptopHandler : MonoBehaviour
             case "consoleMode":
                 currentMode = LaptopModes.Console;
                 break;
-            case "MatchupMode":
-                currentMode = LaptopModes.Matchup;
+            case "specificMode":
+                currentMode = LaptopModes.Specific;
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
@@ -116,10 +126,30 @@ public class LaptopHandler : MonoBehaviour
 
                 profileBox.Find("ProfileImage").GetComponent<Image>().sprite = Gameplay.storedAliens[i].ReturnImage(); //Set the image as the alien image
                 profileBox.Find("SignalName").GetComponent<Text>().text = Gameplay.storedAliens[i].signalName;
-            }
+                Alien refAlien = Gameplay.storedAliens[i];
+                profileBox.Find("LoadProfile").GetComponent<Button>().onClick.AddListener(()=>LoadProfile(refAlien));
+        }
         }
 
     }
+    void LoadProfile(Alien alienProfile)
+    {
+        SwitchMode("specificMode"); //Load the specific profile
+
+        Transform profileTransform = specificProfileTab.transform;
+
+        profileTransform.Find("ProfileImage").GetComponent<Image>().sprite = alienProfile.ReturnImage();
+        profileTransform.Find("ProfileText").GetComponent<Text>().text = alienProfile.decodeTextMessage;
+        profileTransform.Find("Return").GetComponent<Button>().onClick.AddListener(()=>SwitchMode("profilesMode"));
+        profileTransform.Find("DeleteProfile").GetComponent<Button>().onClick.AddListener(() => DeleteProfile(alienProfile));
+    }
+    void DeleteProfile(Alien alienProfile)
+    {
+        specificProfileTab.SetActive(false); //Unload the examine profile screen to prevent errors
+        Gameplay.storedAliens.Remove(alienProfile);
+        SwitchMode("profilesMode");
+    }
+
     void Update()
     {
         dtTime += Time.deltaTime;
