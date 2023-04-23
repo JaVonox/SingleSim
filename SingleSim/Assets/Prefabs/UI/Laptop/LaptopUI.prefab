@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 8457230117826782301}
   - component: {fileID: 8898191395513439657}
   m_Layer: 5
-  m_Name: ExitComparisonMode
+  m_Name: ShowComparitor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2224,7 +2224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.72156864, g: 0.05490196, b: 0.1254902, a: 1}
+  m_Color: {r: 0.1254902, g: 0.72156864, b: 0.05490196, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2244,7 +2244,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Stop Comparing
+  m_Text: Compare
 --- !u!1 &9033836516372008297
 GameObject:
   m_ObjectHideFlags: 0

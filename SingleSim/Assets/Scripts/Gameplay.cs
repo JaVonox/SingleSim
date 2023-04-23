@@ -167,6 +167,14 @@ public class Gameplay : MonoBehaviour
                 break;
         }
     }
+
+    public static void MatchAliens(Alien sender1, Alien sender2)
+    {
+        storedAliens.Remove(sender1);
+        storedAliens.Remove(sender2);
+
+        credits += 10; //Calculate credits using matrix method in the future
+    }
 }
 
 public class Alien //The alien generated when a scanspot is selected. Information is decoded using the signal decoder

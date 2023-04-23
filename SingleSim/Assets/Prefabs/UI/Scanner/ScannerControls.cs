@@ -48,6 +48,7 @@ public class ScannerControls : MonoBehaviour
                 Vector3 newPos = new Vector3((-Gameplay.bounds.xBound / 2) + posScanSpot.x, (Gameplay.bounds.yBound / 2) - posScanSpot.y, 0); //Position isnt perfect but its close
                 newScan.transform.Translate(newPos);
                 newScan.name = "ScanSpot_" + i;
+                newScan.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
                 newScan.GetComponentInChildren<Button>().onClick.AddListener(() => SelectScanSpot(newScan, posScanSpot));
                 loadedScanSpots.Add(newScan);
                 i++;
