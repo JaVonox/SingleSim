@@ -256,12 +256,11 @@ public class LaptopHandler : MonoBehaviour
 
     void LoadShop()
     {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < Gameplay.shopItems.Count; i++)
         {
             GameObject profile = Instantiate(shopItemPrefab, shopItemContainer.transform, false);
 
             RectTransform pfrt = (RectTransform)shopItemContainer.transform; //shop item container rect
-
 
             profile.name = "Item" + i;
             RectTransform rt = profile.GetComponentInChildren<RectTransform>(); //item rect
@@ -269,10 +268,14 @@ public class LaptopHandler : MonoBehaviour
             rt.localPosition = new Vector3(0, -(30 + (65 * i)), 0);
             pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, (70 + (65 * i)));
 
-            //Transform profileBox = profile.transform.Find("ProfileBox");
+            Transform itemBox = profile.transform.Find("ShopItemPanel");
 
-            //profileBox.Find("ProfileImage").GetComponent<Image>().sprite = Gameplay.storedAliens[i].ReturnImage(); //Set the image as the alien image
-            //profileBox.Find("SignalName").GetComponent<Text>().text = Gameplay.storedAliens[i].signalName;
+            itemBox.Find("ShopItemName").GetComponent<Text>().text = Gameplay.shopItems[i].name;
+
+            itemBox.Find("BuyUpgrade").GetComponent<Button>().onClick.RemoveAllListeners();
+
+            string nameStorage = Gameplay.shopItems[i].name;
+            itemBox.Find("BuyUpgrade").GetComponent<Button>().onClick.AddListener(() => Gameplay.UpgradeVariable(nameStorage));
 
         }
     }

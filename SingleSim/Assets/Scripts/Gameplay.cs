@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 public class Gameplay : MonoBehaviour
 {
     public static float scanSpeed = 0.05f; //How fast scanning occurs
+    public static float decoderSpeedMultiplier = 1.0f;
     public static float scanProg = -1; //-1 for not started. locked to 0-1
     public static List<(float x, float y)> scanCoords = new List<(float x, float y)>(); //Stores available positions of scan coordinates
     public static bool scanSpotsAreAvailable = false; //Bool says if there are available scan coordinates on screen
@@ -22,7 +24,7 @@ public class Gameplay : MonoBehaviour
     public static int currentScanTextPos = -1;
     public static float textTime = 0;
 
-    public static int textSpeed = 4;
+    public static float textSpeed = 4;
 
     public GameObject scannerObject;
     public List<Sprite> scannerSpriteStates;
@@ -78,7 +80,7 @@ public class Gameplay : MonoBehaviour
                 {
                     SetScannerState("idle");
                 }
-                currentScanTextPos += textSpeed;
+                currentScanTextPos += Mathf.FloorToInt(textSpeed);
                 if (currentScanTextPos > ScanUItext.Length)
                 {
                     currentScanTextPos = ScanUItext.Length;
@@ -104,7 +106,7 @@ public class Gameplay : MonoBehaviour
                     if(activeAlien.decodeTextProg == -1 ) { activeAlien.decodeTextProg = 1; }
                     else
                     {
-                        activeAlien.decodeTextProg += textSpeed;
+                        activeAlien.decodeTextProg += Mathf.FloorToInt(textSpeed);
 
                         if (activeAlien.decodeTextProg > activeAlien.decodeTextMessage.Length)
                         {
@@ -167,13 +169,49 @@ public class Gameplay : MonoBehaviour
                 break;
         }
     }
-
     public static void MatchAliens(Alien sender1, Alien sender2)
     {
         storedAliens.Remove(sender1);
         storedAliens.Remove(sender2);
 
         credits += 10; //Calculate credits using matrix method in the future
+    }
+
+    public static List<(string name, float baseValue, float incrementValue, int upgradeLevel, int upgradeCost)> shopItems = new List<(string name, float baseValue, float incrementValue, int upgradeLevel, int upgradeCost)>() //Upgrade level is from 0 to 9
+    {
+        ("Text Render Speed",4.0f,1.0f,0,50),
+        ("Scanner Efficiency",0.05f,0.025f,0,20),
+        ("Decoder Efficiency",1.0f,0.1f,0,20)
+    };
+    public static void UpgradeVariable(string varName)
+    {
+        int activeIndex = shopItems.IndexOf(shopItems.Where(x => x.name == varName).First()); //Find the position in the list of shop items
+
+        if (shopItems[activeIndex].upgradeLevel < 9)
+        {
+            shopItems[activeIndex] = (shopItems[activeIndex].name,shopItems[activeIndex].baseValue, shopItems[activeIndex].incrementValue, shopItems[activeIndex].upgradeLevel + 1, shopItems[activeIndex].upgradeCost);
+            credits -= shopItems[activeIndex].upgradeCost;
+            switch (varName) //Select variable. It'd be nice to do this with a referenced variable in the shop items list but apparently c# doesnt enjoy that
+            {
+                case "Text Render Speed":
+                    textTime = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
+                    break;
+                case "Scanner Efficiency":
+                    scanSpeed = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
+                    break;
+                case "Decoder Efficiency":
+                    decoderSpeedMultiplier = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
+                    break;
+                default:
+                    Debug.LogError("Invalid shop");
+                    break;
+            }
+        }
+        else
+        {
+            Debug.Log("Maxed");
+        }
+
     }
 }
 
@@ -193,7 +231,7 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     public Alien(System.Func<int,Sprite> spriteMethod)
     {
         imageID = Random.Range(0, Gameplay.alienSprites.Count); //Load a random image to represent the alien
-        baseDecodeSpeed = Random.Range(0.001f, 0.01f); //Set random speed for decoding the signal
+        baseDecodeSpeed = Random.Range(0.001f, 0.01f) * Gameplay.decoderSpeedMultiplier; //Set random speed for decoding the signal
         retImageMethod = spriteMethod; //Attach the method that returns the sprite
 
         selfParams = new AlienStats(this);
