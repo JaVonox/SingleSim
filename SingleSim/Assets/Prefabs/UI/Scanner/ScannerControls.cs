@@ -115,7 +115,7 @@ public class ScannerControls : MonoBehaviour
     {
         //Scan Complete
         //Uploaded target signal to decoder console
-        Gameplay.ScanUItext = "Scan Complete \n" +
+        Gameplay.scanUIText = "Scan Complete \n" +
             "Downloaded signal (" + Gameplay.UIcoordinates.x + " , " + Gameplay.UIcoordinates.y + ")\n"
             + "Data uploaded to decoder console...\n\n\n"
             + "Raw stream:\n\n"
@@ -137,6 +137,6 @@ public class ScannerControls : MonoBehaviour
     }
     void LoadConsoleText()
     {
-        scannerUploaded.GetComponentInChildren<Text>().text = Gameplay.ScanUItext.Substring(0, Gameplay.currentScanTextPos).ToString();
+        scannerUploaded.GetComponentInChildren<Text>().text = Gameplay.scanUIText.Substring(0, Gameplay.currentScanTextPos).ToString();
     }
 }

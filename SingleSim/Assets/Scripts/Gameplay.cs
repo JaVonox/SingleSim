@@ -20,7 +20,7 @@ public class Gameplay : MonoBehaviour
 
     public static bool scannerConsolePopupEnabled = false; //Checks if the scanner console pop up should be enabled when loaded
     public static (double x, double y) UIcoordinates; //Stores the coordinates for the last completed signal for the UI popup to handle
-    public static string ScanUItext;
+    public static string scanUIText;
     public static int currentScanTextPos = -1;
     public static float textTime = 0;
 
@@ -81,9 +81,9 @@ public class Gameplay : MonoBehaviour
                     SetScannerState("idle");
                 }
                 currentScanTextPos += Mathf.FloorToInt(textSpeed);
-                if (currentScanTextPos > ScanUItext.Length)
+                if (currentScanTextPos > scanUIText.Length)
                 {
-                    currentScanTextPos = ScanUItext.Length;
+                    currentScanTextPos = scanUIText.Length;
                 }
             }
 

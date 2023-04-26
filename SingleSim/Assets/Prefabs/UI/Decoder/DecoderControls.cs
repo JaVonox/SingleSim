@@ -121,7 +121,7 @@ public class DecoderControls : MonoBehaviour
             Gameplay.activeAlien = null; //Delete active alien
             LoadDecoder();
             Gameplay.scannerConsolePopupEnabled = false;
-            Gameplay.ScanUItext = "...";
+            Gameplay.scanUIText = "...";
         }
     }
     void DecoderUpdate()

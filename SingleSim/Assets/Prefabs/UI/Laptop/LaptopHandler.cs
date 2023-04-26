@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 enum LaptopModes
 {
     Profiles,
     Specific,
     Shop,
-    Console
+    Console,
+    Review,
 }
 public class LaptopHandler : MonoBehaviour
 {
@@ -26,6 +28,8 @@ public class LaptopHandler : MonoBehaviour
     public GameObject specificProfileTab;
 
     public GameObject shopTab;
+
+    public GameObject reviewTab;
 
     private Alien comparitorAlien;
     private LaptopModes currentMode;
@@ -66,6 +70,7 @@ public class LaptopHandler : MonoBehaviour
                 profilesTab.SetActive(true);
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
+                reviewTab.SetActive(false);
                 LoadProfiles();
                 break;
             case LaptopModes.Specific:
@@ -75,6 +80,7 @@ public class LaptopHandler : MonoBehaviour
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(true);
                 shopTab.SetActive(false);
+                reviewTab.SetActive(false);
                 break;
             case LaptopModes.Shop:
                 profilesMode.interactable = true;
@@ -83,6 +89,7 @@ public class LaptopHandler : MonoBehaviour
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(true);
+                reviewTab.SetActive(false);
                 LoadShop();
                 break;
             case LaptopModes.Console:
@@ -92,6 +99,17 @@ public class LaptopHandler : MonoBehaviour
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
+                reviewTab.SetActive(false);
+                break;
+            case LaptopModes.Review:
+                profilesMode.interactable = true;
+                shopMode.interactable = true;
+                consoleMode.interactable = true;
+                profilesTab.SetActive(false);
+                specificProfileTab.SetActive(false);
+                shopTab.SetActive(false);
+                reviewTab.SetActive(true);
+                LoadReviewTab();
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
@@ -115,6 +133,9 @@ public class LaptopHandler : MonoBehaviour
                 break;
             case "specificMode":
                 currentMode = LaptopModes.Specific;
+                break;
+            case "reviewMode":
+                currentMode = LaptopModes.Review;
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
@@ -232,7 +253,6 @@ public class LaptopHandler : MonoBehaviour
         comparitorAlien = alienProfile;
         SwitchMode("profilesMode"); //Load the specific profile
     }
-
     void ExitComparisonMode()
     {
         comparitorAlien = null;
@@ -246,12 +266,12 @@ public class LaptopHandler : MonoBehaviour
     }
     void StartMatchup(Alien selectedMatch) //Matches up the two profiles, removing them from memory and awarding some credits based on their compatability
     {
-        SwitchMode("profilesMode");
         Gameplay.MatchAliens(comparitorAlien, selectedMatch);
         comparitorAlien = null;
-        SwitchMode("profilesMode");
+        SwitchMode("reviewMode");
     }
 
+    //TODO maybe LERP?
     private const float rPerLevel = (152.0f / 9.0f) / 255.0f;
     private const float gPerLevel = (-170.0f / 9.0f) / 255.0f;
     private const float bPerLevel = (18.0f / 9.0f) / 255.0f;
@@ -307,13 +327,62 @@ public class LaptopHandler : MonoBehaviour
 
         LoadShopItemLevels();
     }
-
     void UpgradeShopItem(string name) //Upgrade item and reload the item levels for shop objects
     {
         Gameplay.UpgradeVariable(name);
         LoadShopItemLevels();
     }
+    void LoadReviewTab()
+    {
+        reviewTab.transform.Find("ExitReview").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
+        reviewTab.transform.Find("ReviewText").GetComponent<TextMeshProUGUI>().text = GenerateReviewText(); //TODO maybe use line by line speed?
+    }
+    string GenerateReviewText()
+    {
+        Dictionary<string, float> statCompatabilityScore = new Dictionary<string, float>()
+        {
+            {"Body type",Random.Range(0.01f,1.0f)},
+            {"Age range",Random.Range(0.01f,1.0f)},
+            {"Relationship goals",Random.Range(0.01f,1.0f)},
+            {"Occupation",Random.Range(0.01f,1.0f)},
+        };
 
+        string bodyText = "";
+
+
+        foreach (string stat in statCompatabilityScore.Keys)
+        {
+            bodyText += "<color=#FFFFFF>" + stat + " compatability: </color>";
+
+            if (statCompatabilityScore[stat] <= 0.125f)
+            {
+                bodyText += "<color=#b80e20>Abysmal</color>";
+            }
+            else if (statCompatabilityScore[stat] <= 0.25f)
+            {
+                bodyText += "<color=#b8510e>Poor</color>";
+            }
+            else if(statCompatabilityScore[stat] <= 0.5f)
+            {
+                bodyText += "<color=#edd613>Mediocre</color>";
+            }
+            else if(statCompatabilityScore[stat] <= 0.75f)
+            {
+                bodyText += "<color=#20b80e>Good</color>";
+            }
+            else
+            {
+                bodyText += "<color=#0eb851>Excellent</color>";
+            }
+
+            bodyText += "\n";
+        }
+
+
+
+
+        return bodyText;
+    }
     void Update()
     {
         dtTime += Time.deltaTime;
