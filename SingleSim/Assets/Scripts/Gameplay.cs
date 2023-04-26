@@ -194,7 +194,7 @@ public class Gameplay : MonoBehaviour
             switch (varName) //Select variable. It'd be nice to do this with a referenced variable in the shop items list but apparently c# doesnt enjoy that
             {
                 case "Text Render Speed":
-                    textTime = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
+                    textSpeed = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
                     break;
                 case "Scanner Efficiency":
                     scanSpeed = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
@@ -209,10 +209,27 @@ public class Gameplay : MonoBehaviour
         }
         else
         {
-            Debug.Log("Maxed");
+
         }
 
     }
+    public static float GetItemStatistic(string varName, string statName)
+    {
+        int activeIndex = shopItems.IndexOf(shopItems.Where(x => x.name == varName).First()); //Find the position in the list of shop items
+
+        switch(statName)
+        {
+            case "Level":
+                return (float)shopItems[activeIndex].upgradeLevel;
+            case "UpgradeCost":
+                return (float)shopItems[activeIndex].upgradeCost;
+            default:
+                Debug.LogError("Invalid item statistic name");
+                return -1.0f;
+        }
+
+    }
+
 }
 
 public class Alien //The alien generated when a scanspot is selected. Information is decoded using the signal decoder

@@ -30,8 +30,6 @@ public class LaptopHandler : MonoBehaviour
     private Alien comparitorAlien;
     private LaptopModes currentMode;
 
-    // Start is called before the first frame update
-
     private float dtTime;
     void Start()
     {
@@ -254,30 +252,66 @@ public class LaptopHandler : MonoBehaviour
         SwitchMode("profilesMode");
     }
 
+    private const float rPerLevel = (152.0f / 9.0f) / 255.0f;
+    private const float gPerLevel = (-170.0f / 9.0f) / 255.0f;
+    private const float bPerLevel = (18.0f / 9.0f) / 255.0f;
+    void LoadShopItemLevels()
+    {
+        if (shopItemContainer.transform.childCount > 0) //Unload all shop items
+        {
+            foreach (Transform child in shopItemContainer.transform)
+            {
+                float level = Gameplay.GetItemStatistic(child.name,"Level");
+                Transform shopPanel = child.Find("ShopItemPanel");
+                child.GetComponentInChildren<Slider>().value = (float)level / 9.0f; //Get the slider component and set it equal to the upgrade level / 9
+                shopPanel.Find("Slider").Find("Fill Area").GetComponentInChildren<Image>().color = new Color(0.12f + (rPerLevel * level), (0.72f + gPerLevel * level),0.05f + (bPerLevel * level));
+
+                if(level >= 9.0f)
+                {
+                    shopPanel.Find("BuyUpgrade").GetComponent<Button>().interactable = false;
+                    shopPanel.Find("BuyUpgrade").GetComponentInChildren<Text>().text = "Max Level";
+                }
+                else
+                {
+                    shopPanel.Find("BuyUpgrade").GetComponentInChildren<Text>().text = "Upgrade Cost: " + Gameplay.GetItemStatistic(child.name, "UpgradeCost");
+                }
+
+            }
+        }
+
+    }
     void LoadShop()
     {
         for (int i = 0; i < Gameplay.shopItems.Count; i++)
         {
-            GameObject profile = Instantiate(shopItemPrefab, shopItemContainer.transform, false);
+            GameObject shop = Instantiate(shopItemPrefab, shopItemContainer.transform, false);
 
             RectTransform pfrt = (RectTransform)shopItemContainer.transform; //shop item container rect
 
-            profile.name = "Item" + i;
-            RectTransform rt = profile.GetComponentInChildren<RectTransform>(); //item rect
+            shop.name = Gameplay.shopItems[i].name;
+            RectTransform rt = shop.GetComponentInChildren<RectTransform>(); //item rect
 
             rt.localPosition = new Vector3(0, -(30 + (65 * i)), 0);
             pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, (70 + (65 * i)));
 
-            Transform itemBox = profile.transform.Find("ShopItemPanel");
+            Transform itemBox = shop.transform.Find("ShopItemPanel");
 
             itemBox.Find("ShopItemName").GetComponent<Text>().text = Gameplay.shopItems[i].name;
 
             itemBox.Find("BuyUpgrade").GetComponent<Button>().onClick.RemoveAllListeners();
 
             string nameStorage = Gameplay.shopItems[i].name;
-            itemBox.Find("BuyUpgrade").GetComponent<Button>().onClick.AddListener(() => Gameplay.UpgradeVariable(nameStorage));
+            itemBox.Find("BuyUpgrade").GetComponent<Button>().onClick.AddListener(() => UpgradeShopItem(nameStorage)); 
 
         }
+
+        LoadShopItemLevels();
+    }
+
+    void UpgradeShopItem(string name) //Upgrade item and reload the item levels for shop objects
+    {
+        Gameplay.UpgradeVariable(name);
+        LoadShopItemLevels();
     }
 
     void Update()
