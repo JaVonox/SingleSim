@@ -181,7 +181,7 @@ public class Gameplay : MonoBehaviour
     {
         ("Text Render Speed",4.0f,1.0f,0,50),
         ("Scanner Efficiency",0.05f,0.025f,0,20),
-        ("Decoder Efficiency",1.0f,0.1f,0,20)
+        ("Decoder Efficiency",1.0f,0.2f,0,20)
     };
     public static void UpgradeVariable(string varName)
     {

@@ -109,7 +109,7 @@ public class LaptopHandler : MonoBehaviour
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(true);
-                LoadReviewTab();
+                //Details arent added here
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
@@ -267,8 +267,9 @@ public class LaptopHandler : MonoBehaviour
     void StartMatchup(Alien selectedMatch) //Matches up the two profiles, removing them from memory and awarding some credits based on their compatability
     {
         Gameplay.MatchAliens(comparitorAlien, selectedMatch);
-        comparitorAlien = null;
         SwitchMode("reviewMode");
+        LoadReviewTab(comparitorAlien, selectedMatch);
+        comparitorAlien = null;
     }
 
     //TODO maybe LERP?
@@ -332,9 +333,11 @@ public class LaptopHandler : MonoBehaviour
         Gameplay.UpgradeVariable(name);
         LoadShopItemLevels();
     }
-    void LoadReviewTab()
+    void LoadReviewTab(Alien alien1,Alien alien2)
     {
         reviewTab.transform.Find("ExitReview").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
+        reviewTab.transform.Find("Alien1").GetComponent<Image>().sprite = alien1.ReturnImage();
+        reviewTab.transform.Find("Alien2").GetComponent<Image>().sprite = alien2.ReturnImage();
         reviewTab.transform.Find("ReviewText").GetComponent<TextMeshProUGUI>().text = GenerateReviewText(); //TODO maybe use line by line speed?
     }
     string GenerateReviewText()
