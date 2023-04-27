@@ -36,11 +36,18 @@ public class Gameplay : MonoBehaviour
 
     public static int credits = 0;
 
+    public static Dictionary<System.Type, EnumMatrix> prefComparisons = new Dictionary<System.Type, EnumMatrix>();
     // Start is called before the first frame update
     void Start()
     {
+        prefComparisons[typeof(BodyType)] = new EnumMatrix(typeof(BodyType));
+        prefComparisons[typeof(AgeType)] = new EnumMatrix(typeof(AgeType));
+        prefComparisons[typeof(OccupationType)] = new EnumMatrix(typeof(OccupationType));
+        prefComparisons[typeof(GoalsType)] = new EnumMatrix(typeof(GoalsType));
+
+        Debug.Log(GetPrefComparisonMultiplier(typeof(BodyType), "NoPref", "cephalopod"));
         //Load alien sprites into static space to allow access from methods
-        alienSprites = alienSpritesToLoad.GetRange(0,alienSpritesToLoad.Count);
+        alienSprites = alienSpritesToLoad.GetRange(0, alienSpritesToLoad.Count);
         alienSpritesToLoad.Clear();
 
         SetScannerState("idle");
@@ -53,7 +60,7 @@ public class Gameplay : MonoBehaviour
 
         if (secsSinceLastUpdate >= 0.2f)
         {
-            if(scanProg == 0)
+            if (scanProg == 0)
             {
                 SetScannerState("scanning");
             }
@@ -62,11 +69,11 @@ public class Gameplay : MonoBehaviour
             {
                 scanProg += scanSpeed;
             }
-            else if(scanProg >= 1)
+            else if (scanProg >= 1)
             {
                 scanProg = -1; //Reset scanner
 
-                for(int i = 0;i < numberOfScansSpots;i++) //Generate a new scan spot inside the bounds
+                for (int i = 0; i < numberOfScansSpots; i++) //Generate a new scan spot inside the bounds
                 {
                     scanCoords.Add((Random.Range(10, bounds.xBound), Random.Range(10, bounds.yBound))); //Spawn in a new scanspot at random coordinates dictated by the boundaries of the map
                 }
@@ -76,7 +83,7 @@ public class Gameplay : MonoBehaviour
             }
             else if (currentScanTextPos != -1) //Setting UI update text
             {
-                if(currentScanTextPos == 0)
+                if (currentScanTextPos == 0)
                 {
                     SetScannerState("idle");
                 }
@@ -87,7 +94,7 @@ public class Gameplay : MonoBehaviour
                 }
             }
 
-            if(activeAlien != null && activeAlien.decoderProgress >= 0)
+            if (activeAlien != null && activeAlien.decoderProgress >= 0)
             {
                 if (activeAlien.decoderProgress > 1)
                 {
@@ -100,10 +107,10 @@ public class Gameplay : MonoBehaviour
                     activeAlien.decoderProgress += activeAlien.baseDecodeSpeed;
                 }
 
-                if(activeAlien.decoderProgress >= 1)
+                if (activeAlien.decoderProgress >= 1)
                 {
                     SetDecoderState("finished");
-                    if(activeAlien.decodeTextProg == -1 ) { activeAlien.decodeTextProg = 1; }
+                    if (activeAlien.decodeTextProg == -1) { activeAlien.decodeTextProg = 1; }
                     else
                     {
                         activeAlien.decodeTextProg += Mathf.FloorToInt(textSpeed);
@@ -134,7 +141,7 @@ public class Gameplay : MonoBehaviour
     }
     public void SetScannerState(string state)
     {
-        switch(state)
+        switch (state)
         {
             case "idle":
                 scannerObject.GetComponent<SpriteRenderer>().sprite = scannerSpriteStates[0];
@@ -189,7 +196,7 @@ public class Gameplay : MonoBehaviour
 
         if (shopItems[activeIndex].upgradeLevel < 9)
         {
-            shopItems[activeIndex] = (shopItems[activeIndex].name,shopItems[activeIndex].baseValue, shopItems[activeIndex].incrementValue, shopItems[activeIndex].upgradeLevel + 1, shopItems[activeIndex].upgradeCost);
+            shopItems[activeIndex] = (shopItems[activeIndex].name, shopItems[activeIndex].baseValue, shopItems[activeIndex].incrementValue, shopItems[activeIndex].upgradeLevel + 1, shopItems[activeIndex].upgradeCost);
             credits -= shopItems[activeIndex].upgradeCost;
             switch (varName) //Select variable. It'd be nice to do this with a referenced variable in the shop items list but apparently c# doesnt enjoy that
             {
@@ -217,7 +224,7 @@ public class Gameplay : MonoBehaviour
     {
         int activeIndex = shopItems.IndexOf(shopItems.Where(x => x.name == varName).First()); //Find the position in the list of shop items
 
-        switch(statName)
+        switch (statName)
         {
             case "Level":
                 return (float)shopItems[activeIndex].upgradeLevel;
@@ -229,9 +236,12 @@ public class Gameplay : MonoBehaviour
         }
 
     }
+    public static float GetPrefComparisonMultiplier(System.Type enumType, string expectedValue, string actualValue)
+    {
+        return prefComparisons[enumType].GetComparisonValue(expectedValue, actualValue);
+    }
 
 }
-
 public class Alien //The alien generated when a scanspot is selected. Information is decoded using the signal decoder
 {
     public int imageID; //The image ID 
@@ -308,7 +318,6 @@ public enum AgeType
     immortal,
     NoPref
 }
-
 public enum OccupationType
 {
     unemployed,
@@ -317,12 +326,10 @@ public enum OccupationType
     soldier,
     NoPref
 }
-
 public enum GoalsType
 {
     fling,
     relationship,
-    partnership,
     marriage,
     deathbond,
     NoPref
@@ -358,5 +365,90 @@ public class AlienStats
         else { job = self.job; }
 
 
+    }
+}
+public class EnumMatrix //Kind of dissapointed with this whole section. I cant seem to find a way to do what I want in c#
+{
+    private float[,] compatMatrix;
+    private System.Type enumType;
+    public EnumMatrix(System.Type sEnumType)
+    {
+        int enumLength = System.Enum.GetNames(sEnumType).Length;
+        compatMatrix = new float[enumLength,enumLength]; //Define the compatability matrix as sized with the two properties.
+        //The first index of the matrix represents the "desired item" - the request that the client sent out
+        //The second index represents the actual item of the second client
+        //The value contained represents how compatable the two properties are.
+        enumType = sEnumType;
+
+        if(enumType == typeof(BodyType))
+        {
+            GenerateBodyMatrix();
+        }
+        else if (enumType == typeof(AgeType))
+        {
+            GenerateAgeMatrix();
+        }
+        else if (enumType == typeof(OccupationType))
+        {
+            GenerateJobMatrix();
+        }
+        else if (enumType == typeof(GoalsType))
+        {
+            GenerateGoalMatrix();
+        }
+        else
+        {
+            Debug.LogError("invalid enum type");
+        }
+    }
+
+    private void GenerateBodyMatrix()
+    {
+        AddMatrixRow("humanoid",new List<(string typeName, float fieldValue)>(){("humanoid",1.0f),("automaton",0.4f),("cephalopod",0.7f),("insectoid",0.5f),("NoPref",0.0f)});
+        AddMatrixRow("automaton", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.8f), ("automaton", 1.0f), ("cephalopod", 0.3f), ("insectoid", 0.3f), ("NoPref", 0.0f) });
+        AddMatrixRow("cephalopod", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.5f), ("automaton", 0.4f), ("cephalopod", 1.0f), ("insectoid", 0.8f), ("NoPref", 0.0f) });
+        AddMatrixRow("insectoid", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.5f), ("automaton", 0.3f), ("cephalopod", 0.8f), ("insectoid", 1.0f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.8f), ("automaton", 0.8f), ("cephalopod", 0.8f), ("insectoid", 0.8f), ("NoPref", 0.0f) });
+    }
+    private void GenerateAgeMatrix()
+    {
+        AddMatrixRow("adult", new List<(string typeName, float fieldValue)>() { ("adult", 1.0f), ("senior", 0.5f), ("immortal", 0.3f), ("NoPref", 0.0f) });
+        AddMatrixRow("senior", new List<(string typeName, float fieldValue)>() { ("adult", 0.5f), ("senior", 1.0f), ("immortal", 0.8f), ("NoPref", 0.0f) });
+        AddMatrixRow("immortal", new List<(string typeName, float fieldValue)>() { ("adult", 0.3f), ("senior", 0.5f), ("immortal", 1.0f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("adult", 0.8f), ("senior", 0.8f), ("immortal", 0.8f), ("NoPref", 0.0f) });
+    }
+    private void GenerateJobMatrix()
+    {
+        AddMatrixRow("unemployed", new List<(string typeName, float fieldValue)>() { ("unemployed", 1.0f), ("labourer", 0.8f), ("engineer", 0.3f), ("soldier", 0.3f), ("NoPref", 0.0f) });
+        AddMatrixRow("labourer", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.3f), ("labourer", 1.0f), ("engineer", 0.5f), ("soldier", 0.5f), ("NoPref", 0.0f) });
+        AddMatrixRow("engineer", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.1f), ("labourer", 0.3f), ("engineer", 1.0f), ("soldier", 0.3f), ("NoPref", 0.0f) });
+        AddMatrixRow("soldier", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.3f), ("labourer", 0.4f), ("engineer", 0.6f), ("soldier", 1.0f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.8f), ("labourer", 0.8f), ("engineer", 0.8f), ("soldier", 0.8f), ("NoPref", 0.0f) });
+    }
+    private void GenerateGoalMatrix()
+    {
+        AddMatrixRow("fling", new List<(string typeName, float fieldValue)>() { ("fling", 1.0f), ("relationship", 0.4f), ("marriage", 0.1f), ("deathbond", 0.1f), ("NoPref", 0.0f) });
+        AddMatrixRow("relationship", new List<(string typeName, float fieldValue)>() { ("fling", 0.4f), ("relationship", 1.0f), ("marriage", 0.7f), ("deathbond", 0.5f), ("NoPref", 0.0f) });
+        AddMatrixRow("marriage", new List<(string typeName, float fieldValue)>() { ("fling", 0.2f), ("relationship", 0.8f), ("marriage", 1.0f), ("deathbond", 0.7f), ("NoPref", 0.0f) });
+        AddMatrixRow("deathbond", new List<(string typeName, float fieldValue)>() { ("fling", 0.1f), ("relationship", 0.5f), ("marriage", 0.8f), ("deathbond", 1.0f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("fling", 0.8f), ("relationship", 0.8f), ("marriage", 0.8f), ("deathbond", 0.8f), ("NoPref", 0.0f) });
+    }
+    private void AddMatrixRow(string rowName, List<(string typeName, float fieldValue)> input)
+    {
+        int rowIndex = (int)System.Convert.ChangeType(System.Enum.Parse(enumType, rowName),enumType); //Gets the index of the enumType in the compatMatrix
+
+        for (int i = 0; i < input.Count; i++)
+        {
+            int itemRowIndex = (int)System.Convert.ChangeType(System.Enum.Parse(enumType, input[i].typeName), enumType); //Gets the index of the enumType in the compatMatrix
+            compatMatrix[rowIndex, itemRowIndex] = input[i].fieldValue; //Appends the value into the compatability matrix
+        }
+
+    }
+    public float GetComparisonValue(string expectedValue, string actualValue)
+    {
+        int expectedRowIndex = (int)System.Convert.ChangeType(System.Enum.Parse(enumType, expectedValue), enumType);
+        int actualValueRowIndex = (int)System.Convert.ChangeType(System.Enum.Parse(enumType, actualValue), enumType);
+
+        return compatMatrix[expectedRowIndex, actualValueRowIndex];
     }
 }
