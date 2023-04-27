@@ -45,7 +45,6 @@ public class Gameplay : MonoBehaviour
         prefComparisons[typeof(OccupationType)] = new EnumMatrix(typeof(OccupationType));
         prefComparisons[typeof(GoalsType)] = new EnumMatrix(typeof(GoalsType));
 
-        Debug.Log(GetPrefComparisonMultiplier(typeof(BodyType), "NoPref", "cephalopod"));
         //Load alien sprites into static space to allow access from methods
         alienSprites = alienSpritesToLoad.GetRange(0, alienSpritesToLoad.Count);
         alienSpritesToLoad.Clear();
@@ -178,10 +177,59 @@ public class Gameplay : MonoBehaviour
     }
     public static void MatchAliens(Alien sender1, Alien sender2)
     {
+        credits += GetCreditScore(sender1,sender2);
+
         storedAliens.Remove(sender1);
         storedAliens.Remove(sender2);
+    }
 
-        credits += 10; //Calculate credits using matrix method in the future
+    public static int GetCreditScore(Alien sender1,Alien sender2)
+    {
+        int creditsToAppend = 0;
+        //For each of the two aliens, get 10 * the multiplier and average between the two
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(BodyType),sender1,sender2) * 20.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(AgeType), sender1, sender2) * 20.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(OccupationType), sender1, sender2) * 20.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(GoalsType), sender1, sender2) * 20.0f);
+
+        return creditsToAppend;
+    }
+
+    public static float GetAverageComparisonMultiplier(System.Type enumType, Alien sender1, Alien sender2)
+    {
+        if(enumType == typeof(BodyType))
+        {
+            return (
+            (GetPrefComparisonMultiplier(typeof(BodyType), sender1.preferenceParams.body.ToString(), sender2.selfParams.body.ToString())) +
+            (GetPrefComparisonMultiplier(typeof(BodyType), sender2.preferenceParams.body.ToString(), sender1.selfParams.body.ToString()))
+            ) / 2.0f;
+        }
+        else if(enumType == typeof(AgeType))
+        {
+            return (
+            (GetPrefComparisonMultiplier(typeof(AgeType), sender1.preferenceParams.age.ToString(), sender2.selfParams.age.ToString())) +
+            (GetPrefComparisonMultiplier(typeof(AgeType), sender2.preferenceParams.age.ToString(), sender1.selfParams.age.ToString()))
+            ) / 2.0f;
+        }
+        else if (enumType == typeof(OccupationType))
+        {
+            return (
+            (GetPrefComparisonMultiplier(typeof(OccupationType), sender1.preferenceParams.job.ToString(), sender2.selfParams.job.ToString())) +
+            (GetPrefComparisonMultiplier(typeof(OccupationType), sender2.preferenceParams.job.ToString(), sender1.selfParams.job.ToString()))
+            ) / 2.0f;
+        }
+        else if (enumType == typeof(GoalsType))
+        {
+            return (
+            (GetPrefComparisonMultiplier(typeof(GoalsType), sender1.preferenceParams.relationshipGoal.ToString(), sender2.selfParams.relationshipGoal.ToString())) +
+            (GetPrefComparisonMultiplier(typeof(GoalsType), sender2.preferenceParams.relationshipGoal.ToString(), sender1.selfParams.relationshipGoal.ToString()))
+            ) / 2.0f;
+        }
+        else
+        {
+            Debug.LogError("Invalid enum in average comparison");
+            return -1.0f;
+        }
     }
 
     public static List<(string name, float baseValue, float incrementValue, int upgradeLevel, int upgradeCost)> shopItems = new List<(string name, float baseValue, float incrementValue, int upgradeLevel, int upgradeCost)>() //Upgrade level is from 0 to 9

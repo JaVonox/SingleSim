@@ -35,6 +35,8 @@ public class LaptopHandler : MonoBehaviour
     private LaptopModes currentMode;
 
     private float dtTime;
+
+    Dictionary<string, (int count, string colorHex)> scoreDict = new Dictionary<string, (int count, string colorHex)>(); //Todo this may not be memory efficient
     void Start()
     {
         creditsText.text = "Credits: " + Gameplay.credits;
@@ -295,6 +297,14 @@ public class LaptopHandler : MonoBehaviour
                 else
                 {
                     shopPanel.Find("BuyUpgrade").GetComponentInChildren<Text>().text = "Upgrade Cost: " + Gameplay.GetItemStatistic(child.name, "UpgradeCost");
+                    if(Gameplay.credits < (int)Gameplay.GetItemStatistic(child.name, "UpgradeCost"))
+                    {
+                        shopPanel.Find("BuyUpgrade").GetComponent<Button>().interactable = false;
+                    }
+                    else
+                    {
+                        shopPanel.Find("BuyUpgrade").GetComponent<Button>().interactable = true;
+                    }
                 }
 
             }
@@ -338,20 +348,26 @@ public class LaptopHandler : MonoBehaviour
         reviewTab.transform.Find("ExitReview").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
         reviewTab.transform.Find("Alien1").GetComponent<Image>().sprite = alien1.ReturnImage();
         reviewTab.transform.Find("Alien2").GetComponent<Image>().sprite = alien2.ReturnImage();
-        reviewTab.transform.Find("ReviewText").GetComponent<TextMeshProUGUI>().text = GenerateReviewText(); //TODO maybe use line by line speed?
+        reviewTab.transform.Find("ReviewText").GetComponent<TextMeshProUGUI>().text = GenerateReviewText(alien1,alien2); //TODO maybe use line by line speed?
     }
-    string GenerateReviewText()
+    string GenerateReviewText(Alien alien1,Alien alien2)
     {
         Dictionary<string, float> statCompatabilityScore = new Dictionary<string, float>()
         {
-            {"Body type",Random.Range(0.01f,1.0f)},
-            {"Age range",Random.Range(0.01f,1.0f)},
-            {"Relationship goals",Random.Range(0.01f,1.0f)},
-            {"Occupation",Random.Range(0.01f,1.0f)},
+            {"Body type",Gameplay.GetAverageComparisonMultiplier(typeof(BodyType),alien1,alien2)},
+            {"Age range",Gameplay.GetAverageComparisonMultiplier(typeof(AgeType),alien1,alien2)},
+            {"Occupation",Gameplay.GetAverageComparisonMultiplier(typeof(OccupationType),alien1,alien2)},
+            {"Relationship goals",Gameplay.GetAverageComparisonMultiplier(typeof(GoalsType),alien1,alien2)},
         };
 
         string bodyText = "";
 
+        //Reset scoredict values
+        scoreDict["Abysmal"] = (0, "#b80e20");
+        scoreDict["Poor"] = (0, "#b8510e");
+        scoreDict["Mediocre"] = (0, "#edd613");
+        scoreDict["Good"] = (0, "#20b80e");
+        scoreDict["Excellent"] = (0, "#0eb851");
 
         foreach (string stat in statCompatabilityScore.Keys)
         {
@@ -359,30 +375,46 @@ public class LaptopHandler : MonoBehaviour
 
             if (statCompatabilityScore[stat] <= 0.125f)
             {
-                bodyText += "<color=#b80e20>Abysmal</color>";
+                bodyText += "<color=" + scoreDict["Abysmal"].colorHex + ">Abysmal</color>";
+                scoreDict["Abysmal"] = (scoreDict["Abysmal"].count + 1, scoreDict["Abysmal"].colorHex);
             }
             else if (statCompatabilityScore[stat] <= 0.25f)
             {
-                bodyText += "<color=#b8510e>Poor</color>";
+                bodyText += "<color=" + scoreDict["Poor"].colorHex + ">Poor</color>";
+                scoreDict["Poor"] = (scoreDict["Poor"].count + 1, scoreDict["Poor"].colorHex);
             }
             else if(statCompatabilityScore[stat] <= 0.5f)
             {
-                bodyText += "<color=#edd613>Mediocre</color>";
+                bodyText += "<color=" + scoreDict["Mediocre"].colorHex + ">Mediocre</color>";
+                scoreDict["Mediocre"] = (scoreDict["Mediocre"].count + 1, scoreDict["Mediocre"].colorHex);
             }
             else if(statCompatabilityScore[stat] <= 0.75f)
             {
-                bodyText += "<color=#20b80e>Good</color>";
+                bodyText += "<color=" + scoreDict["Good"].colorHex + ">Good</color>";
+                scoreDict["Good"] = (scoreDict["Good"].count + 1, scoreDict["Good"].colorHex);
             }
             else
             {
-                bodyText += "<color=#0eb851>Excellent</color>";
+                bodyText += "<color=" + scoreDict["Excellent"].colorHex + ">Excellent</color>";
+                scoreDict["Excellent"] = (scoreDict["Excellent"].count + 1, scoreDict["Excellent"].colorHex);
             }
 
             bodyText += "\n";
         }
 
+        string mostCommonHex = "#FFFFFF";
+        int highestValue = -1;
 
+        foreach((int count, string colorHex) value in scoreDict.Values)
+        {
+            if(value.count >= highestValue) //>= gives priority to higher scoretypes
+            {
+                highestValue = value.count;
+                mostCommonHex = value.colorHex;
+            }
+        }
 
+        bodyText += "<color=#FFFFFF> Final credit score: </color><color=" + mostCommonHex + ">" + Gameplay.GetCreditScore(alien1, alien2) + "</color>\n";
 
         return bodyText;
     }
