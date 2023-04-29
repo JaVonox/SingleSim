@@ -25,6 +25,7 @@ public class Gameplay : MonoBehaviour
     public static float textTime = 0;
 
     public static float textSpeed = 4;
+    public static float textDisplayChance = 0.925f; //Chance that the text will properly display
 
     public GameObject scannerObject;
     public List<Sprite> scannerSpriteStates;
@@ -239,7 +240,8 @@ public class Gameplay : MonoBehaviour
     {
         ("Text Render Speed",4.0f,1.0f,0,50),
         ("Scanner Efficiency",0.05f,0.025f,0,20),
-        ("Decoder Efficiency",1.0f,0.2f,0,20)
+        ("Decoder Efficiency",1.0f,0.2f,0,20),
+        ("Decoder Accuracy",0.925f,0.008f,0,10)
     };
     public static void UpgradeVariable(string varName)
     {
@@ -259,6 +261,9 @@ public class Gameplay : MonoBehaviour
                     break;
                 case "Decoder Efficiency":
                     decoderSpeedMultiplier = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
+                    break;
+                case "Decoder Accuracy":
+                    textDisplayChance = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
                     break;
                 default:
                     Debug.LogError("Invalid shop");
@@ -345,7 +350,24 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     {
         List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> possibleMessages = Gameplay.LoadedMessages.Where(n => n.type == selfParams.body).ToList(); //Get all body type specific messages
         int messageID = Random.Range(0, possibleMessages.Count); //Get a random message body
-        return ProcessText(possibleMessages[messageID].unprocessedContents,possibleMessages[messageID].noPrefReplacements,possibleMessages[messageID].selfUnemployedReplacement,possibleMessages[messageID].prefUnemployedReplacement);
+        string preObMessage = ProcessText(possibleMessages[messageID].unprocessedContents,possibleMessages[messageID].noPrefReplacements,possibleMessages[messageID].selfUnemployedReplacement,possibleMessages[messageID].prefUnemployedReplacement);
+        string newMessage = "";
+
+        foreach(char x in preObMessage)
+        {
+            if(x == ' ' || Random.Range(0.01f,1.0f) < Gameplay.textDisplayChance)
+            {
+                newMessage += x;
+            }
+            else
+            {
+                newMessage += ".";
+            }
+        }
+
+        Debug.Log(newMessage);
+
+        return newMessage;
     }
 
     private static readonly List<string> replacementStrings = new List<string>() { "[self_body]","[pref_body]","[self_age]","[pref_age]","[self_job]","[pref_job]","[self_goal]","[pref_goal]"};
@@ -371,8 +393,6 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
                 editedText = editedText.Replace(match, replacementWords[match]);
             }
         }
-        Debug.Log(editedText);
-
         return editedText;
     }
 }
