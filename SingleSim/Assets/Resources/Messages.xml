@@ -1,0 +1,13 @@
+<messagesList>
+	<message id="1" type="humanoid">
+		<body>Hi, im just a simple [self_body] looking for a [pref_body] to spend some alone time with. I currently work as a [self_job]. Ideally, id like to meet a [pref_age] [pref_job] interested in [pref_goal]</body>
+		<replacements>
+			<replacement type="pref_body">like minded person</replacement>
+			<replacement type="pref_age">beautiful</replacement>
+			<replacement type="pref_job">loving partner</replacement>
+			<replacement type="pref_goal">seeing how far things go</replacement>
+			<replacement type="self_unemployed">am in search of a job</replacement>
+			<replacement type="pref_unemployed">with a lot of free time</replacement>
+		</replacements>
+	</message>
+</messagesList>

@@ -38,7 +38,7 @@ public class Gameplay : MonoBehaviour
 
     public static Dictionary<System.Type, EnumMatrix> prefComparisons = new Dictionary<System.Type, EnumMatrix>(); //Matrices for the preferences vs actual grid
 
-    public static List<(BodyType type, string unprocessedContents, Dictionary<System.Type,string> noPrefReplacements, string unemployedReplacement)> LoadedMessages = new List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string unemployedReplacement)>(); //Messages sorted by body type and details filled out as appropriate
+    public static List<(BodyType type, string unprocessedContents, Dictionary<System.Type,string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> LoadedMessages = new List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)>(); //Messages sorted by body type and details filled out as appropriate
     // Start is called before the first frame update
     void Start()
     {
@@ -56,10 +56,11 @@ public class Gameplay : MonoBehaviour
     }
     void LoadMessages()
     {
-        LoadedMessages.Add((BodyType.humanoid, "humanoidText [pref_body]", null,""));
-        LoadedMessages.Add((BodyType.automaton, "automatonText [pref_body]", null,""));
-        LoadedMessages.Add((BodyType.cephalopod, "cephText [pref_body]", null,""));
-        LoadedMessages.Add((BodyType.insectoid, "insectText [pref_body]", null,""));
+        LoadedMessages = FileLoading.GetMessages();
+
+        LoadedMessages.Add((BodyType.automaton, "automatonText [pref_body]", null,"",""));
+        LoadedMessages.Add((BodyType.cephalopod, "cephText [pref_body]", null,"",""));
+        LoadedMessages.Add((BodyType.insectoid, "insectText [pref_body]", null,"",""));
 
         //"Hi, im just a simple " + (selfParams.age) + " " + (selfParams.body)
         //    + " looking for a " + (preferenceParams.body == BodyType.NoPref ? "like minded person " : preferenceParams.body + " ") + "to spend some alone time with. " +
@@ -357,13 +358,13 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     }
     public string GenerateText()
     {
-        List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string unemployedReplacement)> possibleMessages = Gameplay.LoadedMessages.Where(n => n.type == selfParams.body).ToList(); //Get all body type specific messages
+        List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> possibleMessages = Gameplay.LoadedMessages.Where(n => n.type == selfParams.body).ToList(); //Get all body type specific messages
         int messageID = Random.Range(0, possibleMessages.Count); //Get a random message body
-        return ProcessText(possibleMessages[messageID].unprocessedContents,possibleMessages[messageID].noPrefReplacements,possibleMessages[messageID].unemployedReplacement);
+        return ProcessText(possibleMessages[messageID].unprocessedContents,possibleMessages[messageID].noPrefReplacements,possibleMessages[messageID].selfUnemployedReplacement,possibleMessages[messageID].prefUnemployedReplacement);
     }
 
     private static readonly List<string> replacementStrings = new List<string>() { "[self_body]","[pref_body]","[self_age]","[pref_age]","[self_job]","[pref_job]","[self_goal]","[pref_goal]"};
-    public string ProcessText(string preprocessedText, Dictionary<System.Type, string> noPrefReplacements, string unemployedReplacement)
+    public string ProcessText(string preprocessedText, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)
     {
         string editedText = preprocessedText;
         Dictionary<string, string> replacementWords = new Dictionary<string, string>();
@@ -373,8 +374,8 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         replacementWords.Add("[pref_body]", preferenceParams.body == BodyType.NoPref ? noPrefReplacements[typeof(BodyType)] : preferenceParams.body.ToString());
         replacementWords.Add("[self_age]", selfParams.age.ToString());
         replacementWords.Add("[pref_age]", preferenceParams.age == AgeType.NoPref ? noPrefReplacements[typeof(AgeType)] : preferenceParams.age.ToString());
-        replacementWords.Add("[self_job]", selfParams.job.ToString());
-        replacementWords.Add("[pref_job]", preferenceParams.job == OccupationType.unemployed ? unemployedReplacement : (preferenceParams.job == OccupationType.NoPref ? noPrefReplacements[typeof(OccupationType)] : preferenceParams.job.ToString()));
+        replacementWords.Add("[self_job]", selfParams.job == OccupationType.unemployed ? selfUnemployedReplacement : selfParams.job.ToString());
+        replacementWords.Add("[pref_job]", preferenceParams.job == OccupationType.unemployed ? prefUnemployedReplacement : (preferenceParams.job == OccupationType.NoPref ? noPrefReplacements[typeof(OccupationType)] : preferenceParams.job.ToString()));
         replacementWords.Add("[self_goal]", selfParams.relationshipGoal.ToString());
         replacementWords.Add("[pref_goal]", preferenceParams.relationshipGoal == GoalsType.NoPref ? noPrefReplacements[typeof(GoalsType)] : preferenceParams.relationshipGoal.ToString());
 
@@ -383,7 +384,6 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         {
             if(editedText.Contains(match))
             {
-                Debug.Log("match on " + match);
                 editedText = editedText.Replace(match, replacementWords[match]);
             }
         }
