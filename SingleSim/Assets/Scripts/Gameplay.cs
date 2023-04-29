@@ -36,7 +36,9 @@ public class Gameplay : MonoBehaviour
 
     public static int credits = 0;
 
-    public static Dictionary<System.Type, EnumMatrix> prefComparisons = new Dictionary<System.Type, EnumMatrix>();
+    public static Dictionary<System.Type, EnumMatrix> prefComparisons = new Dictionary<System.Type, EnumMatrix>(); //Matrices for the preferences vs actual grid
+
+    public static List<(BodyType type, string unprocessedContents, Dictionary<System.Type,string> noPrefReplacements, string unemployedReplacement)> LoadedMessages = new List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string unemployedReplacement)>(); //Messages sorted by body type and details filled out as appropriate
     // Start is called before the first frame update
     void Start()
     {
@@ -45,11 +47,26 @@ public class Gameplay : MonoBehaviour
         prefComparisons[typeof(OccupationType)] = new EnumMatrix(typeof(OccupationType));
         prefComparisons[typeof(GoalsType)] = new EnumMatrix(typeof(GoalsType));
 
+        LoadMessages();
         //Load alien sprites into static space to allow access from methods
         alienSprites = alienSpritesToLoad.GetRange(0, alienSpritesToLoad.Count);
         alienSpritesToLoad.Clear();
 
         SetScannerState("idle");
+    }
+    void LoadMessages()
+    {
+        LoadedMessages.Add((BodyType.humanoid, "humanoidText [pref_body]", null,""));
+        LoadedMessages.Add((BodyType.automaton, "automatonText [pref_body]", null,""));
+        LoadedMessages.Add((BodyType.cephalopod, "cephText [pref_body]", null,""));
+        LoadedMessages.Add((BodyType.insectoid, "insectText [pref_body]", null,""));
+
+        //"Hi, im just a simple " + (selfParams.age) + " " + (selfParams.body)
+        //    + " looking for a " + (preferenceParams.body == BodyType.NoPref ? "like minded person " : preferenceParams.body + " ") + "to spend some alone time with. " +
+        //    "I currently " + (selfParams.job == OccupationType.unemployed ? "am in search of a job" : "work as a " + selfParams.job) +
+        //    ". Ideally, id like to meet a " + (preferenceParams.age == AgeType.NoPref ? "" : preferenceParams.age + " ") +
+        //    (preferenceParams.job == OccupationType.NoPref ? "loving partner" : (preferenceParams.job == OccupationType.unemployed ? "with a lot of free time" : preferenceParams.job + "")) +
+        //    " interested in " + (selfParams.relationshipGoal == GoalsType.NoPref ? "seeing how far things go." : "a " + selfParams.relationshipGoal + ".");
     }
 
     // Update is called once per frame
@@ -340,12 +357,39 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     }
     public string GenerateText()
     {
-        return "Hi, im just a simple " + (selfParams.age) + " " + (selfParams.body) 
-            + " looking for a " + (preferenceParams.body == BodyType.NoPref ? "like minded person " : preferenceParams.body + " ") + "to spend some alone time with. " +
-            "I currently " + (selfParams.job == OccupationType.unemployed ? "am in search of a job" : "work as a " + selfParams.job) +
-            ". Ideally, id like to meet a " + (preferenceParams.age == AgeType.NoPref ? "" : preferenceParams.age + " " ) +
-            (preferenceParams.job == OccupationType.NoPref ? "loving partner" : (preferenceParams.job == OccupationType.unemployed ? "with a lot of free time" : preferenceParams.job +"")) +
-            " interested in " + (selfParams.relationshipGoal == GoalsType.NoPref ? "seeing how far things go." : "a " + selfParams.relationshipGoal + ".");
+        List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string unemployedReplacement)> possibleMessages = Gameplay.LoadedMessages.Where(n => n.type == selfParams.body).ToList(); //Get all body type specific messages
+        int messageID = Random.Range(0, possibleMessages.Count); //Get a random message body
+        return ProcessText(possibleMessages[messageID].unprocessedContents,possibleMessages[messageID].noPrefReplacements,possibleMessages[messageID].unemployedReplacement);
+    }
+
+    private static readonly List<string> replacementStrings = new List<string>() { "[self_body]","[pref_body]","[self_age]","[pref_age]","[self_job]","[pref_job]","[self_goal]","[pref_goal]"};
+    public string ProcessText(string preprocessedText, Dictionary<System.Type, string> noPrefReplacements, string unemployedReplacement)
+    {
+        string editedText = preprocessedText;
+        Dictionary<string, string> replacementWords = new Dictionary<string, string>();
+
+        //Add replacements for strings
+        replacementWords.Add("[self_body]", selfParams.body.ToString());
+        replacementWords.Add("[pref_body]", preferenceParams.body == BodyType.NoPref ? noPrefReplacements[typeof(BodyType)] : preferenceParams.body.ToString());
+        replacementWords.Add("[self_age]", selfParams.age.ToString());
+        replacementWords.Add("[pref_age]", preferenceParams.age == AgeType.NoPref ? noPrefReplacements[typeof(AgeType)] : preferenceParams.age.ToString());
+        replacementWords.Add("[self_job]", selfParams.job.ToString());
+        replacementWords.Add("[pref_job]", preferenceParams.job == OccupationType.unemployed ? unemployedReplacement : (preferenceParams.job == OccupationType.NoPref ? noPrefReplacements[typeof(OccupationType)] : preferenceParams.job.ToString()));
+        replacementWords.Add("[self_goal]", selfParams.relationshipGoal.ToString());
+        replacementWords.Add("[pref_goal]", preferenceParams.relationshipGoal == GoalsType.NoPref ? noPrefReplacements[typeof(GoalsType)] : preferenceParams.relationshipGoal.ToString());
+
+        Debug.Log(editedText);
+        foreach(string match in replacementStrings) //iterate through match words and replace with the appropriate replacement
+        {
+            if(editedText.Contains(match))
+            {
+                Debug.Log("match on " + match);
+                editedText = editedText.Replace(match, replacementWords[match]);
+            }
+        }
+        Debug.Log(editedText);
+
+        return editedText;
     }
 }
 
