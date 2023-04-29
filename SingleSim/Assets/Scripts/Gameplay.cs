@@ -47,27 +47,12 @@ public class Gameplay : MonoBehaviour
         prefComparisons[typeof(OccupationType)] = new EnumMatrix(typeof(OccupationType));
         prefComparisons[typeof(GoalsType)] = new EnumMatrix(typeof(GoalsType));
 
-        LoadMessages();
+        LoadedMessages = FileLoading.GetMessages();
         //Load alien sprites into static space to allow access from methods
         alienSprites = alienSpritesToLoad.GetRange(0, alienSpritesToLoad.Count);
         alienSpritesToLoad.Clear();
 
         SetScannerState("idle");
-    }
-    void LoadMessages()
-    {
-        LoadedMessages = FileLoading.GetMessages();
-
-        LoadedMessages.Add((BodyType.automaton, "automatonText [pref_body]", null,"",""));
-        LoadedMessages.Add((BodyType.cephalopod, "cephText [pref_body]", null,"",""));
-        LoadedMessages.Add((BodyType.insectoid, "insectText [pref_body]", null,"",""));
-
-        //"Hi, im just a simple " + (selfParams.age) + " " + (selfParams.body)
-        //    + " looking for a " + (preferenceParams.body == BodyType.NoPref ? "like minded person " : preferenceParams.body + " ") + "to spend some alone time with. " +
-        //    "I currently " + (selfParams.job == OccupationType.unemployed ? "am in search of a job" : "work as a " + selfParams.job) +
-        //    ". Ideally, id like to meet a " + (preferenceParams.age == AgeType.NoPref ? "" : preferenceParams.age + " ") +
-        //    (preferenceParams.job == OccupationType.NoPref ? "loving partner" : (preferenceParams.job == OccupationType.unemployed ? "with a lot of free time" : preferenceParams.job + "")) +
-        //    " interested in " + (selfParams.relationshipGoal == GoalsType.NoPref ? "seeing how far things go." : "a " + selfParams.relationshipGoal + ".");
     }
 
     // Update is called once per frame
@@ -379,7 +364,6 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         replacementWords.Add("[self_goal]", selfParams.relationshipGoal.ToString());
         replacementWords.Add("[pref_goal]", preferenceParams.relationshipGoal == GoalsType.NoPref ? noPrefReplacements[typeof(GoalsType)] : preferenceParams.relationshipGoal.ToString());
 
-        Debug.Log(editedText);
         foreach(string match in replacementStrings) //iterate through match words and replace with the appropriate replacement
         {
             if(editedText.Contains(match))

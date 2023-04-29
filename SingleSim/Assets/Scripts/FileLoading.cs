@@ -60,7 +60,6 @@ public static class FileLoading
             messages.Add(newItem);
         }
 
-        Debug.Log(messages[0].selfUnemployedReplacement);
         return messages;
     }
 }

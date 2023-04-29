@@ -1,13 +1,134 @@
 <messagesList>
-	<message id="1" type="humanoid">
-		<body>Hi, im just a simple [self_body] looking for a [pref_body] to spend some alone time with. I currently work as a [self_job]. Ideally, id like to meet a [pref_age] [pref_job] interested in [pref_goal]</body>
+	<message type="humanoid">
+		<body>Of hello to [pref_body] [pref_age] beauty. I [self_body] of luxury [self_age] [self_job]. seek for [pref_job] for [pref_goal]. beauty only please</body>
 		<replacements>
-			<replacement type="pref_body">like minded person</replacement>
-			<replacement type="pref_age">beautiful</replacement>
-			<replacement type="pref_job">loving partner</replacement>
-			<replacement type="pref_goal">seeing how far things go</replacement>
-			<replacement type="self_unemployed">am in search of a job</replacement>
-			<replacement type="pref_unemployed">with a lot of free time</replacement>
+			<replacement type="pref_body">gorgeous</replacement>
+			<replacement type="pref_age">sexy</replacement>
+			<replacement type="pref_job">money</replacement>
+			<replacement type="pref_goal">many lovings</replacement>
+			<replacement type="self_unemployed">with soon job</replacement>
+			<replacement type="pref_unemployed">no responsible</replacement>
+		</replacements>
+	</message>
+	<message type="humanoid">
+		<body>[self_age] [self_body] need [pref_age] [pref_body]. work [self_job]. fond of [pref_job]. must [pref_goal]</body>
+		<replacements>
+			<replacement type="pref_body">sexy</replacement>
+			<replacement type="pref_age">sexy</replacement>
+			<replacement type="pref_job">any</replacement>
+			<replacement type="pref_goal">love</replacement>
+			<replacement type="self_unemployed">no</replacement>
+			<replacement type="pref_unemployed">freedom</replacement>
+		</replacements>
+	</message>
+	<message type="humanoid">
+		<body>pease send [pref_body] [pref_age] [pref_job] desperate!!!!! big beauty for [pref_goal] NEED!!!! am [self_age] [self_body] [self_job]?????</body>
+		<replacements>
+			<replacement type="pref_body">big</replacement>
+			<replacement type="pref_age">beuaty</replacement>
+			<replacement type="pref_job">LOVE</replacement>
+			<replacement type="pref_goal">me</replacement>
+			<replacement type="self_unemployed">soon job i promise</replacement>
+			<replacement type="pref_unemployed">must not work</replacement>
+		</replacements>
+	</message>
+	<message type="automaton">
+		<body>[self_body]. [self_age]. [self_job]. SELECT * FROM USERS WHERE _body = [pref_body] AND _age = [pref_age] AND _occupation = [pref_job] AND _relationshipGoal = [pref_goal]. LONELY.</body>
+		<replacements>
+			<replacement type="pref_body">*</replacement>
+			<replacement type="pref_age">*</replacement>
+			<replacement type="pref_job">*</replacement>
+			<replacement type="pref_goal">*</replacement>
+			<replacement type="self_unemployed">non functional</replacement>
+			<replacement type="pref_unemployed">non functional</replacement>
+		</replacements>
+	</message>
+	<message type="automaton">
+		<body>introduction as [self_body] of [self_age]. leading conversation about fascination with [pref_job]. invitation for [pref_body] to lead in [pref_goal] with subtle implication of preference for [pref_age]. boast about occupation as titanium [self_job]</body>
+		<replacements>
+			<replacement type="pref_body">sapient_creature</replacement>
+			<replacement type="pref_age">not_dead</replacement>
+			<replacement type="pref_job">transfer_of_economic_material</replacement>
+			<replacement type="pref_goal">spend_time_with</replacement>
+			<replacement type="self_unemployed">err:no_job</replacement>
+			<replacement type="pref_unemployed">no_job</replacement>
+		</replacements>
+	</message>
+	<message type="automaton">
+		<body>public class Self { private string body = '[self_body]'; private string age = '[self_age]'; private string occupation = '[self_job]'; public string goal = '[pref_goal]';} public class Desire { private string body = '[pref_body]'; private string age = '[pref_age]'; private string job = '[pref_job]'; private string goal = Self.goal;}</body>
+		<replacements>
+			<replacement type="pref_body">any</replacement>
+			<replacement type="pref_age">any</replacement>
+			<replacement type="pref_job">any</replacement>
+			<replacement type="pref_goal">any</replacement>
+			<replacement type="self_unemployed">unemployed</replacement>
+			<replacement type="pref_unemployed">unemployed</replacement>
+		</replacements>
+	</message>
+	<message type="cephalopod">
+		<body>Greetings. [self_age] [self_body] in need of excellent loving from [pref_age] [pref_body] posthaste, required for [pref_goal]. One works as wealthy [self_job], finds [pref_job] irresistible.</body>
+		<replacements>
+			<replacement type="pref_body">peasant</replacement>
+			<replacement type="pref_age">chivalrous</replacement>
+			<replacement type="pref_job">lower classes</replacement>
+			<replacement type="pref_goal">love</replacement>
+			<replacement type="self_unemployed">idle aristocrat</replacement>
+			<replacement type="pref_unemployed">the weak and useless</replacement>
+		</replacements>
+	</message>
+		<message type="cephalopod">
+		<body>Noble [self_body] [self_job] of the refined age of [self_age] in dear need of [pref_goal] with supple [pref_body] inferior. must be a [pref_age] and no less noble than a [pref_job].</body>
+		<replacements>
+			<replacement type="pref_body">peon</replacement>
+			<replacement type="pref_age">weakling</replacement>
+			<replacement type="pref_job">the average beast</replacement>
+			<replacement type="pref_goal">bonding</replacement>
+			<replacement type="self_unemployed">idle patron</replacement>
+			<replacement type="pref_unemployed">idle dreamer</replacement>
+		</replacements>
+	</message>
+	<message type="cephalopod">
+		<body>Most refined of salutations to thyself and thy kinsmen, beautiful [pref_age] [pref_body]. How one dreams of sitting under the stars, discussing thy work, noble [pref_job]. One wishes for no more than [pref_goal] with thee. As for my humble self, one is a [self_age] [self_body] - notable for ones excellent prowess as a [self_job]. One does so look forward to speaking again. </body>
+		<replacements>
+			<replacement type="pref_body">beast</replacement>
+			<replacement type="pref_age">limber</replacement>
+			<replacement type="pref_job">lover</replacement>
+			<replacement type="pref_goal">to explore the passions of romance</replacement>
+			<replacement type="self_unemployed">former worker</replacement>
+			<replacement type="pref_unemployed">job hunter</replacement>
+		</replacements>
+	</message>
+	<message type="insectoid">
+		<body>HHHHHH. I [self_body] with [self_age] hhhhhhh. [pref_goal] for [pref_body] [pref_age].h. I proud [self_job]. seek [pref_job]</body>
+		<replacements>
+			<replacement type="pref_body">feeble</replacement>
+			<replacement type="pref_age">prey</replacement>
+			<replacement type="pref_job">other</replacement>
+			<replacement type="pref_goal">many moons affection</replacement>
+			<replacement type="self_unemployed">job hunter</replacement>
+			<replacement type="pref_unemployed">job hunter</replacement>
+		</replacements>
+	</message>
+	<message type="insectoid">
+		<body>nnHHHH [self_job][self_age][self_body]HHHHHHHHHHHHHHHH NEED [pref_goal] with [pref_body][pref_job][pref_age] </body>
+		<replacements>
+			<replacement type="pref_body">lesser</replacement>
+			<replacement type="pref_age">thing</replacement>
+			<replacement type="pref_job">thing</replacement>
+			<replacement type="pref_goal">big sexy</replacement>
+			<replacement type="self_unemployed">free</replacement>
+			<replacement type="pref_unemployed">free</replacement>
+		</replacements>
+	</message>
+	<message type="insectoid">
+		<body>huntmeal TO SHARE with [pref_age] [pref_body] in EXCHANGE FOR [pref_goal]. [self_body] is GREAT and POWERFUL [self_job] OF [self_age]. MUST [pref_job]</body>
+		<replacements>
+			<replacement type="pref_body">SEXY</replacement>
+			<replacement type="pref_age">HUNGRY</replacement>
+			<replacement type="pref_job">EMPLOYMENT</replacement>
+			<replacement type="pref_goal">DATE</replacement>
+			<replacement type="self_unemployed">UNPRODUCTIVE</replacement>
+			<replacement type="pref_unemployed">FREEDOM</replacement>
 		</replacements>
 	</message>
 </messagesList>
