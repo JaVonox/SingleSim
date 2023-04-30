@@ -49,7 +49,7 @@ public static class FileLoading
                         newItem.selfUnemployedReplacement = replacementNode.InnerText;
                         break;
                     case "pref_unemployed":
-                        newItem.selfUnemployedReplacement = replacementNode.InnerText;
+                        newItem.prefUnemployedReplacement = replacementNode.InnerText;
                         break;
                     default:
                         Debug.Log("invalid attribute on node " + replacementNode.Attributes["type"].Value.ToString());

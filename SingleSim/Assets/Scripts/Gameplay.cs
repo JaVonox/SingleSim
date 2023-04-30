@@ -388,11 +388,6 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         {
             if(editedText.Contains(match))
             {
-                if(replacementWords[match] == "")
-                {
-                    Debug.LogError("INVALID REPLACEMENT SPOTTED AS " + match + "JOB PREFER = " + preferenceParams.job + " LOADED " + prefUnemployedReplacement + " EQUALITY == " + (preferenceParams.job == OccupationType.unemployed) + " CALCULATED " + (preferenceParams.job == OccupationType.unemployed ? prefUnemployedReplacement : "FALSE"));
-                    Debug.LogError(prefUnemployedReplacement);
-                }
                 editedText = editedText.Replace(match, replacementWords[match]);
             }
             else
