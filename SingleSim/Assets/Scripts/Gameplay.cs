@@ -160,7 +160,6 @@ public class Gameplay : MonoBehaviour
                 break;
         }
     }
-
     public void SetDecoderState(string state)
     {
         switch (state)
@@ -191,10 +190,10 @@ public class Gameplay : MonoBehaviour
     {
         int creditsToAppend = 0;
         //For each of the two aliens, get 10 * the multiplier and average between the two
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(BodyType),sender1,sender2) * 20.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(AgeType), sender1, sender2) * 20.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(OccupationType), sender1, sender2) * 20.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(GoalsType), sender1, sender2) * 20.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(BodyType),sender1,sender2) * 15.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(AgeType), sender1, sender2) * 15.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(OccupationType), sender1, sender2) * 15.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(GoalsType), sender1, sender2) * 15.0f);
 
         return creditsToAppend;
     }
@@ -370,7 +369,7 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         return newMessage;
     }
 
-    private static readonly List<string> replacementStrings = new List<string>() { "[self_body]","[pref_body]","[self_age]","[pref_age]","[self_job]","[pref_job]","[self_goal]","[pref_goal]"};
+    private static readonly List<string> replacementStrings = new List<string>() { "[self_body]","[pref_body]","[self_age]","[pref_age]","[self_job]","[pref_job]","[pref_goal]"}; 
     public string ProcessText(string preprocessedText, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)
     {
         string editedText = preprocessedText;
@@ -383,14 +382,22 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         replacementWords.Add("[pref_age]", preferenceParams.age == AgeType.NoPref ? noPrefReplacements[typeof(AgeType)] : preferenceParams.age.ToString());
         replacementWords.Add("[self_job]", selfParams.job == OccupationType.unemployed ? selfUnemployedReplacement : selfParams.job.ToString());
         replacementWords.Add("[pref_job]", preferenceParams.job == OccupationType.unemployed ? prefUnemployedReplacement : (preferenceParams.job == OccupationType.NoPref ? noPrefReplacements[typeof(OccupationType)] : preferenceParams.job.ToString()));
-        replacementWords.Add("[self_goal]", selfParams.relationshipGoal.ToString());
         replacementWords.Add("[pref_goal]", preferenceParams.relationshipGoal == GoalsType.NoPref ? noPrefReplacements[typeof(GoalsType)] : preferenceParams.relationshipGoal.ToString());
-
+        //pref goal should always match self goal so theres no need for it
         foreach(string match in replacementStrings) //iterate through match words and replace with the appropriate replacement
         {
             if(editedText.Contains(match))
             {
+                if(replacementWords[match] == "")
+                {
+                    Debug.LogError("INVALID REPLACEMENT SPOTTED AS " + match + "JOB PREFER = " + preferenceParams.job + " LOADED " + prefUnemployedReplacement + " EQUALITY == " + (preferenceParams.job == OccupationType.unemployed) + " CALCULATED " + (preferenceParams.job == OccupationType.unemployed ? prefUnemployedReplacement : "FALSE"));
+                    Debug.LogError(prefUnemployedReplacement);
+                }
                 editedText = editedText.Replace(match, replacementWords[match]);
+            }
+            else
+            {
+                Debug.LogError("missing matchcase " + match);
             }
         }
         return editedText;
@@ -500,34 +507,34 @@ public class EnumMatrix //Kind of dissapointed with this whole section. I cant s
 
     private void GenerateBodyMatrix()
     {
-        AddMatrixRow("humanoid",new List<(string typeName, float fieldValue)>(){("humanoid",1.0f),("automaton",0.4f),("cephalopod",0.7f),("insectoid",0.5f),("NoPref",0.0f)});
-        AddMatrixRow("automaton", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.8f), ("automaton", 1.0f), ("cephalopod", 0.3f), ("insectoid", 0.3f), ("NoPref", 0.0f) });
-        AddMatrixRow("cephalopod", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.5f), ("automaton", 0.4f), ("cephalopod", 1.0f), ("insectoid", 0.8f), ("NoPref", 0.0f) });
-        AddMatrixRow("insectoid", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.5f), ("automaton", 0.3f), ("cephalopod", 0.8f), ("insectoid", 1.0f), ("NoPref", 0.0f) });
-        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.8f), ("automaton", 0.8f), ("cephalopod", 0.8f), ("insectoid", 0.8f), ("NoPref", 0.0f) });
+        AddMatrixRow("humanoid",new List<(string typeName, float fieldValue)>(){("humanoid",1.0f),("automaton",0.5f),("cephalopod",0.4f),("insectoid",0.3f),("NoPref",0.0f)});
+        AddMatrixRow("automaton", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.5f), ("automaton", 1.0f), ("cephalopod", 0.3f), ("insectoid", 0.5f), ("NoPref", 0.0f) });
+        AddMatrixRow("cephalopod", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.7f), ("automaton", 0.3f), ("cephalopod", 1.0f), ("insectoid", 0.1f), ("NoPref", 0.0f) });
+        AddMatrixRow("insectoid", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.4f), ("automaton", 0.3f), ("cephalopod", 0.1f), ("insectoid", 1.0f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.7f), ("automaton", 0.7f), ("cephalopod", 0.7f), ("insectoid", 0.7f), ("NoPref", 0.0f) });
     }
     private void GenerateAgeMatrix()
     {
-        AddMatrixRow("adult", new List<(string typeName, float fieldValue)>() { ("adult", 1.0f), ("senior", 0.5f), ("immortal", 0.3f), ("NoPref", 0.0f) });
-        AddMatrixRow("senior", new List<(string typeName, float fieldValue)>() { ("adult", 0.5f), ("senior", 1.0f), ("immortal", 0.8f), ("NoPref", 0.0f) });
-        AddMatrixRow("immortal", new List<(string typeName, float fieldValue)>() { ("adult", 0.3f), ("senior", 0.5f), ("immortal", 1.0f), ("NoPref", 0.0f) });
-        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("adult", 0.8f), ("senior", 0.8f), ("immortal", 0.8f), ("NoPref", 0.0f) });
+        AddMatrixRow("adult", new List<(string typeName, float fieldValue)>() { ("adult", 1.0f), ("senior", 0.3f), ("immortal", 0.1f), ("NoPref", 0.0f) });
+        AddMatrixRow("senior", new List<(string typeName, float fieldValue)>() { ("adult", 0.5f), ("senior", 1.0f), ("immortal", 0.5f), ("NoPref", 0.0f) });
+        AddMatrixRow("immortal", new List<(string typeName, float fieldValue)>() { ("adult", 0.2f), ("senior", 0.5f), ("immortal", 1.0f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("adult", 0.7f), ("senior", 0.7f), ("immortal", 0.7f), ("NoPref", 0.0f) });
     }
     private void GenerateJobMatrix()
     {
-        AddMatrixRow("unemployed", new List<(string typeName, float fieldValue)>() { ("unemployed", 1.0f), ("labourer", 0.8f), ("engineer", 0.3f), ("soldier", 0.3f), ("NoPref", 0.0f) });
+        AddMatrixRow("unemployed", new List<(string typeName, float fieldValue)>() { ("unemployed", 1.0f), ("labourer", 0.5f), ("engineer", 0.3f), ("soldier", 0.3f), ("NoPref", 0.0f) });
         AddMatrixRow("labourer", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.3f), ("labourer", 1.0f), ("engineer", 0.5f), ("soldier", 0.5f), ("NoPref", 0.0f) });
         AddMatrixRow("engineer", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.1f), ("labourer", 0.3f), ("engineer", 1.0f), ("soldier", 0.3f), ("NoPref", 0.0f) });
-        AddMatrixRow("soldier", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.3f), ("labourer", 0.4f), ("engineer", 0.6f), ("soldier", 1.0f), ("NoPref", 0.0f) });
-        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.8f), ("labourer", 0.8f), ("engineer", 0.8f), ("soldier", 0.8f), ("NoPref", 0.0f) });
+        AddMatrixRow("soldier", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.3f), ("labourer", 0.4f), ("engineer", 0.4f), ("soldier", 1.0f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.7f), ("labourer", 0.7f), ("engineer", 0.7f), ("soldier", 0.7f), ("NoPref", 0.0f) });
     }
     private void GenerateGoalMatrix()
     {
-        AddMatrixRow("fling", new List<(string typeName, float fieldValue)>() { ("fling", 1.0f), ("relationship", 0.4f), ("marriage", 0.1f), ("deathbond", 0.1f), ("NoPref", 0.0f) });
-        AddMatrixRow("relationship", new List<(string typeName, float fieldValue)>() { ("fling", 0.4f), ("relationship", 1.0f), ("marriage", 0.7f), ("deathbond", 0.5f), ("NoPref", 0.0f) });
-        AddMatrixRow("marriage", new List<(string typeName, float fieldValue)>() { ("fling", 0.2f), ("relationship", 0.8f), ("marriage", 1.0f), ("deathbond", 0.7f), ("NoPref", 0.0f) });
-        AddMatrixRow("deathbond", new List<(string typeName, float fieldValue)>() { ("fling", 0.1f), ("relationship", 0.5f), ("marriage", 0.8f), ("deathbond", 1.0f), ("NoPref", 0.0f) });
-        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("fling", 0.8f), ("relationship", 0.8f), ("marriage", 0.8f), ("deathbond", 0.8f), ("NoPref", 0.0f) });
+        AddMatrixRow("fling", new List<(string typeName, float fieldValue)>() { ("fling", 1.0f), ("relationship", 0.4f), ("marriage", 0.1f), ("deathbond", 0.1f), ("NoPref", 0.7f) });
+        AddMatrixRow("relationship", new List<(string typeName, float fieldValue)>() { ("fling", 0.3f), ("relationship", 1.0f), ("marriage", 0.4f), ("deathbond", 0.1f), ("NoPref", 0.7f) });
+        AddMatrixRow("marriage", new List<(string typeName, float fieldValue)>() { ("fling", 0.2f), ("relationship", 0.45f), ("marriage", 1.0f), ("deathbond", 0.4f), ("NoPref", 0.7f) });
+        AddMatrixRow("deathbond", new List<(string typeName, float fieldValue)>() { ("fling", 0.1f), ("relationship", 0.3f), ("marriage", 0.45f), ("deathbond", 1.0f), ("NoPref", 0.7f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("fling", 0.7f), ("relationship", 0.7f), ("marriage", 0.7f), ("deathbond", 0.7f), ("NoPref", 0.7f) });
     }
     private void AddMatrixRow(string rowName, List<(string typeName, float fieldValue)> input)
     {

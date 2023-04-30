@@ -35,8 +35,6 @@ public class LaptopHandler : MonoBehaviour
     private LaptopModes currentMode;
 
     private float dtTime;
-
-    Dictionary<string, (int count, string colorHex)> scoreDict = new Dictionary<string, (int count, string colorHex)>(); //Todo this may not be memory efficient
     void Start()
     {
         creditsText.text = "Credits: " + Gameplay.credits;
@@ -362,61 +360,97 @@ public class LaptopHandler : MonoBehaviour
 
         string bodyText = "";
 
-        //Reset scoredict values
-        scoreDict["Abysmal"] = (0, "#b80e20");
-        scoreDict["Poor"] = (0, "#b8510e");
-        scoreDict["Mediocre"] = (0, "#edd613");
-        scoreDict["Good"] = (0, "#20b80e");
-        scoreDict["Excellent"] = (0, "#0eb851");
-
         foreach (string stat in statCompatabilityScore.Keys)
         {
-            bodyText += "<color=#FFFFFF>" + stat + " compatability: </color>";
+            bodyText += "<size=14><color=#FFFFFF>" + stat + " compatability: </color>";
 
-            if (statCompatabilityScore[stat] <= 0.125f)
+            (string name, string colour) scoreVals = GetScoringName(statCompatabilityScore[stat], 0.2f);
+
+            bodyText += "<color=" + scoreVals.colour + ">" + scoreVals.name + "</color></size>\n";
+
+            (string name, string colour) scoringA1 = ("NULL","#FFFFFF");
+            (string name, string colour) scoringA2 = ("NULL", "#FFFFFF");
+
+            switch (stat)
             {
-                bodyText += "<color=" + scoreDict["Abysmal"].colorHex + ">Abysmal</color>";
-                scoreDict["Abysmal"] = (scoreDict["Abysmal"].count + 1, scoreDict["Abysmal"].colorHex);
-            }
-            else if (statCompatabilityScore[stat] <= 0.25f)
-            {
-                bodyText += "<color=" + scoreDict["Poor"].colorHex + ">Poor</color>";
-                scoreDict["Poor"] = (scoreDict["Poor"].count + 1, scoreDict["Poor"].colorHex);
-            }
-            else if(statCompatabilityScore[stat] <= 0.5f)
-            {
-                bodyText += "<color=" + scoreDict["Mediocre"].colorHex + ">Mediocre</color>";
-                scoreDict["Mediocre"] = (scoreDict["Mediocre"].count + 1, scoreDict["Mediocre"].colorHex);
-            }
-            else if(statCompatabilityScore[stat] <= 0.75f)
-            {
-                bodyText += "<color=" + scoreDict["Good"].colorHex + ">Good</color>";
-                scoreDict["Good"] = (scoreDict["Good"].count + 1, scoreDict["Good"].colorHex);
-            }
-            else
-            {
-                bodyText += "<color=" + scoreDict["Excellent"].colorHex + ">Excellent</color>";
-                scoreDict["Excellent"] = (scoreDict["Excellent"].count + 1, scoreDict["Excellent"].colorHex);
+                case "Body type":
+                    scoringA1 = GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(BodyType), alien1.preferenceParams.body.ToString(), alien2.selfParams.body.ToString()), 0.2f);
+                    scoringA2 = GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(BodyType), alien2.preferenceParams.body.ToString(), alien1.selfParams.body.ToString()), 0.2f);
+                    bodyText += "<size=8><color=#0E75B8>[" + alien1.preferenceParams.body + "->" + alien2.selfParams.body + "=</color><color=" + scoringA1.colour + ">" + scoringA1.name + "</color><color=#0E75B8>] ";
+                    bodyText += "[" + alien2.preferenceParams.body + "->" + alien1.selfParams.body + "=</color><color=" + scoringA2.colour + ">" + scoringA2.name + "</color><color=#0E75B8>]</color></size>\n";
+                    break;
+                case "Age range":
+                    scoringA1 = GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(AgeType), alien1.preferenceParams.age.ToString(), alien2.selfParams.age.ToString()), 0.2f);
+                    scoringA2 = GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(AgeType), alien2.preferenceParams.age.ToString(), alien1.selfParams.age.ToString()), 0.2f);
+                    bodyText += "<size=8><color=#0E75B8>[" + alien1.preferenceParams.age + "->" + alien2.selfParams.age + "=</color><color=" + scoringA1.colour + ">" + scoringA1.name + "</color><color=#0E75B8>] ";
+                    bodyText += "[" + alien2.preferenceParams.age + "->" + alien1.selfParams.age + "=</color><color=" + scoringA2.colour + ">" + scoringA2.name + "</color><color=#0E75B8>]</color></size>\n";
+                    break;
+                case "Occupation":
+                    scoringA1 = GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(OccupationType), alien1.preferenceParams.job.ToString(), alien2.selfParams.job.ToString()), 0.2f);
+                    scoringA2 = GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(OccupationType), alien2.preferenceParams.job.ToString(), alien1.selfParams.job.ToString()), 0.2f);
+                    bodyText += "<size=8><color=#0E75B8>[" + alien1.preferenceParams.job + "->" + alien2.selfParams.job + "=</color><color=" + scoringA1.colour + ">" + scoringA1.name + "</color><color=#0E75B8>] ";
+                    bodyText += "[" + alien2.preferenceParams.job + "->" + alien1.selfParams.job + "=</color><color=" + scoringA2.colour + ">" + scoringA2.name + "</color><color=#0E75B8>]</color></size>\n";
+                    break;
+                case "Relationship goals":
+                    scoringA1 = GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(GoalsType), alien1.preferenceParams.relationshipGoal.ToString(), alien2.selfParams.relationshipGoal.ToString()), 0.2f);
+                    scoringA2 = GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(GoalsType), alien2.preferenceParams.relationshipGoal.ToString(), alien1.selfParams.relationshipGoal.ToString()), 0.2f);
+                    bodyText += "<size=8><color=#0E75B8>[" + alien1.preferenceParams.relationshipGoal + "->" + alien2.selfParams.relationshipGoal + "=</color><color=" + scoringA1.colour + ">" + scoringA1.name + "</color><color=#0E75B8>] ";
+                    bodyText += "[" + alien2.preferenceParams.relationshipGoal + "->" + alien1.selfParams.relationshipGoal + "=</color><color=" + scoringA2.colour + ">" + scoringA2.name + "</color><color=#0E75B8>]</color></size>\n";
+                    break;
+                default:
+                    Debug.LogError("error generating review text");
+                    break;
             }
 
-            bodyText += "\n";
         }
 
-        string mostCommonHex = "#FFFFFF";
-        int highestValue = -1;
-
-        foreach((int count, string colorHex) value in scoreDict.Values)
+        while(bodyText.Contains("NoPref")) //Remove all nopref occurances
         {
-            if(value.count >= highestValue) //>= gives priority to higher scoretypes
-            {
-                highestValue = value.count;
-                mostCommonHex = value.colorHex;
-            }
+            bodyText = bodyText.Replace("NoPref", "No Preference");
+
         }
 
-        bodyText += "<color=#FFFFFF> Final credit score: </color><color=" + mostCommonHex + ">" + Gameplay.GetCreditScore(alien1, alien2) + "</color>\n";
+        int credScore = Gameplay.GetCreditScore(alien1, alien2);
+
+        (string name, string colour) finalScoreVal = GetScoringName(credScore, 12);
+
+        bodyText += "<size=18><color=#FFFFFF> Final credit score: </color><color=" + finalScoreVal.colour + ">" + credScore + "</color></size>\n";
 
         return bodyText;
+    }
+
+    private (string descriptor, string color) GetScoringName(float value, float divisor) //Groups score into five segments of equal size
+    {
+        string desc = "NULL";
+        string colour = "#FFFFFF";
+
+        if (value <= divisor * 1.0f)
+        {
+            desc = "Abysmal";
+            colour = "#b80e20";
+        }
+        else if (value <= divisor * 2.0f)
+        {
+            desc = "Poor";
+            colour = "#b8510e";
+        }
+        else if (value <= divisor * 3.0f)
+        {
+            desc = "Mediocre";
+            colour = "#edd613";
+        }
+        else if (value <= divisor * 4.0f)
+        {
+            desc = "Good";
+            colour = "#20b80e";
+        }
+        else
+        {
+            desc = "Excellent";
+            colour = "#0eb851";
+        }
+
+        return (desc, colour);
     }
     void Update()
     {
