@@ -6,13 +6,20 @@ using System.Linq;
 public class LaptopConsole
 {
     private static Queue<string> consoleStorage = new Queue<string>();
-    private static Dictionary<string, System.Action<string[]>> consoleCommands = new Dictionary<string, System.Action<string[]>>(); //Stores the default command, its action and the associated arguments
+    private static Dictionary<string, (bool visible, System.Action<string[]> command)> consoleCommands = new Dictionary<string, (bool visible, System.Action<string[]> command)>(); //Stores the default command, its action and the associated arguments
     public static void FirstConsoleLoad()
     {
-        consoleStorage.Enqueue("Enter Help for a list of commands");
+        consoleStorage.Enqueue("<color=#FFFFFF>Enter Help for a list of commands</color>");
 
         //Add console commands
-        consoleCommands.Add("Help", (args) => DisplayCommands(args)); 
+        consoleCommands.Add("Help",(true,(args) => DisplayCommands(args)));
+        consoleCommands.Add("Clear", (true, (args) => ClearCommands(args)));
+
+        //Debug commands
+        consoleCommands.Add("Debug.AddCredits", (false, (args) => DebugAddCredits(args))); ;
+        consoleCommands.Add("Debug.Peek", (false, (args) => DebugPeekAlien(args))); ;
+        consoleCommands.Add("Debug.Decode", (false, (args) => DebugFinishDecode(args))); ;
+        consoleCommands.Add("Debug.xray", (false, (args) => DebugSeeCommands(args))); ;
     }
     public static void ReloadConsole(ref TMPro.TextMeshProUGUI consoleObject)
     {
@@ -39,9 +46,12 @@ public class LaptopConsole
 
         string[] delimInput = input.Split(' ');
 
-        System.Action<string[]> associatedCommand = consoleCommands.FirstOrDefault(x => x.Key.ToUpper() == delimInput[0].ToUpper()).Value;
-        if(associatedCommand == null) { consoleStorage.Enqueue("Invalid command. Enter Help for a list of commands"); } //If the command is invalid, display default text
-        else { associatedCommand.Invoke((delimInput.Length > 1 ? delimInput.Skip(1).ToArray() : new string[]{""})); } //If the command is valid, run the associated command with the passed arguments
+        System.Action<string[]> associatedCommand = consoleCommands.FirstOrDefault(x => x.Key.ToUpper() == delimInput[0].ToUpper()).Value.command;
+        if(associatedCommand == null) { consoleStorage.Enqueue("<color=#B80e20>Invalid command. Enter Help for a list of commands</color>"); } //If the command is invalid, display default text
+        else 
+        {
+            associatedCommand.Invoke((delimInput.Length > 1 ? delimInput.Skip(1).ToArray() : new string[] { "null" }));
+        } //If the command is valid, run the associated command with the passed arguments
         ReloadConsole(ref consoleObject);
     }
 
@@ -49,11 +59,64 @@ public class LaptopConsole
     private static void DisplayCommands(string[] args)
     {
         string commandList = "";
-        foreach(string key in consoleCommands.Keys)
+        foreach(string key in consoleCommands.Where(x=> x.Value.visible == true).Select(x=>x.Key)) //Iterate through all the keys with the visible attribute
         {
-            commandList += key + ",";
+            commandList += key + ", ";
         }
 
-        consoleStorage.Enqueue("Currently accessible commands: " + commandList);
+        consoleStorage.Enqueue("<color=#FFFFFF>Currently accessible commands: " + commandList + "</color>");
+    }
+    private static void ClearCommands(string[] args)
+    {
+        consoleStorage.Clear();
+        consoleStorage.Enqueue("<color=#FFFFFF>Enter Help for a list of commands</color>");
+    }
+
+    //Debug commands
+    private static void DebugAddCredits(string[] args)
+    {
+        int creditsToAppend = 0;
+        bool parseSuccess = int.TryParse(args[0],out creditsToAppend);
+        if (parseSuccess) { 
+            consoleStorage.Enqueue("<color=#FFFFFF>Appended " + creditsToAppend + " credits</color>");
+            Gameplay.credits += creditsToAppend;
+        }
+        else { consoleStorage.Enqueue("<color=#B80e20>Invalid credit amount: " + args[0] + "</color>"); }
+    }
+    private static void DebugPeekAlien(string[] args)
+    {
+        if(Gameplay.activeAlien != null)
+        {
+            string alienMessage = "<color=#FFFFFF>Message:\n" + Gameplay.activeAlien.decodeTextMessage +
+                "\nSelfParams: " + Gameplay.activeAlien.selfParams.body + ", " + Gameplay.activeAlien.selfParams.age + ", " + Gameplay.activeAlien.selfParams.job + ", " + Gameplay.activeAlien.selfParams.relationshipGoal +
+                "\nPrefParams: " + Gameplay.activeAlien.preferenceParams.body + ", " + Gameplay.activeAlien.preferenceParams.age + ", " + Gameplay.activeAlien.preferenceParams.job + ", " + Gameplay.activeAlien.preferenceParams.relationshipGoal + "</color>";
+            consoleStorage.Enqueue(alienMessage);
+        }
+        else
+        {
+            consoleStorage.Enqueue("<color=#B80e20>No loaded signal</color>");
+        }
+    }
+
+    private static void DebugFinishDecode(string[] args)
+    {
+        if (Gameplay.activeAlien != null && Gameplay.activeAlien.decoderProgress > 0)
+        {
+            Gameplay.activeAlien.decoderProgress = 1;
+            consoleStorage.Enqueue("<color=#FFFFFF>Finished decoding</color>");
+        }
+        else
+        {
+            consoleStorage.Enqueue("<color=#B80e20>Signal either does not exist or is not in decoding phase</color>");
+        }
+    }
+    private static void DebugSeeCommands(string[] args)
+    {
+        string[] commandsSet = consoleCommands.Keys.ToArray();
+        foreach(string key in commandsSet)
+        {
+            consoleCommands[key] = (true, consoleCommands[key].command);
+        }
+        consoleStorage.Enqueue("<color=#FFFFFF>Made all commands visible in help menu</color>");
     }
 }

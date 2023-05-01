@@ -241,7 +241,7 @@ public class Gameplay : MonoBehaviour
         ("Text Render Speed",4.0f,1.0f,0,50),
         ("Scanner Efficiency",0.05f,0.025f,0,20),
         ("Decoder Efficiency",1.0f,0.2f,0,20),
-        ("Decoder Accuracy",0.925f,0.008f,0,10)
+        ("Signal Accuracy",0.925f,0.008f,0,10)
     };
     public static void UpgradeVariable(string varName)
     {
@@ -262,7 +262,7 @@ public class Gameplay : MonoBehaviour
                 case "Decoder Efficiency":
                     decoderSpeedMultiplier = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
                     break;
-                case "Decoder Accuracy":
+                case "Signal Accuracy":
                     textDisplayChance = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
                     break;
                 default:
@@ -364,9 +364,6 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
                 newMessage += ".";
             }
         }
-
-        Debug.Log(newMessage);
-
         return newMessage;
     }
 

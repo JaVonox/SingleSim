@@ -107,10 +107,9 @@ public class LaptopHandler : MonoBehaviour
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(false);
+                consoleTab.SetActive(true);
                 LaptopConsole.ReloadConsole(ref consoleText); //Reload the console data
                 consoleInput.text = "";
-                consoleInput.ActivateInputField();
-                consoleTab.SetActive(true);
                 break;
             case LaptopModes.Review:
                 profilesMode.interactable = true;
@@ -121,7 +120,6 @@ public class LaptopHandler : MonoBehaviour
                 shopTab.SetActive(false);
                 reviewTab.SetActive(true);
                 consoleTab.SetActive(false);
-                //Details arent added here
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
