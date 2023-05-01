@@ -53,6 +53,7 @@ public class Gameplay : MonoBehaviour
         alienSprites = alienSpritesToLoad.GetRange(0, alienSpritesToLoad.Count);
         alienSpritesToLoad.Clear();
 
+        LaptopConsole.FirstConsoleLoad();
         SetScannerState("idle");
     }
 

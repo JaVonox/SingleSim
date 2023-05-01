@@ -27,6 +27,10 @@ public class LaptopHandler : MonoBehaviour
     public GameObject profilesTab;
     public GameObject specificProfileTab;
 
+    public GameObject consoleTab;
+    public TMPro.TMP_InputField consoleInput;
+    public TextMeshProUGUI consoleText;
+
     public GameObject shopTab;
 
     public GameObject reviewTab;
@@ -71,6 +75,7 @@ public class LaptopHandler : MonoBehaviour
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(false);
+                consoleTab.SetActive(false);
                 LoadProfiles();
                 break;
             case LaptopModes.Specific:
@@ -81,6 +86,7 @@ public class LaptopHandler : MonoBehaviour
                 specificProfileTab.SetActive(true);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(false);
+                consoleTab.SetActive(false);
                 break;
             case LaptopModes.Shop:
                 profilesMode.interactable = true;
@@ -90,6 +96,7 @@ public class LaptopHandler : MonoBehaviour
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(true);
                 reviewTab.SetActive(false);
+                consoleTab.SetActive(false);
                 LoadShop();
                 break;
             case LaptopModes.Console:
@@ -100,6 +107,10 @@ public class LaptopHandler : MonoBehaviour
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(false);
+                LaptopConsole.ReloadConsole(ref consoleText); //Reload the console data
+                consoleInput.text = "";
+                consoleInput.ActivateInputField();
+                consoleTab.SetActive(true);
                 break;
             case LaptopModes.Review:
                 profilesMode.interactable = true;
@@ -109,6 +120,7 @@ public class LaptopHandler : MonoBehaviour
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(true);
+                consoleTab.SetActive(false);
                 //Details arent added here
                 break;
             default:
@@ -406,7 +418,7 @@ public class LaptopHandler : MonoBehaviour
 
         while(bodyText.Contains("NoPref")) //Remove all nopref occurances
         {
-            bodyText = bodyText.Replace("NoPref", "No Preference");
+            bodyText = bodyText.Replace("NoPref", "no preference");
 
         }
 
@@ -418,7 +430,6 @@ public class LaptopHandler : MonoBehaviour
 
         return bodyText;
     }
-
     private (string descriptor, string color) GetScoringName(float value, float divisor) //Groups score into five segments of equal size
     {
         string desc = "NULL";
@@ -460,5 +471,19 @@ public class LaptopHandler : MonoBehaviour
         {
             creditsText.text = "Credits: " + Gameplay.credits;
         }
+
+        if(currentMode == LaptopModes.Console) //If in console mode, pressing enter allows for submission of text to console
+        {
+            if (Input.GetKeyUp(KeyCode.Return) && consoleInput.text != "") 
+            { 
+                SubmitConsoleInput(consoleInput.text);
+                consoleInput.text = "";
+            }
+        }
+    }
+    private void SubmitConsoleInput(string input)
+    {
+        LaptopConsole.SubmitItem(ref consoleText, input);
+        consoleInput.ActivateInputField();
     }
 }
