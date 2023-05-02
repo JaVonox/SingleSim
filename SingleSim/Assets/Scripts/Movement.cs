@@ -1,15 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 public class Movement : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
 
     public bool playerMovementLocked = false;
     public bool isInMenu = false;
@@ -18,7 +13,7 @@ public class Movement : MonoBehaviour
     private const float moveSpeed = 5f;
     public GameObject playerChar;
     public CharacterController playerMovement;
-    public float sensitivity = 0.5f;
+    public static float sensitivity = 0.5f;
     private float rotateX = 0f;
 
     private const float gravity = -9.81f; 
@@ -32,6 +27,36 @@ public class Movement : MonoBehaviour
 
     public List<Collider> interactables = new List<Collider>(); //Colliders with their indexes representing their UI ids
     public List<GameObject> uiPrefabs = new List<GameObject>(); //prefabs with their associated index IDs
+
+    public GameObject optionsMenu;
+
+    public static List<(int width, int height)> supportedResolutions = new List<(int width, int height)>()
+    {(1920,1080),(1600,900),(1366,768),(1280,1024),(1280,720),(1024,768),(600,400)};
+    void Start()
+    {
+        (int width, int height)[] playerResolutions = Screen.resolutions.OrderBy(x=>x.width).Reverse().Select(x=>(x.width,x.height)).ToArray();
+
+        bool hasSetResolution = false;
+
+        foreach((int width, int height) resolution in supportedResolutions)
+        {
+            if(playerResolutions.Contains(resolution))
+            {
+                Debug.Log("Setting resolution " + resolution.width + "x" + resolution.height);
+                Screen.SetResolution(resolution.width, resolution.height, true);
+                hasSetResolution = true;
+                break;
+            }
+        }
+
+        if(!hasSetResolution)
+        {
+            Debug.LogError("unrecognised resolution");
+            supportedResolutions.Insert(0, (Screen.currentResolution.width, Screen.currentResolution.height)); //Adds resolution to list at 0th position
+        }    
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
     void Update()
     {
         //Debug.DrawRay(camera.transform.position, camera.transform.TransformDirection(Vector3.forward) * 1.5f,Color.green);
@@ -60,7 +85,16 @@ public class Movement : MonoBehaviour
 
         if(!playerMovementLocked)
         {
-            MoveChar();
+            if (Input.GetButtonDown("Cancel")) //Open option menu
+            {
+                ToggleMenuState();
+                loadedUIElement = Instantiate(optionsMenu, camera.transform);
+                loadedUIElement.GetComponent<UIDestroy>().objectDestroyMethod += ToggleMenuState; //makes it so when the UI element is destroyed movement is reenabled
+            }
+            else
+            {
+                MoveChar();
+            }
         }
     }
 
