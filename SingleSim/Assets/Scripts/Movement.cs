@@ -31,7 +31,7 @@ public class Movement : MonoBehaviour
     public GameObject optionsMenu;
 
     public static List<(int width, int height)> supportedResolutions = new List<(int width, int height)>()
-    {(1920,1080),(1600,900),(1366,768),(1280,1024),(1280,720),(1024,768),(600,400)};
+    {(1920,1080),(1600,900),(1366,768),(1280,1024),(1280,720),(1024,768)};
     void Start()
     {
         (int width, int height)[] playerResolutions = Screen.resolutions.OrderBy(x=>x.width).Reverse().Select(x=>(x.width,x.height)).ToArray();
@@ -42,7 +42,6 @@ public class Movement : MonoBehaviour
         {
             if(playerResolutions.Contains(resolution))
             {
-                Debug.Log("Setting resolution " + resolution.width + "x" + resolution.height);
                 Screen.SetResolution(resolution.width, resolution.height, true);
                 hasSetResolution = true;
                 break;

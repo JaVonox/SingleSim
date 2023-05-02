@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
+using System.Linq;
 enum PauseState
 {
     Default,
@@ -12,8 +13,15 @@ enum PauseState
 public class PauseMenuScript : MonoBehaviour
 {
     public GameObject optionsPanel;
+
+    //sensitivity items
     public InputField sensitivityInput;
     public Slider sensitivitySlider;
+
+    //resolution items
+    public TMPro.TMP_Dropdown resolutionDropdown;
+    public Toggle fullscreen;
+
     public Button submitChanges;
 
     public Button optionsButton;
@@ -70,17 +78,48 @@ public class PauseMenuScript : MonoBehaviour
     {
         Movement.sensitivity = float.Parse(sensitivitySlider.value.ToString("F2")); //Set sensitivity, clamped to 2dp
 
+        (int width, int height) splitRes = screenTextRef[resolutionDropdown.options[resolutionDropdown.value].text]; //Get the currently selected resolution and split into width and height
+        Screen.SetResolution(splitRes.width, splitRes.height, fullscreen.isOn); //Set new screen resolution
         SwitchState(PauseState.Default);
     }
+
+    Dictionary<string, (int width, int height)> screenTextRef = new Dictionary<string, (int width, int height)>();
     void Start()
     {
         SwitchState(PauseState.Default);
         optionsButton.onClick.AddListener(() => SwitchState(PauseState.Options));
+
         sensitivitySlider.minValue = minSensitivity;
         sensitivitySlider.maxValue = maxSensitivity;
         sensitivitySlider.onValueChanged.AddListener((newValue) => SensitivitySliderHandler(newValue));
         sensitivityInput.onEndEdit.AddListener((newValue) => SensitivityInputHandler(newValue));
+
+        List<string> resolutionStrings = new List<string>();
+        string selectedRes = "";
+
+        foreach((int width, int height) res in Movement.supportedResolutions)
+        {
+            resolutionStrings.Add(res.width + "x" + res.height);
+            screenTextRef.Add(res.width + "x" + res.height, (res.width, res.height));
+        }
+
+        selectedRes = Screen.width + "x" + Screen.height;
+
+        resolutionDropdown.options.RemoveAll(x=>true);
+
+        if (!resolutionStrings.Contains(selectedRes)) 
+        {
+            selectedRes = "<color=#B80E20>" + selectedRes + "</color>"; //Add the colour to the resolution string name
+            resolutionStrings.Add(selectedRes);
+            screenTextRef.Add(selectedRes, (Screen.width, Screen.height));
+        } //if the resolution isnt in the supported list, add to options.
+
+        resolutionDropdown.AddOptions(resolutionStrings);
+
+        resolutionDropdown.value = resolutionDropdown.options.FindIndex(x => x.text == selectedRes);
         submitChanges.onClick.AddListener(() => SubmitChanges());
+
+        fullscreen.isOn = Screen.fullScreen;
     }
 
     void Update()
