@@ -25,7 +25,7 @@ public class Gameplay : MonoBehaviour
     public static float textTime = 0;
 
     public static float textSpeed = 4;
-    public static float textDisplayChance = 0.925f; //Chance that the text will properly display
+    public static float textDisplayChance = 1; //Chance that the text will properly display. currently dummied, used to be 0.925f
 
     public GameObject scannerObject;
     public List<Sprite> scannerSpriteStates;
@@ -241,7 +241,7 @@ public class Gameplay : MonoBehaviour
         ("Text Render Speed",4.0f,1.0f,0,50),
         ("Scanner Efficiency",0.05f,0.025f,0,20),
         ("Decoder Efficiency",1.0f,0.2f,0,20),
-        ("Signal Accuracy",0.925f,0.008f,0,10)
+        //("Signal Accuracy",0.925f,0.008f,0,10)
     };
     public static void UpgradeVariable(string varName)
     {
