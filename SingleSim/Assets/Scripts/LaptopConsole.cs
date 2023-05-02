@@ -16,10 +16,11 @@ public class LaptopConsole
         consoleCommands.Add("Clear", (true, (args) => ClearCommands(args)));
 
         //Debug commands
-        consoleCommands.Add("Debug.AddCredits", (false, (args) => DebugAddCredits(args))); ;
-        consoleCommands.Add("Debug.Peek", (false, (args) => DebugPeekAlien(args))); ;
-        consoleCommands.Add("Debug.Decode", (false, (args) => DebugFinishDecode(args))); ;
-        consoleCommands.Add("Debug.xray", (false, (args) => DebugSeeCommands(args))); ;
+        consoleCommands.Add("Debug.AddCredits", (false, (args) => DebugAddCredits(args)));
+        consoleCommands.Add("Debug.Peek", (false, (args) => DebugPeekAlien(args)));
+        consoleCommands.Add("Debug.Decode", (false, (args) => DebugFinishDecode(args)));
+        consoleCommands.Add("Debug.xray", (false, (args) => DebugSeeCommands(args)));
+        consoleCommands.Add("Debug.swarm", (false, (args) => DebugSwarmSignals(args))); ;
     }
     public static void ReloadConsole(ref TMPro.TextMeshProUGUI consoleObject)
     {
@@ -76,8 +77,7 @@ public class LaptopConsole
     private static void DebugAddCredits(string[] args)
     {
         int creditsToAppend = 0;
-        bool parseSuccess = int.TryParse(args[0],out creditsToAppend);
-        if (parseSuccess) { 
+        if (int.TryParse(args[0], out creditsToAppend)) { 
             consoleStorage.Enqueue("<color=#FFFFFF>Appended " + creditsToAppend + " credits</color>");
             Gameplay.credits += creditsToAppend;
         }
@@ -118,5 +118,22 @@ public class LaptopConsole
             consoleCommands[key] = (true, consoleCommands[key].command);
         }
         consoleStorage.Enqueue("<color=#FFFFFF>Made all commands visible in help menu</color>");
+    }
+
+    private static void DebugSwarmSignals(string[] args)
+    {
+        int signalsToAdd = 0;
+        if (int.TryParse(args[0], out signalsToAdd))
+        {
+            for (int i = 0; i < signalsToAdd; i++)
+            {
+                Gameplay.storedAliens.Add(new Alien(Gameplay.ReturnImage));
+            }
+            consoleStorage.Enqueue("<color=#FFFFFF>Added " + args[0] + " new signals to database</color>");
+        }
+        else
+        {
+            consoleStorage.Enqueue("<color=#B80e20>Invalid signal count: " + args[0] + "</color>");
+        }
     }
 }
