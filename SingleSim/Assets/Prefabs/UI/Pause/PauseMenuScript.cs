@@ -23,6 +23,9 @@ public class PauseMenuScript : MonoBehaviour
     public TMPro.TMP_Dropdown resolutionDropdown;
     public Toggle fullscreen;
 
+    //volume items
+    public InputField volumeInput;
+    public Slider volumeSlider;
     //options buttons
     public Button submitChanges;
     public Button restoreDefault;
@@ -76,8 +79,14 @@ public class PauseMenuScript : MonoBehaviour
         sensitivitySlider.minValue = minSensitivity;
         sensitivitySlider.maxValue = maxSensitivity;
 
+        volumeSlider.minValue = 0;
+        volumeSlider.maxValue = 1;
+
         sensitivitySlider.value = Movement.sensitivity;
         sensitivityInput.text = Movement.sensitivity.ToString("F2");
+
+        volumeSlider.value = Movement.volume;
+        volumeInput.text = Movement.volume.ToString("F2");
 
         List<string> resolutionStrings = new List<string>();
         string selectedRes = "";
@@ -127,10 +136,32 @@ public class PauseMenuScript : MonoBehaviour
         }
     }
 
+    private void VolumeSliderHandler(float newValue)
+    {
+        volumeInput.text = newValue.ToString("F2");
+    }
+    private void VolumeInputHandler(string newValue)
+    {
+        float processedNewValue = 0;
+
+        if (float.TryParse(newValue, out processedNewValue))
+        {
+            if (processedNewValue < 0) { processedNewValue = 0; volumeInput.text = processedNewValue.ToString("F2"); }
+            else if (processedNewValue > 1) { processedNewValue = 1; volumeInput.text = processedNewValue.ToString("F2"); }
+            volumeSlider.value = processedNewValue;
+        }
+        else
+        {
+            volumeSlider.value = 0;
+            volumeInput.text = "0";
+        }
+    }
+
     private void RestoreDefaultSettings()
     {
         SwitchState(PauseState.Default);
         Movement.sensitivity = 0.5f;
+        Movement.volume = 0.5f;
         Screen.SetResolution(Movement.defaultScreenRes.width, Movement.defaultScreenRes.height, true);
         SetOptionsDefaults();
     }
@@ -143,6 +174,7 @@ public class PauseMenuScript : MonoBehaviour
     private void SubmitChanges() //For when a user attempts to submit their options changes
     {
         Movement.sensitivity = float.Parse(sensitivitySlider.value.ToString("F2")); //Set sensitivity, clamped to 2dp
+        Movement.volume = float.Parse(volumeSlider.value.ToString("F2"));
 
         (int width, int height) splitRes = screenTextRef[resolutionDropdown.options[resolutionDropdown.value].text]; //Get the currently selected resolution and split into width and height
         Screen.SetResolution(splitRes.width, splitRes.height, fullscreen.isOn); //Set new screen resolution
@@ -156,8 +188,12 @@ public class PauseMenuScript : MonoBehaviour
 
         optionsButton.onClick.AddListener(() => SwitchState(PauseState.Options));
         exitGame.onClick.AddListener(() => SwitchState(PauseState.ExitDialog));
+
         sensitivitySlider.onValueChanged.AddListener((newValue) => SensitivitySliderHandler(newValue));
         sensitivityInput.onEndEdit.AddListener((newValue) => SensitivityInputHandler(newValue));
+
+        volumeSlider.onValueChanged.AddListener((newValue) => VolumeSliderHandler(newValue));
+        volumeInput.onEndEdit.AddListener((newValue) => VolumeInputHandler(newValue));;
 
         submitChanges.onClick.AddListener(() => SubmitChanges());
         restoreDefault.onClick.AddListener(() => RestoreDefaultSettings());

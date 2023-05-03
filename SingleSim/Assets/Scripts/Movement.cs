@@ -35,7 +35,7 @@ public class Movement : MonoBehaviour
 
     public static (int width, int height) defaultScreenRes;
 
-    public static float volume = 1.0f;
+    public static float volume = 0.5f;
     void Start()
     {
         (int width, int height)[] playerResolutions = Screen.resolutions.OrderBy(x=>x.width).Reverse().Select(x=>(x.width,x.height)).ToArray();
