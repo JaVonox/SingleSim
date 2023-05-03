@@ -12,9 +12,10 @@ public class AudioHandler : MonoBehaviour
 {
     public AudioSource serverAmbient;
     public AudioSource serverProcessing;
+    public AudioSource serverScanning;
     public AudioSource serverBeep;
 
-
+    public AudioSource outsideAmbience;
     public AudioSource outsideNoises;
     public List<AudioClip> commonOutsideAudio;
     public List<AudioClip> rareOutsideAudio;
@@ -50,18 +51,21 @@ public class AudioHandler : MonoBehaviour
             case ServerAudioState.AmbientFan:
                 serverAmbient.enabled = true;
                 serverProcessing.enabled = false;
+                serverScanning.enabled = false;
                 serverBeep.enabled = false;
                 beepsEnabled = false;
                 break;
             case ServerAudioState.Scanner:
                 serverAmbient.enabled = true;
-                serverProcessing.enabled = true;
+                serverProcessing.enabled = false;
+                serverScanning.enabled = true;
                 serverBeep.enabled = false;
                 beepsEnabled = false;
                 break;
             case ServerAudioState.Decoding:
                 serverAmbient.enabled = true;
                 serverProcessing.enabled = true;
+                serverScanning.enabled = false;
                 serverBeep.enabled = true;
                 beepsEnabled = true;
                 break;
@@ -143,8 +147,10 @@ public class AudioHandler : MonoBehaviour
 
         if (dtTime > 0.1f)
         {
-            serverAmbient.volume = Movement.volume * 0.6f;
+            outsideAmbience.volume = Movement.volume * 0.2f;
+            serverAmbient.volume = Movement.volume * 0.8f;
             serverProcessing.volume = Movement.volume;
+            serverScanning.volume = Movement.volume;
 
             if (beepsEnabled) //Beep randomness
             {
@@ -155,9 +161,9 @@ public class AudioHandler : MonoBehaviour
                 }
             }
 
-            if(outsideNoises.isPlaying == false && Random.Range(0f,1.0f) < 0.00005f) //Outside Ambience randomness.
+            if(outsideNoises.isPlaying == false && Random.Range(0, 1000) == 69) //Outside noises randomness.
             {
-                if(Random.Range(0f,1.0f) < 0.01f) //Check for rare audio cue. default 0.01f
+                if(Random.Range(0,100) == 69) //Check for rare audio cue. default 0.01f
                 {
                     outsideNoises.clip = rareOutsideAudio[Random.Range(0, rareOutsideAudio.Count)];
                     outsideNoises.volume = Mathf.Min(1.0f * Movement.volume,1.0f);
