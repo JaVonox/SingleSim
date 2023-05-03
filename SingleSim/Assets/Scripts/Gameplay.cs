@@ -143,8 +143,13 @@ public class Gameplay : MonoBehaviour
     {
         return alienSprites[imageID];
     }
+
+    public static string scannerState = "idle";
+    public static string decoderState = "idle";
     public void SetScannerState(string state)
     {
+        scannerState = state;
+
         switch (state)
         {
             case "idle":
@@ -160,9 +165,13 @@ public class Gameplay : MonoBehaviour
                 Debug.LogError("Invalid scanner state");
                 break;
         }
+
+        AudioHandler.CallNewAudioState();
     }
     public void SetDecoderState(string state)
     {
+        decoderState = state;
+
         switch (state)
         {
             case "idle":
@@ -178,6 +187,9 @@ public class Gameplay : MonoBehaviour
                 Debug.LogError("Invalid decoder state");
                 break;
         }
+
+        AudioHandler.CallNewAudioState();
+
     }
     public static void MatchAliens(Alien sender1, Alien sender2)
     {
