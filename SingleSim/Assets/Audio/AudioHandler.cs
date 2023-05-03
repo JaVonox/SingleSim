@@ -14,6 +14,11 @@ public class AudioHandler : MonoBehaviour
     public AudioSource serverProcessing;
     public AudioSource serverBeep;
 
+
+    public AudioSource outsideAmbientSource;
+    public List<AudioClip> commonOutsideAudio;
+    public List<AudioClip> rareOutsideAudio;
+
     private float dtTime;
 
     private static ServerAudioState currentState;
@@ -80,16 +85,34 @@ public class AudioHandler : MonoBehaviour
 
         dtTime += Time.deltaTime;
 
-        if(beepsEnabled)
+        if (dtTime > 0.1f)
         {
-            if (dtTime > 0.1f)
+            if (beepsEnabled) //Beep randomness
             {
                 if (Random.Range(0.001f, 1.0f) < 0.1f)
                 {
                     serverBeep.Play();
                 }
-                dtTime = 0;
             }
+
+            if(outsideAmbientSource.isPlaying == false && Random.Range(0f,1.0f) < 0.001f) //Outside Ambience randomness. default 0.001f
+            {
+                if(Random.Range(0f,1.0f) < 0.01f) //Check for rare audio cue. default 0.01f
+                {
+                    outsideAmbientSource.clip = rareOutsideAudio[Random.Range(0, rareOutsideAudio.Count)];
+                    outsideAmbientSource.volume = Random.Range(0.1f, 0.5f);
+                    outsideAmbientSource.Play();
+                }
+                else
+                {
+                    outsideAmbientSource.clip = commonOutsideAudio[Random.Range(0, commonOutsideAudio.Count)];
+                    outsideAmbientSource.volume = Random.Range(0.1f, 0.5f);
+                    outsideAmbientSource.Play();
+                }
+            }
+
+            dtTime = 0;
         }
+
     }
 }

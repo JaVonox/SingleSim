@@ -189,7 +189,6 @@ public class Gameplay : MonoBehaviour
         }
 
         AudioHandler.CallNewAudioState();
-
     }
     public static void MatchAliens(Alien sender1, Alien sender2)
     {
