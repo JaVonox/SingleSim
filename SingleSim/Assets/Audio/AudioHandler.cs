@@ -15,7 +15,7 @@ public class AudioHandler : MonoBehaviour
     public AudioSource serverBeep;
 
 
-    public AudioSource outsideAmbientSource;
+    public AudioSource outsideNoises;
     public List<AudioClip> commonOutsideAudio;
     public List<AudioClip> rareOutsideAudio;
 
@@ -75,39 +75,99 @@ public class AudioHandler : MonoBehaviour
     }
     void Start()
     {
+        normalSoundRefs.Add("crow1", 0);
+        normalSoundRefs.Add("crow2", 1);
 
+        weirdSoundRefs.Add("weird1", 0);
+        weirdSoundRefs.Add("weird2", 1);
     }
 
+    private static bool forcePlay = false;
+    private static string forcedSound = "";
+    private static float forcedVolume = 0f;
+    private static Dictionary<string, int> normalSoundRefs = new Dictionary<string, int>();
+    private static Dictionary<string, int> weirdSoundRefs = new Dictionary<string, int>();
+    public static bool ConsolePlaySound(string soundName, float volume)
+    {
+        if(normalSoundRefs.ContainsKey(soundName) || weirdSoundRefs.ContainsKey(soundName))
+        {
+            forcePlay = true;
+            forcedSound = soundName;
+            forcedVolume = volume;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void ConsoleSoundPlayer()
+    {
+        outsideNoises.Stop();
+        int soundID = -1;
+        bool isNormal = true;
+
+        if (normalSoundRefs.ContainsKey(forcedSound)) { soundID = normalSoundRefs[forcedSound]; isNormal = true; }
+        else if (weirdSoundRefs.ContainsKey(forcedSound)) { soundID = weirdSoundRefs[forcedSound]; isNormal = false; }
+        else { Debug.LogError("invalid sound requested"); }
+
+        if(isNormal)
+        {
+            outsideNoises.clip = commonOutsideAudio[soundID];
+            outsideNoises.volume = Mathf.Min(forcedVolume * Movement.volume,1.0f);
+            outsideNoises.Play();
+        }
+        else
+        {
+            outsideNoises.clip = rareOutsideAudio[soundID];
+            outsideNoises.volume = Mathf.Min(forcedVolume * Movement.volume,1.0f);
+            outsideNoises.Play();
+        }
+
+        forcePlay = false;
+        forcedSound = "";
+        forcedVolume = 0;
+    }
     // Update is called once per frame
     void Update()
     {
         if (needsUpdate) { UpdateAudio(); } //When an audio source update is requested, force an update
 
+        if (forcePlay) //console command to force play a sound
+        {
+            ConsoleSoundPlayer();
+        }
+
         dtTime += Time.deltaTime;
 
         if (dtTime > 0.1f)
         {
+            serverAmbient.volume = Movement.volume * 0.6f;
+            serverProcessing.volume = Movement.volume;
+
             if (beepsEnabled) //Beep randomness
             {
                 if (Random.Range(0.001f, 1.0f) < 0.1f)
                 {
+                    serverBeep.volume = Movement.volume * 0.2f;
                     serverBeep.Play();
                 }
             }
 
-            if(outsideAmbientSource.isPlaying == false && Random.Range(0f,1.0f) < 0.001f) //Outside Ambience randomness. default 0.001f
+            if(outsideNoises.isPlaying == false && Random.Range(0f,1.0f) < 0.00005f) //Outside Ambience randomness.
             {
                 if(Random.Range(0f,1.0f) < 0.01f) //Check for rare audio cue. default 0.01f
                 {
-                    outsideAmbientSource.clip = rareOutsideAudio[Random.Range(0, rareOutsideAudio.Count)];
-                    outsideAmbientSource.volume = Random.Range(0.1f, 0.5f);
-                    outsideAmbientSource.Play();
+                    outsideNoises.clip = rareOutsideAudio[Random.Range(0, rareOutsideAudio.Count)];
+                    outsideNoises.volume = Mathf.Min(1.0f * Movement.volume,1.0f);
+                    outsideNoises.Play();
                 }
                 else
                 {
-                    outsideAmbientSource.clip = commonOutsideAudio[Random.Range(0, commonOutsideAudio.Count)];
-                    outsideAmbientSource.volume = Random.Range(0.1f, 0.5f);
-                    outsideAmbientSource.Play();
+                    outsideNoises.clip = commonOutsideAudio[Random.Range(0, commonOutsideAudio.Count)];
+                    outsideNoises.volume = Mathf.Min(Random.Range(0.1f, 1.0f) * Movement.volume, 1.0f);
+                    outsideNoises.Play();
                 }
             }
 

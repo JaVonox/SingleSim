@@ -20,7 +20,8 @@ public class LaptopConsole
         consoleCommands.Add("Debug.Peek", (false, (args) => DebugPeekAlien(args)));
         consoleCommands.Add("Debug.Decode", (false, (args) => DebugFinishDecode(args)));
         consoleCommands.Add("Debug.xray", (false, (args) => DebugSeeCommands(args)));
-        consoleCommands.Add("Debug.swarm", (false, (args) => DebugSwarmSignals(args))); ;
+        consoleCommands.Add("Debug.swarm", (false, (args) => DebugSwarmSignals(args)));
+        consoleCommands.Add("Debug.noise", (false, (args) => DebugPlaySound(args)));
     }
     public static void ReloadConsole(ref TMPro.TextMeshProUGUI consoleObject)
     {
@@ -134,6 +135,30 @@ public class LaptopConsole
         else
         {
             consoleStorage.Enqueue("<color=#B80e20>Invalid signal count: " + args[0] + "</color>");
+        }
+    }
+
+    private static void DebugPlaySound(string[] args)
+    {
+        float reqVolume;
+        if (args.Length < 2) { consoleStorage.Enqueue("<color=#B80e20>Sound player requires two arguments: soundbyte name and float volume</color>"); }
+        else
+        {
+            if (float.TryParse(args[1], out reqVolume))
+            {
+                if (AudioHandler.ConsolePlaySound(args[0], reqVolume))
+                {
+                    consoleStorage.Enqueue("<color=#FFFFFF>Playing soundbyte " + args[0] + "</color>");
+                }
+                else
+                {
+                    consoleStorage.Enqueue("<color=#B80e20>Invalid soundbyte " + args[0] + "</color>");
+                }
+            }
+            else
+            {
+                consoleStorage.Enqueue("<color=#B80e20>Invalid volume " + args[1] + "</color>");
+            }
         }
     }
 }
