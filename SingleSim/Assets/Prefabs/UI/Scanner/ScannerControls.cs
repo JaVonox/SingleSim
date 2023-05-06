@@ -92,6 +92,7 @@ public class ScannerControls : MonoBehaviour
         }
     void Update()
     {
+        if(Input.mouseScrollDelta.y != 0) { ScrollHandler(Input.mouseScrollDelta.y); }
         progSlider.value = Gameplay.scanProg; //Update the value of the scan progress slider
         Gameplay.lastLoadedHz = int.Parse(hundredsText.text) * 100 + int.Parse(tensText.text) * 10 + int.Parse(onesText.text); //Constantly update hz value stored
 
@@ -137,6 +138,17 @@ public class ScannerControls : MonoBehaviour
         if(startScan.interactable == false && Gameplay.scanProg == -1) { startScan.interactable = true; }
     }
 
+    void ScrollHandler(float yIn)
+    {
+        int cVal = int.Parse(hundredsText.text) * 100 + int.Parse(tensText.text) * 10 + int.Parse(onesText.text);
+        int updatedFreq = Mathf.Clamp(cVal + Mathf.CeilToInt(yIn),0,999);
+
+        string hzString = updatedFreq.ToString();
+        hundredsText.text = hzString[0].ToString();
+        tensText.text = hzString[1].ToString();
+        onesText.text = hzString[2].ToString();
+    }
+
     void SetupScanSpotGameobject()
     {
         int currentFreq = int.Parse(Gameplay.lastSentHz.ToString());
@@ -156,7 +168,7 @@ public class ScannerControls : MonoBehaviour
             {
                 if (offset > Gameplay.signalReadingRange) //If the signal is outside the range atwhich signal reading can occur
                 {
-                    float offsetRange = (float)offset / 750.0f;
+                    float offsetRange = (float)offset / 200.0f;
                     scanInteract.gameObject.GetComponent<Image>().color = Color.Lerp(new Color(0.12f, 0.72f, 0.05f, 1), new Color(0.72f, 0.05f, 0.12f, 1), offsetRange);
                     scanInteract.interactable = false;
                 }

@@ -27,7 +27,7 @@ public class Gameplay : MonoBehaviour
     public static float textSpeed = 4;
     public static float textDisplayChance = 1; //Chance that the text will properly display. currently dummied, used to be 0.925f
 
-    public static float signalReadingRange = 50; //Range at which a signal can be loaded into the decoder
+    public static float signalReadingRange = 30; //Range at which a signal can be loaded into the decoder
 
     public GameObject scannerObject;
     public List<Sprite> scannerSpriteStates;
@@ -260,7 +260,7 @@ public class Gameplay : MonoBehaviour
         ("Text Render Speed",4.0f,1.0f,0,50),
         ("Scanner Speed",0.05f,0.025f,0,40),
         ("Decoder Speed",1.0f,0.2f,0,40),
-        ("Frequency Range",50.0f,15.0f,0,60),
+        ("Frequency Range",30.0f,15.0f,0,60),
         ("Radar Strength",5.0f,1.0f,0,60)
         //("Signal Accuracy",0.925f,0.008f,0,10)
     };
@@ -361,8 +361,7 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     public Alien(System.Func<int,Sprite> spriteMethod)
     {
         imageID = Random.Range(0, Gameplay.alienSprites.Count); //Load a random image to represent the alien
-        baseDecodeSpeed = ((double)(Random.Range(1.0f, 11.0f)) / 2000.0) * Gameplay.decoderSpeedMultiplier; //Set random speed for decoding the signal
-        Debug.Log(baseDecodeSpeed * 2000.0);
+        baseDecodeSpeed = ((double)(Random.Range(2.0f, 6.0f)) / 2000.0) * Gameplay.decoderSpeedMultiplier; //Set random speed for decoding the signal
         retImageMethod = spriteMethod; //Attach the method that returns the sprite
 
         selfParams = new AlienStats(this);
