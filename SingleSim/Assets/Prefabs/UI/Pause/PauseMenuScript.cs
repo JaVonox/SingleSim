@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using UnityEngine.SceneManagement;
 enum PauseState
 {
     Default,
@@ -199,8 +200,9 @@ public class PauseMenuScript : MonoBehaviour
         restoreDefault.onClick.AddListener(() => RestoreDefaultSettings());
         cancel.onClick.AddListener(() => CancelChanges());
 
-        reallyExit.onClick.AddListener(() => Application.Quit());
+        reallyExit.onClick.AddListener(() => SceneManager.LoadScene("Title"));
         reallyCancel.onClick.AddListener(() => SwitchState(PauseState.Default));
+
     }
 
     void Update()

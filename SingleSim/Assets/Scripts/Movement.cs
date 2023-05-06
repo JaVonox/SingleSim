@@ -38,27 +38,6 @@ public class Movement : MonoBehaviour
     public static float volume = 0.5f;
     void Start()
     {
-        (int width, int height)[] playerResolutions = Screen.resolutions.OrderBy(x=>x.width).Reverse().Select(x=>(x.width,x.height)).ToArray();
-
-        bool hasSetResolution = false;
-
-        foreach((int width, int height) resolution in supportedResolutions)
-        {
-            if(playerResolutions.Contains(resolution))
-            {
-                Screen.SetResolution(resolution.width, resolution.height, true);
-                hasSetResolution = true;
-                break;
-            }
-        }
-
-        if(!hasSetResolution)
-        {
-            Debug.LogError("unrecognised resolution");
-            supportedResolutions.Insert(0, (Screen.currentResolution.width, Screen.currentResolution.height)); //Adds resolution to list at 0th position
-        }
-
-        defaultScreenRes = (Screen.width, Screen.height);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
