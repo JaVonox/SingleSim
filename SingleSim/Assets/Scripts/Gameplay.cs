@@ -38,8 +38,8 @@ public class Gameplay : MonoBehaviour
     public static List<Sprite> alienSprites;
 
     public static int credits = 0;
-    public static int lastLoadedHz = 300;
-    public static int lastSentHz = 300;
+    public static int lastLoadedHz = 255;
+    public static int lastSentHz = 255;
 
     public static Dictionary<System.Type, EnumMatrix> prefComparisons = new Dictionary<System.Type, EnumMatrix>(); //Matrices for the preferences vs actual grid
 
@@ -209,11 +209,11 @@ public class Gameplay : MonoBehaviour
     public static int GetCreditScore(Alien sender1,Alien sender2)
     {
         int creditsToAppend = 0;
-        //For each of the two aliens, get 10 * the multiplier and average between the two
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(BodyType),sender1,sender2) * 15.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(AgeType), sender1, sender2) * 15.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(OccupationType), sender1, sender2) * 15.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(GoalsType), sender1, sender2) * 15.0f);
+        //For each of the two aliens, get 15 * the multiplier and average between the two
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(BodyType),sender1,sender2) * 20.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(AgeType), sender1, sender2) * 10.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(OccupationType), sender1, sender2) * 10.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(GoalsType), sender1, sender2) * 20.0f);
 
         return creditsToAppend;
     }
@@ -258,8 +258,10 @@ public class Gameplay : MonoBehaviour
     public static List<(string name, float baseValue, float incrementValue, int upgradeLevel, int upgradeCost)> shopItems = new List<(string name, float baseValue, float incrementValue, int upgradeLevel, int upgradeCost)>() //Upgrade level is from 0 to 9
     {
         ("Text Render Speed",4.0f,1.0f,0,50),
-        ("Scanner Efficiency",0.05f,0.025f,0,20),
-        ("Decoder Efficiency",1.0f,0.2f,0,20),
+        ("Scanner Speed",0.05f,0.025f,0,40),
+        ("Decoder Speed",1.0f,0.2f,0,40),
+        ("Frequency Range",50.0f,15.0f,0,60),
+        ("Radar Strength",5.0f,1.0f,0,60)
         //("Signal Accuracy",0.925f,0.008f,0,10)
     };
     public static void UpgradeVariable(string varName)
@@ -275,14 +277,20 @@ public class Gameplay : MonoBehaviour
                 case "Text Render Speed":
                     textSpeed = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
                     break;
-                case "Scanner Efficiency":
+                case "Scanner Speed":
                     scanSpeed = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
                     break;
-                case "Decoder Efficiency":
+                case "Decoder Speed":
                     decoderSpeedMultiplier = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
                     break;
                 case "Signal Accuracy":
                     textDisplayChance = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
+                    break;
+                case "Frequency Range":
+                    signalReadingRange = Mathf.FloorToInt(shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel));
+                    break;
+                case "Radar Strength":
+                    numberOfScansSpots = Mathf.FloorToInt(shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel));
                     break;
                 default:
                     Debug.LogError("Invalid shop");
@@ -341,8 +349,8 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
 {
     public int imageID; //The image ID 
     public System.Func<int,Sprite> retImageMethod;
-    public float decoderProgress = -1;
-    public float baseDecodeSpeed = 0;
+    public double decoderProgress = -1;
+    public double baseDecodeSpeed = 0;
     public int decodeTextProg = -1;
     public string decodeTextMessage;
 
@@ -353,7 +361,8 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     public Alien(System.Func<int,Sprite> spriteMethod)
     {
         imageID = Random.Range(0, Gameplay.alienSprites.Count); //Load a random image to represent the alien
-        baseDecodeSpeed = Random.Range(0.001f, 0.01f) * Gameplay.decoderSpeedMultiplier; //Set random speed for decoding the signal
+        baseDecodeSpeed = ((double)(Random.Range(1.0f, 11.0f)) / 2000.0) * Gameplay.decoderSpeedMultiplier; //Set random speed for decoding the signal
+        Debug.Log(baseDecodeSpeed * 2000.0);
         retImageMethod = spriteMethod; //Attach the method that returns the sprite
 
         selfParams = new AlienStats(this);

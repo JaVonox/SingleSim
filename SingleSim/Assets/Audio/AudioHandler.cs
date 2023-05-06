@@ -6,7 +6,8 @@ public enum ServerAudioState
 {
     AmbientFan,
     Scanner,
-    Decoding
+    Decoding,
+    ScanAndDecode,
 }
 public class AudioHandler : MonoBehaviour
 {
@@ -33,7 +34,12 @@ public class AudioHandler : MonoBehaviour
             currentState = ServerAudioState.AmbientFan;
             needsUpdate = true;
         }
-        else if(Gameplay.scannerState == "scanning" && Gameplay.decoderState != "decoding")
+        else if(Gameplay.scannerState == "scanning" && Gameplay.decoderState == "decoding")
+        {
+            currentState = ServerAudioState.ScanAndDecode;
+            needsUpdate = true;
+        }
+        else if(Gameplay.scannerState == "scanning")
         {
             currentState = ServerAudioState.Scanner;
             needsUpdate = true;
@@ -66,6 +72,13 @@ public class AudioHandler : MonoBehaviour
                 serverAmbient.enabled = true;
                 serverProcessing.enabled = true;
                 serverScanning.enabled = false;
+                serverBeep.enabled = true;
+                beepsEnabled = true;
+                break;
+            case ServerAudioState.ScanAndDecode:
+                serverAmbient.enabled = true;
+                serverProcessing.enabled = true;
+                serverScanning.enabled = true;
                 serverBeep.enabled = true;
                 beepsEnabled = true;
                 break;
@@ -149,14 +162,14 @@ public class AudioHandler : MonoBehaviour
         {
             outsideAmbience.volume = Movement.volume * 0.2f;
             serverAmbient.volume = Movement.volume * 0.8f;
-            serverProcessing.volume = Movement.volume;
+            serverProcessing.volume = Movement.volume * 0.8f;
             serverScanning.volume = Movement.volume;
 
             if (beepsEnabled) //Beep randomness
             {
                 if (Random.Range(0.001f, 1.0f) < 0.1f)
                 {
-                    serverBeep.volume = Movement.volume * 0.2f;
+                    serverBeep.volume = Movement.volume * 0.1f;
                     serverBeep.Play();
                 }
             }

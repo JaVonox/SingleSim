@@ -80,7 +80,8 @@ public class ScannerControls : MonoBehaviour
         if (Gameplay.scanProg == -1 && !Gameplay.scanSpotsAreAvailable)
         {
             scannerUploaded.GetComponentInChildren<Text>().text = "Scanner console active\n" +
-                "Press 'Perform Scan' to begin scanning for signals";
+                "Current expected signal reading range: +/- " + (Gameplay.signalReadingRange + Random.Range(0.001f, 0.8f)).ToString() + "MHz \n" +
+                "Press 'Perform Scan' to begin scanning for signals.";
             scannerUploaded.SetActive(true);
         }
         else

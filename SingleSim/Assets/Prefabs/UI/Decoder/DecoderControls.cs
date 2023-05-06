@@ -38,7 +38,7 @@ public class DecoderControls : MonoBehaviour
         }
         else
         {
-            progSlider.value = Gameplay.activeAlien.decoderProgress;
+            progSlider.value = (float)Gameplay.activeAlien.decoderProgress;
 
             updateTime += Time.deltaTime;
 
@@ -84,7 +84,7 @@ public class DecoderControls : MonoBehaviour
             DecoderUpdate();
 
             progSlider.gameObject.SetActive(true);
-            progSlider.value = Gameplay.activeAlien.decoderProgress;
+            progSlider.value = (float)Gameplay.activeAlien.decoderProgress;
 
             startDecode.gameObject.SetActive(true);
             uploadDecoded.gameObject.SetActive(true);
@@ -144,7 +144,7 @@ public class DecoderControls : MonoBehaviour
 
             alienImage.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
 
-            int stage = (int)Mathf.Round(Gameplay.activeAlien.decoderProgress / 0.25f) + 1; //0-5 stages
+            int stage = (int)Mathf.Round((float)Gameplay.activeAlien.decoderProgress / 0.25f) + 1; //0-5 stages
 
             int splitsTotal = (int)Mathf.Pow(4, stage); //Total number of splits
             int splitPerSide = (int)Mathf.Sqrt(splitsTotal);
