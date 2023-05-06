@@ -8,7 +8,7 @@ public class Gameplay : MonoBehaviour
     public static float scanSpeed = 0.05f; //How fast scanning occurs
     public static float decoderSpeedMultiplier = 1.0f;
     public static float scanProg = -1; //-1 for not started. locked to 0-1
-    public static List<(float x, float y)> scanCoords = new List<(float x, float y)>(); //Stores available positions of scan coordinates
+    public static List<Scanspot> scanCoords = new List<Scanspot>(); //Stores available positions of scan coordinates
     public static bool scanSpotsAreAvailable = false; //Bool says if there are available scan coordinates on screen
     public static int numberOfScansSpots = 5; //how many scan spots can appear at once
     public static (float xBound, float yBound) bounds; //Stores the boundaries of the scanSet
@@ -79,7 +79,7 @@ public class Gameplay : MonoBehaviour
 
                 for (int i = 0; i < numberOfScansSpots; i++) //Generate a new scan spot inside the bounds
                 {
-                    scanCoords.Add((Random.Range(10, bounds.xBound), Random.Range(10, bounds.yBound))); //Spawn in a new scanspot at random coordinates dictated by the boundaries of the map
+                    scanCoords.Add(new Scanspot(Random.Range(10, bounds.xBound), Random.Range(10, bounds.yBound),Random.Range(50,950))); //Spawn in a new scanspot at random coordinates dictated by the boundaries of the map
                 }
                 SetScannerState("finished");
                 scanSpotsAreAvailable = true;
@@ -306,6 +306,26 @@ public class Gameplay : MonoBehaviour
     public static float GetPrefComparisonMultiplier(System.Type enumType, string expectedValue, string actualValue)
     {
         return prefComparisons[enumType].GetComparisonValue(expectedValue, actualValue);
+    }
+
+}
+
+public class Scanspot
+{
+    public float x;
+    public float y;
+    public int freq; //The hz frequency of the signal
+
+    public Scanspot(float nx, float ny, int nhz)
+    {
+        x = nx;
+        y = ny;
+        freq = nhz;
+    }
+
+    public (float x, float y) GetCoordsTuple()
+    {
+        return (x, y);
     }
 
 }

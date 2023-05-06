@@ -163,7 +163,7 @@ public class AudioHandler : MonoBehaviour
 
             if(outsideNoises.isPlaying == false && Random.Range(0, 1000) == 69) //Outside noises randomness.
             {
-                if(Random.Range(0,100) == 69) //Check for rare audio cue. default 0.01f
+                if(Random.Range(0,200) == 69) //Check for rare audio cue
                 {
                     outsideNoises.clip = rareOutsideAudio[Random.Range(0, rareOutsideAudio.Count)];
                     outsideNoises.volume = Mathf.Min(1.0f * Movement.volume,1.0f);

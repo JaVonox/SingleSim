@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 public class ScannerControls : MonoBehaviour
 {
     public GameObject scannerHighlight;
@@ -11,8 +12,56 @@ public class ScannerControls : MonoBehaviour
     public GameObject scanSpot;
     public GameObject scannerUploaded; //Console for after the scan has been uploaded
     private List<GameObject> loadedScanSpots = new List<GameObject>();
+
+    public TextMeshProUGUI hundredsText;
+    public Button hundredsIncrement;
+    public Button hundredsDecrement;
+
+    public TextMeshProUGUI tensText;
+    public Button tensIncrement;
+    public Button tensDecrement;
+
+    public TextMeshProUGUI onesText;
+    public Button onesIncrement;
+    public Button onesDecrement;
+
+    private Dictionary<Button, (TextMeshProUGUI modifiableObject, bool IsPositive)> btnToModifier = new Dictionary<Button, (TextMeshProUGUI modifiableObject, bool IsPositive)>();
+
+    void AddDigitsListeners()
+    {
+        //Add in references in dictionary
+        btnToModifier.Add(hundredsIncrement, (hundredsText,true));
+        hundredsIncrement.onClick.AddListener(() => ChangeDigit(hundredsIncrement));
+        btnToModifier.Add(hundredsDecrement, (hundredsText, false));
+        hundredsDecrement.onClick.AddListener(() => ChangeDigit(hundredsDecrement));
+        btnToModifier.Add(tensIncrement, (tensText, true));
+        tensIncrement.onClick.AddListener(() => ChangeDigit(tensIncrement));
+        btnToModifier.Add(tensDecrement, (tensText, false));
+        tensDecrement.onClick.AddListener(() => ChangeDigit(tensDecrement));
+        btnToModifier.Add(onesIncrement, (onesText, true));
+        onesIncrement.onClick.AddListener(() => ChangeDigit(onesIncrement));
+        btnToModifier.Add(onesDecrement, (onesText, false));
+        onesDecrement.onClick.AddListener(() => ChangeDigit(onesDecrement));
+    }
+
+    void ChangeDigit(Button sender)
+    {
+        int newDigitVal = int.Parse(btnToModifier[sender].modifiableObject.text);
+
+        if(btnToModifier[sender].IsPositive) //If an increment button is pressed
+        {
+            newDigitVal = newDigitVal == 9 ? newDigitVal = 0 : newDigitVal += 1;
+        }
+        else
+        {
+            newDigitVal = newDigitVal == 0 ? newDigitVal = 9 : newDigitVal -= 1;
+        }
+
+        btnToModifier[sender].modifiableObject.text = newDigitVal.ToString();
+    }
     void Start()
     {
+        AddDigitsListeners();
         //Make button activate the scanning - unless it has already started
         if (Gameplay.scanProg != -1) { startScan.interactable = false; }
         startScan.onClick.AddListener(() => BeginScanMode());
@@ -42,14 +91,14 @@ public class ScannerControls : MonoBehaviour
         if(Gameplay.scanSpotsAreAvailable && mapSpotsPanel.transform.childCount == 0) //If there are scan spots to be spawned and none currently on the map
         {
             int i = 0; //spotID counter
-            foreach((float x, float y) posScanSpot in Gameplay.scanCoords)
+            foreach(Scanspot posScanSpot in Gameplay.scanCoords)
             {
                 GameObject newScan = Instantiate(scanSpot,mapSpotsPanel.transform,false);
                 Vector3 newPos = new Vector3((-Gameplay.bounds.xBound / 2) + posScanSpot.x, (Gameplay.bounds.yBound / 2) - posScanSpot.y, 0); //Position isnt perfect but its close
                 newScan.transform.Translate(newPos);
                 newScan.name = "ScanSpot_" + i;
                 newScan.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
-                newScan.GetComponentInChildren<Button>().onClick.AddListener(() => SelectScanSpot(newScan, posScanSpot));
+                newScan.GetComponentInChildren<Button>().onClick.AddListener(() => SelectScanSpot(newScan, posScanSpot.GetCoordsTuple()));
                 loadedScanSpots.Add(newScan);
                 i++;
             }
