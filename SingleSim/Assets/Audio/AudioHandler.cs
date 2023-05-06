@@ -161,7 +161,7 @@ public class AudioHandler : MonoBehaviour
                 }
             }
 
-            if(outsideNoises.isPlaying == false && Random.Range(0, 1000) == 69) //Outside noises randomness.
+            if(outsideNoises.isPlaying == false && Random.Range(0, 2000) == 69) //Outside noises randomness.
             {
                 if(Random.Range(0,200) == 69) //Check for rare audio cue
                 {

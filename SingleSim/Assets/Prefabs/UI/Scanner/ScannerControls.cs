@@ -27,7 +27,7 @@ public class ScannerControls : MonoBehaviour
 
     private Dictionary<Button, (TextMeshProUGUI modifiableObject, bool IsPositive)> btnToModifier = new Dictionary<Button, (TextMeshProUGUI modifiableObject, bool IsPositive)>();
 
-    void AddDigitsListeners()
+    void SetupDigits()
     {
         //Add in references in dictionary
         btnToModifier.Add(hundredsIncrement, (hundredsText,true));
@@ -42,6 +42,11 @@ public class ScannerControls : MonoBehaviour
         onesIncrement.onClick.AddListener(() => ChangeDigit(onesIncrement));
         btnToModifier.Add(onesDecrement, (onesText, false));
         onesDecrement.onClick.AddListener(() => ChangeDigit(onesDecrement));
+
+        string hzString = Gameplay.lastLoadedHz.ToString();
+        hundredsText.text = hzString[0].ToString();
+        tensText.text = hzString[1].ToString();
+        onesText.text = hzString[2].ToString();
     }
 
     void ChangeDigit(Button sender)
@@ -61,7 +66,7 @@ public class ScannerControls : MonoBehaviour
     }
     void Start()
     {
-        AddDigitsListeners();
+        SetupDigits();
         //Make button activate the scanning - unless it has already started
         if (Gameplay.scanProg != -1) { startScan.interactable = false; }
         startScan.onClick.AddListener(() => BeginScanMode());
@@ -87,20 +92,34 @@ public class ScannerControls : MonoBehaviour
     void Update()
     {
         progSlider.value = Gameplay.scanProg; //Update the value of the scan progress slider
+        Gameplay.lastLoadedHz = int.Parse(hundredsText.text) * 100 + int.Parse(tensText.text) * 10 + int.Parse(onesText.text); //Constantly update hz value stored
 
-        if(Gameplay.scanSpotsAreAvailable && mapSpotsPanel.transform.childCount == 0) //If there are scan spots to be spawned and none currently on the map
+        if (Gameplay.scanSpotsAreAvailable && mapSpotsPanel.transform.childCount == 0) //If there are scan spots to be spawned and none currently on the map
         {
             int i = 0; //spotID counter
             foreach(Scanspot posScanSpot in Gameplay.scanCoords)
             {
                 GameObject newScan = Instantiate(scanSpot,mapSpotsPanel.transform,false);
+                Button scanInteract = newScan.GetComponentInChildren<Button>();
+
                 Vector3 newPos = new Vector3((-Gameplay.bounds.xBound / 2) + posScanSpot.x, (Gameplay.bounds.yBound / 2) - posScanSpot.y, 0); //Position isnt perfect but its close
                 newScan.transform.Translate(newPos);
                 newScan.name = "ScanSpot_" + i;
-                newScan.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
-                newScan.GetComponentInChildren<Button>().onClick.AddListener(() => SelectScanSpot(newScan, posScanSpot.GetCoordsTuple()));
+
+                scanInteract.onClick.RemoveAllListeners();
+                scanInteract.onClick.AddListener(() => SelectScanSpot(newScan, posScanSpot.GetCoordsTuple()));
+
                 loadedScanSpots.Add(newScan);
+                SetupScanSpotGameobject();
                 i++;
+            }
+        }
+
+        if(Gameplay.scanProg == -1 && loadedScanSpots.Count > 0) //When the scan finishes, reenable all buttons
+        {
+            if (loadedScanSpots[0].GetComponentInChildren<Button>().interactable == false)
+            {
+                SetupScanSpotGameobject();
             }
         }
 
@@ -116,6 +135,39 @@ public class ScannerControls : MonoBehaviour
 
         if(startScan.interactable == false && Gameplay.scanProg == -1) { startScan.interactable = true; }
     }
+
+    void SetupScanSpotGameobject()
+    {
+        int currentFreq = int.Parse(Gameplay.lastSentHz.ToString());
+        int i = 0;
+        foreach (GameObject scanspot in loadedScanSpots)
+        {
+            Button scanInteract = scanspot.GetComponentInChildren<Button>();
+
+            int offset = Mathf.Abs(Gameplay.scanCoords[i].freq - currentFreq); //The abs distance from the frequence of the scanspot
+
+            if (Gameplay.scanProg != -1) //If a scan is in progress, remove the interaction until it is done
+            {
+                scanInteract.interactable = false;
+                scanInteract.gameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+            }
+            else
+            {
+                if (offset > Gameplay.signalReadingRange) //If the signal is outside the range atwhich signal reading can occur
+                {
+                    float offsetRange = (float)offset / 750.0f;
+                    scanInteract.gameObject.GetComponent<Image>().color = Color.Lerp(new Color(0.12f, 0.72f, 0.05f, 1), new Color(0.72f, 0.05f, 0.12f, 1), offsetRange);
+                    scanInteract.interactable = false;
+                }
+                else
+                {
+                    scanInteract.gameObject.GetComponent<Image>().color = new Color(0.12f, 0.72f, 0.05f, 1);
+                    scanInteract.interactable = true;
+                }
+            }
+            i++;
+        }
+    }
     void BeginScanMode()
     {
         if(scannerUploaded.activeSelf == true) { scannerUploaded.SetActive(false); Gameplay.scannerConsolePopupEnabled = false; }
@@ -123,8 +175,8 @@ public class ScannerControls : MonoBehaviour
         Gameplay.scanProg = 0;
         Gameplay.currentScanTextPos = -1;
         Gameplay.textTime = 0;
-        Gameplay.scanSpotsAreAvailable = false;
-        Gameplay.scanCoords.Clear();
+        Gameplay.lastSentHz = Gameplay.lastLoadedHz; //Load in the last hz recorded to be sent as the scan
+
         if(mapSpotsPanel.transform.childCount > 0) //Unload all scan spots
         {
             foreach (Transform child in mapSpotsPanel.transform)

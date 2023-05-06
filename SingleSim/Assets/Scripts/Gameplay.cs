@@ -27,6 +27,8 @@ public class Gameplay : MonoBehaviour
     public static float textSpeed = 4;
     public static float textDisplayChance = 1; //Chance that the text will properly display. currently dummied, used to be 0.925f
 
+    public static float signalReadingRange = 50; //Range at which a signal can be loaded into the decoder
+
     public GameObject scannerObject;
     public List<Sprite> scannerSpriteStates;
     public GameObject decoderObject;
@@ -36,6 +38,8 @@ public class Gameplay : MonoBehaviour
     public static List<Sprite> alienSprites;
 
     public static int credits = 0;
+    public static int lastLoadedHz = 300;
+    public static int lastSentHz = 300;
 
     public static Dictionary<System.Type, EnumMatrix> prefComparisons = new Dictionary<System.Type, EnumMatrix>(); //Matrices for the preferences vs actual grid
 
@@ -77,9 +81,13 @@ public class Gameplay : MonoBehaviour
             {
                 scanProg = -1; //Reset scanner
 
-                for (int i = 0; i < numberOfScansSpots; i++) //Generate a new scan spot inside the bounds
+                if (!scanSpotsAreAvailable) //If there are not already available scanspots, generate new ones
                 {
-                    scanCoords.Add(new Scanspot(Random.Range(10, bounds.xBound), Random.Range(10, bounds.yBound),Random.Range(50,950))); //Spawn in a new scanspot at random coordinates dictated by the boundaries of the map
+                    for (int i = 0; i < numberOfScansSpots; i++) //Generate a new scan spot inside the bounds
+                    {
+                        scanCoords.Add(new Scanspot(Random.Range(10, bounds.xBound), Random.Range(10, bounds.yBound), Random.Range(50, 950))); //Spawn in a new scanspot at random coordinates dictated by the boundaries of the map
+                    }
+
                 }
                 SetScannerState("finished");
                 scanSpotsAreAvailable = true;
