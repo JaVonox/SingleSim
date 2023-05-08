@@ -286,8 +286,8 @@ public class Gameplay : MonoBehaviour
         ("Text Render Speed",4.0f,1.0f,0,50),
         ("Scanner Speed",0.05f,0.025f,0,40),
         ("Decoder Speed",1.0f,0.2f,0,40),
-        ("Frequency Range",30.0f,15.0f,0,60),
-        ("Radar Strength",5.0f,1.0f,0,60)
+        ("Frequency Range",30.0f,10.0f,0,60),
+        ("Radar Strength",5.0f,0.5f,0,60)
         //("Signal Accuracy",0.925f,0.008f,0,10)
     };
     public static void UpgradeVariable(string varName)

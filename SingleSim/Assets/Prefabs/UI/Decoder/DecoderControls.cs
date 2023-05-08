@@ -17,6 +17,7 @@ public class DecoderControls : MonoBehaviour
     private bool isLoaded = false;
 
     private float updateTime = 0.2f;
+    private float imageTime = 5.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,11 +41,18 @@ public class DecoderControls : MonoBehaviour
         {
             progSlider.value = (float)Gameplay.activeAlien.decoderProgress;
 
-            updateTime += Time.deltaTime;
+            float newDT = Time.deltaTime;
+            updateTime += newDT;
+            imageTime += newDT;
+
+            if(imageTime >= 1.5f)
+            {
+                DecoderUpdate();
+                imageTime = 0.0f;
+            }
 
             if(updateTime >= 0.2f)
             {
-                DecoderUpdate();
                 updateTime = 0;
 
                 if(Gameplay.activeAlien.decoderProgress >= 1)
@@ -166,6 +174,11 @@ public class DecoderControls : MonoBehaviour
 
                     Color locColour = alienImgTexture.GetPixel((int)Mathf.Floor(widthPerSplit * (x - 1)), (int)Mathf.Floor(alienImgTexture.height - heightPerSplit * (y - 1))); //Get colour at top left of split
 
+                    int staticNum = Random.Range(0, 15);
+
+                    if (staticNum == 5 || staticNum == 4 || staticNum == 3) { locColour = Color.black; }
+                    else if(staticNum == 6) { locColour = Color.grey; }
+                    else if(staticNum == 7) { locColour = Color.white; }
                     //Set colour for image
 
                     newSplit.GetComponentInChildren<Image>().color = new Color32((byte)Mathf.Floor(locColour.r * 255), (byte)Mathf.Floor(locColour.g * 255), (byte)Mathf.Floor(locColour.b * 255), 255);
