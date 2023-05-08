@@ -23,13 +23,12 @@ public class TitleScreenScripts : MonoBehaviour
     private bool chestRise = true;
     private float breathTime = 0;
 
-    private float dTime = 0;
+    private float dTime = -1.0f;
     // Start is called before the first frame update
     void Start()
     {
         cameraStartVec = mainCamera.transform.position;
         chestRiseVec = new Vector3(cameraStartVec.x, cameraStartVec.y + chestRiseHeight, cameraStartVec.z);
-        Debug.Log(cameraStartVec.y);
         startupAudio.Play();
         startupAudio.volume = 0.3f * Movement.volume;
         continualAudio.volume = 0.3f * Movement.volume;
@@ -58,6 +57,8 @@ public class TitleScreenScripts : MonoBehaviour
         }
 
         Movement.defaultScreenRes = (Screen.width, Screen.height);
+
+        Application.targetFrameRate = 120;
 
     }
 

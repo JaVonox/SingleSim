@@ -34,8 +34,14 @@ public class Gameplay : MonoBehaviour
     public GameObject decoderObject;
     public List<Sprite> decoderSpriteStates;
 
-    public List<Sprite> alienSpritesToLoad; //Non static field to import the sprites and load them into the static loaded
-    public static List<Sprite> alienSprites;
+    public List<Sprite> humanoidSpritesToLoad; //Non static field to import the sprites and load them into the static loaded
+    public List<Sprite> robotSpritesToLoad; 
+    public List<Sprite> cephSpritesToLoad; 
+    public List<Sprite> insectSpritesToLoad; 
+    public static List<Sprite> humanSprites;
+    public static List<Sprite> robotSprites;
+    public static List<Sprite> cephSprites;
+    public static List<Sprite> insectSprites;
 
     public static int credits = 0;
     public static int lastLoadedHz = 255;
@@ -54,8 +60,15 @@ public class Gameplay : MonoBehaviour
 
         LoadedMessages = FileLoading.GetMessages();
         //Load alien sprites into static space to allow access from methods
-        alienSprites = alienSpritesToLoad.GetRange(0, alienSpritesToLoad.Count);
-        alienSpritesToLoad.Clear();
+        humanSprites = humanoidSpritesToLoad.GetRange(0, humanoidSpritesToLoad.Count);
+        robotSprites = robotSpritesToLoad.GetRange(0, robotSpritesToLoad.Count);
+        cephSprites = cephSpritesToLoad.GetRange(0, cephSpritesToLoad.Count);
+        insectSprites = insectSpritesToLoad.GetRange(0, insectSpritesToLoad.Count);
+
+        humanoidSpritesToLoad.Clear();
+        robotSpritesToLoad.Clear();
+        cephSpritesToLoad.Clear();
+        insectSpritesToLoad.Clear();
 
         LaptopConsole.FirstConsoleLoad();
         SetScannerState("idle");
@@ -147,9 +160,22 @@ public class Gameplay : MonoBehaviour
     {
         activeAlien = new Alien(ReturnImage);
     }
-    public static Sprite ReturnImage(int imageID)
+    public static Sprite ReturnImage(int imageID,BodyType bodyType)
     {
-        return alienSprites[imageID];
+        switch(bodyType)
+        {
+            case BodyType.humanoid:
+                return humanSprites[imageID];
+            case BodyType.automaton:
+                return robotSprites[imageID];
+            case BodyType.cephalopod:
+                return cephSprites[imageID];
+            case BodyType.insectoid:
+                return insectSprites[imageID];
+            default:
+                Debug.LogError("Invalid sprite type");
+                return humanSprites[0];
+        }
     }
 
     public static string scannerState = "idle";
@@ -348,7 +374,7 @@ public class Scanspot
 public class Alien //The alien generated when a scanspot is selected. Information is decoded using the signal decoder
 {
     public int imageID; //The image ID 
-    public System.Func<int,Sprite> retImageMethod;
+    public System.Func<int, BodyType,Sprite> retImageMethod;
     public double decoderProgress = -1;
     public double baseDecodeSpeed = 0;
     public int decodeTextProg = -1;
@@ -358,13 +384,19 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     public AlienStats preferenceParams; //The preferred stats of an alien
 
     public string signalName;
-    public Alien(System.Func<int,Sprite> spriteMethod)
+    public Alien(System.Func<int, BodyType, Sprite> spriteMethod)
     {
-        imageID = Random.Range(0, Gameplay.alienSprites.Count); //Load a random image to represent the alien
         baseDecodeSpeed = ((double)(Random.Range(2.0f, 6.0f)) / 2000.0) * Gameplay.decoderSpeedMultiplier; //Set random speed for decoding the signal
         retImageMethod = spriteMethod; //Attach the method that returns the sprite
 
         selfParams = new AlienStats(this);
+
+        //Load a random image to represent the alien
+        if (selfParams.body == BodyType.humanoid) { imageID = Random.Range(0, Gameplay.humanSprites.Count); }
+        else if (selfParams.body == BodyType.automaton) { imageID = Random.Range(0, Gameplay.robotSprites.Count); }
+        else if (selfParams.body == BodyType.cephalopod) { imageID = Random.Range(0, Gameplay.cephSprites.Count); }
+        else if (selfParams.body == BodyType.insectoid) { imageID = Random.Range(0, Gameplay.insectSprites.Count); }
+
         preferenceParams = new AlienStats(ref selfParams);
 
         decodeTextMessage = GenerateText();
@@ -391,7 +423,7 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     }
     public Sprite ReturnImage()
     {
-        return retImageMethod(imageID);
+        return retImageMethod(imageID,selfParams.body);
     }
     public string GenerateText()
     {
