@@ -13,9 +13,23 @@ public class TitleScreenScripts : MonoBehaviour
 
     public AudioSource startupAudio;
     public AudioSource continualAudio;
+
+    public Camera mainCamera;
+
+    //Breathing variables
+    private Vector3 cameraStartVec;
+    private Vector3 chestRiseVec;
+    private const float chestRiseHeight = 0.3f;
+    private bool chestRise = true;
+    private float breathTime = 0;
+
+    private float dTime = 0;
     // Start is called before the first frame update
     void Start()
     {
+        cameraStartVec = mainCamera.transform.position;
+        chestRiseVec = new Vector3(cameraStartVec.x, cameraStartVec.y + chestRiseHeight, cameraStartVec.z);
+        Debug.Log(cameraStartVec.y);
         startupAudio.Play();
         startupAudio.volume = 0.3f * Movement.volume;
         continualAudio.volume = 0.3f * Movement.volume;
@@ -57,6 +71,35 @@ public class TitleScreenScripts : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        dTime += Time.deltaTime;
+
+        //Need one breath cycle to finish over 5 seconds period?
+        if(dTime >= 0.05f)
+        {
+            breathTime += dTime;
+            if(mainCamera.transform.position.y <= cameraStartVec.y && !chestRise)
+            {
+                mainCamera.transform.position = cameraStartVec;
+                breathTime = 0;
+                chestRise = true;
+            }
+            else if(mainCamera.transform.position.y >= chestRiseVec.y && chestRise)
+            {
+                mainCamera.transform.position = cameraStartVec;
+                breathTime = 0;
+                chestRise = false;
+            }
+
+            if(chestRise)
+            {
+                mainCamera.transform.position = Vector3.Lerp(cameraStartVec, chestRiseVec, breathTime / 5.0f);
+            }
+            else
+            {
+                mainCamera.transform.position = Vector3.Lerp(chestRiseVec, cameraStartVec, breathTime / 5.0f);
+            }
+            dTime = 0;
+        }
         if(Cursor.visible == false) {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true; 
