@@ -174,7 +174,8 @@ public class DecoderControls : MonoBehaviour
 
                     Color locColour = alienImgTexture.GetPixel((int)Mathf.Floor(widthPerSplit * (x - 1)), (int)Mathf.Floor(alienImgTexture.height - heightPerSplit * (y - 1))); //Get colour at top left of split
 
-                    int staticNum = Random.Range(0, 15);
+                    int rangeVal = 15 + (Gameplay.activeAlien.decoderProgress >= 0.75f ? 5 : 0);
+                    int staticNum = Random.Range(0, rangeVal);
 
                     if (staticNum == 5 || staticNum == 4 || staticNum == 3) { locColour = Color.black; }
                     else if(staticNum == 6) { locColour = Color.grey; }
