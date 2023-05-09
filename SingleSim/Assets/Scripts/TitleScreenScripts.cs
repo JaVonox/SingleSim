@@ -38,8 +38,6 @@ public class TitleScreenScripts : MonoBehaviour
     private void SwitchState(TitleState newState)
     {
         currentState = newState;
-        startupAudio.volume = 0.3f * Movement.volume;
-        continualAudio.volume = 0.3f * Movement.volume;
 
         switch (newState)
         {
@@ -123,6 +121,9 @@ public class TitleScreenScripts : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        startupAudio.volume = 0.3f * Movement.volume;
+        continualAudio.volume = 0.3f * Movement.volume;
+
         dTime += Time.deltaTime;
 
         //Need one breath cycle to finish over 5 seconds period?
