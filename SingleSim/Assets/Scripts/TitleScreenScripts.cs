@@ -16,6 +16,8 @@ public class TitleScreenScripts : MonoBehaviour
 
     public Camera mainCamera;
 
+    public GameObject saveDialog;
+
     //Breathing variables
     private Vector3 cameraStartVec;
     private Vector3 chestRiseVec;
@@ -34,6 +36,7 @@ public class TitleScreenScripts : MonoBehaviour
         continualAudio.volume = 0.3f * Movement.volume;
 
         newGame.onClick.AddListener(() => StartNewGame());
+        loadGame.onClick.AddListener(() => LoadGame());
         exit.onClick.AddListener(() => Application.Quit());
 
         (int width, int height)[] playerResolutions = Screen.resolutions.OrderBy(x => x.width).Reverse().Select(x => (x.width, x.height)).ToArray();
@@ -70,6 +73,10 @@ public class TitleScreenScripts : MonoBehaviour
         SceneManager.LoadScene("Main");
     }
 
+    void LoadGame()
+    {
+        saveDialog.SetActive(true);
+    }
     // Update is called once per frame
     void Update()
     {

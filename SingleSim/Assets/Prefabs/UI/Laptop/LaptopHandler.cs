@@ -282,7 +282,6 @@ public class LaptopHandler : MonoBehaviour
         comparitorAlien = null;
     }
 
-    //TODO maybe LERP?
     private const float rPerLevel = (152.0f / 9.0f) / 255.0f;
     private const float gPerLevel = (-170.0f / 9.0f) / 255.0f;
     private const float bPerLevel = (18.0f / 9.0f) / 255.0f;

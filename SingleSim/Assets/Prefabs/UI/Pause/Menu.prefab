@@ -3808,6 +3808,7 @@ MonoBehaviour:
   saveGame: {fileID: 4015889373705359202}
   reallyExit: {fileID: 2580770654276650974}
   reallyCancel: {fileID: 5810900114143319643}
+  savePanel: {fileID: 0}
 --- !u!1 &6128347749926807334
 GameObject:
   m_ObjectHideFlags: 0
@@ -5433,7 +5434,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 3835358332556433581}
   m_OnClick:
     m_PersistentCalls:

@@ -9,7 +9,8 @@ enum PauseState
 {
     Default,
     Options,
-    ExitDialog
+    ExitDialog,
+    Saving,
 }
 public class PauseMenuScript : MonoBehaviour
 {
@@ -48,15 +49,18 @@ public class PauseMenuScript : MonoBehaviour
     private void SwitchState(PauseState newState)
     {
         currentState = newState;
+    
         switch(newState)
         {
             case PauseState.Default:
+                saveGame.interactable = true;
                 optionsButton.interactable = true;
                 exitGame.interactable = true;
                 optionsPanel.SetActive(false);
                 reallyExitPanel.SetActive(false);
                 break;
             case PauseState.Options:
+                saveGame.interactable = false;
                 optionsButton.interactable = false;
                 exitGame.interactable = false;
                 SetOptionsDefaults();
@@ -64,10 +68,18 @@ public class PauseMenuScript : MonoBehaviour
                 reallyExitPanel.SetActive(false);
                 break;
             case PauseState.ExitDialog:
+                saveGame.interactable = false;
                 exitGame.interactable = false;
                 optionsButton.interactable = false;
                 optionsPanel.SetActive(false);
                 reallyExitPanel.SetActive(true);
+                break;
+            case PauseState.Saving:
+                saveGame.interactable = false;
+                exitGame.interactable = false;
+                optionsButton.interactable = false;
+                optionsPanel.SetActive(false);
+                reallyExitPanel.SetActive(false);
                 break;
             default:
                 Debug.LogError("Invalid pause menu state");
@@ -157,7 +169,6 @@ public class PauseMenuScript : MonoBehaviour
             volumeInput.text = "0";
         }
     }
-
     private void RestoreDefaultSettings()
     {
         SwitchState(PauseState.Default);
@@ -189,6 +200,7 @@ public class PauseMenuScript : MonoBehaviour
 
         optionsButton.onClick.AddListener(() => SwitchState(PauseState.Options));
         exitGame.onClick.AddListener(() => SwitchState(PauseState.ExitDialog));
+        saveGame.onClick.AddListener(()=> SwitchState(PauseState.Saving));
 
         sensitivitySlider.onValueChanged.AddListener((newValue) => SensitivitySliderHandler(newValue));
         sensitivityInput.onEndEdit.AddListener((newValue) => SensitivityInputHandler(newValue));
@@ -204,7 +216,10 @@ public class PauseMenuScript : MonoBehaviour
         reallyCancel.onClick.AddListener(() => SwitchState(PauseState.Default));
 
     }
+    private void LoadSaveDialog()
+    {
 
+    }
     void ExitToTitle()
     {
         SceneManager.LoadScene("Title");
