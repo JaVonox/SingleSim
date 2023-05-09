@@ -21,8 +21,8 @@ public class OptionsScript : MonoBehaviour
     public Button cancel;
 
     //Actions
-    public System.Action<PauseState> optionsSwitchMethod;
-
+    public System.Action<PauseState> pauseSwitchMethod;
+    public System.Action<TitleState> titleSwitchMethod;
 
     private const float minSensitivity = 0.1f;
     private const float maxSensitivity = 2.0f;
@@ -43,7 +43,12 @@ public class OptionsScript : MonoBehaviour
 
     public void AddPauseMethods(System.Action<PauseState> inhSwitchMethod)
     {
-        optionsSwitchMethod = inhSwitchMethod;
+        pauseSwitchMethod = inhSwitchMethod;
+    }
+
+    public void AddPauseMethods(System.Action<TitleState> inhSwitchMethod)
+    {
+        titleSwitchMethod = inhSwitchMethod;
     }
     // Update is called once per frame
     void Update()
@@ -143,17 +148,25 @@ public class OptionsScript : MonoBehaviour
         (int width, int height) splitRes = screenTextRef[resolutionDropdown.options[resolutionDropdown.value].text]; //Get the currently selected resolution and split into width and height
         Screen.SetResolution(splitRes.width, splitRes.height, fullscreen.isOn); //Set new screen resolution
 
-        if (optionsSwitchMethod != null)
+        if (pauseSwitchMethod != null)
         {
-            optionsSwitchMethod(PauseState.Default);
+            pauseSwitchMethod(PauseState.Default);
+        }
+        else if(titleSwitchMethod != null)
+        {
+            titleSwitchMethod(TitleState.Default);
         }
     }
 
     private void RestoreDefaultSettings()
     {
-        if (optionsSwitchMethod != null)
+        if (pauseSwitchMethod != null)
         {
-            optionsSwitchMethod(PauseState.Default);
+            pauseSwitchMethod(PauseState.Default);
+        }
+        else if (titleSwitchMethod != null)
+        {
+            titleSwitchMethod(TitleState.Default);
         }
         Movement.sensitivity = 0.5f;
         Movement.volume = 0.5f;
@@ -163,9 +176,13 @@ public class OptionsScript : MonoBehaviour
 
     private void CancelChanges()
     {
-        if (optionsSwitchMethod != null)
+        if (pauseSwitchMethod != null)
         {
-            optionsSwitchMethod(PauseState.Default);
+            pauseSwitchMethod(PauseState.Default);
+        }
+        else if (titleSwitchMethod != null)
+        {
+            titleSwitchMethod(TitleState.Default);
         }
         SetOptionsDefaults();
     }

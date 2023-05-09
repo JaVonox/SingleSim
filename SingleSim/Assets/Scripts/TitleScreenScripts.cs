@@ -4,6 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+public enum TitleState
+{
+    Default,
+    Options,
+    SaveDialog
+}
 public class TitleScreenScripts : MonoBehaviour
 {
     public Button newGame;
@@ -17,6 +23,7 @@ public class TitleScreenScripts : MonoBehaviour
     public Camera mainCamera;
 
     public GameObject saveDialog;
+    public GameObject optionsDialog;
 
     //Breathing variables
     private Vector3 cameraStartVec;
@@ -26,17 +33,58 @@ public class TitleScreenScripts : MonoBehaviour
     private float breathTime = 0;
 
     private float dTime = -1.0f;
-    // Start is called before the first frame update
-    void Start()
+
+    private TitleState currentState;
+    private void SwitchState(TitleState newState)
     {
-        cameraStartVec = mainCamera.transform.position;
-        chestRiseVec = new Vector3(cameraStartVec.x, cameraStartVec.y + chestRiseHeight, cameraStartVec.z);
-        startupAudio.Play();
+        currentState = newState;
         startupAudio.volume = 0.3f * Movement.volume;
         continualAudio.volume = 0.3f * Movement.volume;
 
+        switch (newState)
+        {
+            case TitleState.Default:
+                newGame.interactable = true;
+                loadGame.interactable = true;
+                options.interactable = true;
+                exit.interactable = true;
+                saveDialog.SetActive(false);
+                optionsDialog.SetActive(false);
+                break;
+            case TitleState.Options:
+                newGame.interactable = false;
+                loadGame.interactable = false;
+                options.interactable = false;
+                exit.interactable = false;
+                saveDialog.SetActive(false);
+                optionsDialog.GetComponentInChildren<OptionsScript>().SetOptionsDefaults();
+                optionsDialog.SetActive(true);
+                break;
+            case TitleState.SaveDialog:
+                newGame.interactable = false;
+                loadGame.interactable = false;
+                options.interactable = false;
+                exit.interactable = false;
+                saveDialog.SetActive(true);
+                optionsDialog.SetActive(false);
+                break;
+            default:
+                Debug.LogError("Invalid title menu state");
+                break;
+        }
+    }
+    void Start()
+    {
+        SwitchState(TitleState.Default);
+        optionsDialog.GetComponent<OptionsScript>().AddPauseMethods(SwitchState); //Add the method for switching state to the options script to allow it to close itself
+
+        cameraStartVec = mainCamera.transform.position;
+        chestRiseVec = new Vector3(cameraStartVec.x, cameraStartVec.y + chestRiseHeight, cameraStartVec.z);
+        startupAudio.Play();
+
         newGame.onClick.AddListener(() => StartNewGame());
-        loadGame.onClick.AddListener(() => LoadGame());
+        loadGame.onClick.AddListener(() => SwitchState(TitleState.SaveDialog));
+        options.onClick.AddListener(() => SwitchState(TitleState.Options));
         exit.onClick.AddListener(() => Application.Quit());
 
         (int width, int height)[] playerResolutions = Screen.resolutions.OrderBy(x => x.width).Reverse().Select(x => (x.width, x.height)).ToArray();
@@ -71,11 +119,6 @@ public class TitleScreenScripts : MonoBehaviour
         continualAudio.Stop();
         Gameplay.Setup();
         SceneManager.LoadScene("Main");
-    }
-
-    void LoadGame()
-    {
-        saveDialog.SetActive(true);
     }
     // Update is called once per frame
     void Update()
