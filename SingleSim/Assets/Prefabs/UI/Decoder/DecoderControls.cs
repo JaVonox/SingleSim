@@ -57,6 +57,8 @@ public class DecoderControls : MonoBehaviour
 
                 if(Gameplay.activeAlien.decoderProgress >= 1)
                 {
+                    TextUpdate();
+
                     startDecode.gameObject.SetActive(true);
                     uploadDecoded.gameObject.SetActive(true);
 
@@ -90,6 +92,7 @@ public class DecoderControls : MonoBehaviour
             alienImage.SetActive(true);
             alienImage.GetComponent<Image>().sprite = Gameplay.activeAlien.ReturnImage();
             DecoderUpdate();
+            TextUpdate();
 
             progSlider.gameObject.SetActive(true);
             progSlider.value = (float)Gameplay.activeAlien.decoderProgress;
@@ -189,14 +192,18 @@ public class DecoderControls : MonoBehaviour
                 }
             }
         }
-        else //When the decoder completes running
+    }
+
+    void TextUpdate()
+    {
+        if (Gameplay.activeAlien.decoderProgress >= 1)
         {
             alienImage.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
             Gameplay.activeAlien.decoderProgress = 1;
 
-            if(Gameplay.activeAlien.decodeTextProg >= Gameplay.activeAlien.decodeTextMessage.Length)
+            if (Gameplay.activeAlien.decodeTextProg >= Gameplay.activeAlien.decodeTextMessage.Length)
             {
-                console.text = "Decoding message... \n" + Gameplay.activeAlien.decodeTextMessage.Substring(0, Gameplay.activeAlien.decodeTextProg).ToString() + 
+                console.text = "Decoding message... \n" + Gameplay.activeAlien.decodeTextMessage.Substring(0, Gameplay.activeAlien.decodeTextProg).ToString() +
                     "\n\n\nMessage processed. Select upload to add signal to the database";
             }
             else if (Gameplay.activeAlien.decodeTextProg > 1)

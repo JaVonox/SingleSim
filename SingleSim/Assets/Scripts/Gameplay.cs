@@ -498,6 +498,9 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         string editedText = preprocessedText;
         Dictionary<string, string> replacementWords = new Dictionary<string, string>();
 
+        //string selfColorHex = "#e7d112";
+        //string prefColorHex = "#A60EB8";
+
         //Add replacements for strings
         replacementWords.Add("[self_body]", selfParams.body.ToString());
         replacementWords.Add("[pref_body]", preferenceParams.body == BodyType.NoPref ? noPrefReplacements[typeof(BodyType)] : preferenceParams.body.ToString());
