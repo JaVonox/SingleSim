@@ -24,7 +24,7 @@ public class AudioHandler : MonoBehaviour
     private float dtTime;
 
     private static ServerAudioState currentState;
-    public static bool needsUpdate = true; //When the update method needs to switch the current audio behaviour
+    public static bool needsUpdate; //When the update method needs to switch the current audio behaviour
 
     public static bool beepsEnabled;
     public static void CallNewAudioState()
@@ -92,11 +92,25 @@ public class AudioHandler : MonoBehaviour
     }
     void Start()
     {
+        normalSoundRefs.Clear();
+        weirdSoundRefs.Clear();
+
         normalSoundRefs.Add("crow1", 0);
         normalSoundRefs.Add("crow2", 1);
 
         weirdSoundRefs.Add("weird1", 0);
         weirdSoundRefs.Add("weird2", 1);
+
+        Setup();
+    }
+
+    public static void Setup()
+    {
+        needsUpdate = true;
+        beepsEnabled = false;
+        forcePlay = false;
+        forcedSound = "";
+        forcedVolume = 0f;
     }
 
     private static bool forcePlay = false;

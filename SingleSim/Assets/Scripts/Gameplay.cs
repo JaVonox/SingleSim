@@ -50,6 +50,37 @@ public class Gameplay : MonoBehaviour
     public static Dictionary<System.Type, EnumMatrix> prefComparisons = new Dictionary<System.Type, EnumMatrix>(); //Matrices for the preferences vs actual grid
 
     public static List<(BodyType type, string unprocessedContents, Dictionary<System.Type,string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> LoadedMessages = new List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)>(); //Messages sorted by body type and details filled out as appropriate
+    
+    public static void ResetGamestate()
+    {
+        scanSpeed = 0.05f;
+        decoderSpeedMultiplier = 1.0f;
+        scanProg = -1;
+        scanCoords.Clear();
+        scanSpotsAreAvailable = false;
+        numberOfScansSpots = 5;
+        bounds = (0,0);
+        isBoundsSet = false;
+        activeAlien = null;
+        storedAliens.Clear();
+        scannerConsolePopupEnabled = false;
+        UIcoordinates = (0, 0);
+        scanUIText = "";
+        currentScanTextPos = -1;
+        textTime = 0;
+        textSpeed = 4;
+        textDisplayChance = 1;
+        signalReadingRange = 30;
+        //Loaded sprites does not need to be reset
+        credits = 0;
+        lastLoadedHz = 255;
+        lastSentHz = 255;
+        //Pref Comparisons does not need to be reset
+        //Loaded messages does not need to be reset
+
+        AudioHandler.Setup();
+
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -70,13 +101,28 @@ public class Gameplay : MonoBehaviour
         cephSpritesToLoad.Clear();
         insectSpritesToLoad.Clear();
 
-        LaptopConsole.FirstConsoleLoad();
-        SetScannerState("idle");
+        Setup();
     }
 
+    public static bool isSetup = false;
+    public static void Setup()
+    {
+        ResetGamestate();
+        Movement.EnterMovementState();
+        isSetup = true;
+    }
     // Update is called once per frame
     void Update()
     {
+        if(isSetup) //When in setup state, update all non-static variables on first frame update
+        {
+            secsSinceLastUpdate = 0;
+            LaptopConsole.FirstConsoleLoad();
+            SetScannerState("idle");
+            SetDecoderState("idle");
+            isSetup = false;
+        }
+
         secsSinceLastUpdate += Time.deltaTime;
 
         if (secsSinceLastUpdate >= 0.2f)

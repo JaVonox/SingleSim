@@ -19,7 +19,7 @@ public class TitleScreenScripts : MonoBehaviour
     //Breathing variables
     private Vector3 cameraStartVec;
     private Vector3 chestRiseVec;
-    private const float chestRiseHeight = 0.3f;
+    private const float chestRiseHeight = 0.2f;
     private bool chestRise = true;
     private float breathTime = 0;
 
@@ -66,6 +66,7 @@ public class TitleScreenScripts : MonoBehaviour
     {
         startupAudio.Stop();
         continualAudio.Stop();
+        Gameplay.Setup();
         SceneManager.LoadScene("Main");
     }
 
@@ -93,11 +94,11 @@ public class TitleScreenScripts : MonoBehaviour
 
             if(chestRise)
             {
-                mainCamera.transform.position = Vector3.Lerp(cameraStartVec, chestRiseVec, breathTime / 5.0f);
+                mainCamera.transform.position = Vector3.Lerp(cameraStartVec, chestRiseVec, breathTime / 2.5f);
             }
             else
             {
-                mainCamera.transform.position = Vector3.Lerp(chestRiseVec, cameraStartVec, breathTime / 5.0f);
+                mainCamera.transform.position = Vector3.Lerp(chestRiseVec, cameraStartVec, breathTime / 2.5f);
             }
             dTime = 0;
         }

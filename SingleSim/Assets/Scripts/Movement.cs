@@ -36,7 +36,7 @@ public class Movement : MonoBehaviour
     public static (int width, int height) defaultScreenRes;
 
     public static float volume = 0.5f;
-    void Start()
+    public static void EnterMovementState()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

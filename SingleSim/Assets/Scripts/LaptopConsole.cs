@@ -9,6 +9,9 @@ public class LaptopConsole
     private static Dictionary<string, (bool visible, System.Action<string[]> command)> consoleCommands = new Dictionary<string, (bool visible, System.Action<string[]> command)>(); //Stores the default command, its action and the associated arguments
     public static void FirstConsoleLoad()
     {
+        consoleStorage.Clear();
+        consoleCommands.Clear();
+
         consoleStorage.Enqueue("<color=#FFFFFF>Enter Help for a list of commands</color>");
 
         //Add console commands
@@ -41,7 +44,6 @@ public class LaptopConsole
             consoleStorage.Dequeue(); //Remove all items over the limit
         }
     }
-
     public static void SubmitItem(ref TMPro.TextMeshProUGUI consoleObject, string input)
     {
         consoleStorage.Enqueue(">" + input);

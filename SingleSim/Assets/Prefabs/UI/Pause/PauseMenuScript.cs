@@ -200,9 +200,15 @@ public class PauseMenuScript : MonoBehaviour
         restoreDefault.onClick.AddListener(() => RestoreDefaultSettings());
         cancel.onClick.AddListener(() => CancelChanges());
 
-        reallyExit.onClick.AddListener(() => SceneManager.LoadScene("Title"));
+        reallyExit.onClick.AddListener(() => ExitToTitle()); ;
         reallyCancel.onClick.AddListener(() => SwitchState(PauseState.Default));
 
+    }
+
+    void ExitToTitle()
+    {
+        SceneManager.LoadScene("Title");
+        Gameplay.ResetGamestate();
     }
 
     void Update()
