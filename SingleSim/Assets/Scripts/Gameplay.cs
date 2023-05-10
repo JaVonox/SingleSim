@@ -492,23 +492,34 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         return newMessage;
     }
 
+    public string GetAlienText() //Gets aliens own text to the current text progress - highlighting syntax in the progress.
+    {
+        string txt = decodeTextMessage.Substring(0, decodeTextProg).ToString();
+        txt = txt.Replace("", "<color=#e7d112>");
+        txt = txt.Replace("`", "<color=#A60EB8>");
+        txt = txt.Replace("", "</color>");
+
+        return txt;
+    }
+
     private static readonly List<string> replacementStrings = new List<string>() { "[self_body]","[pref_body]","[self_age]","[pref_age]","[self_job]","[pref_job]","[pref_goal]"}; 
     public string ProcessText(string preprocessedText, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)
     {
         string editedText = preprocessedText;
         Dictionary<string, string> replacementWords = new Dictionary<string, string>();
 
-        //string selfColorHex = "#e7d112";
-        //string prefColorHex = "#A60EB8";
+        //string selfColorHex = "#e7d112";  character indicator
+        //string prefColorHex = "#A60EB8"; ` character indicator
+        //  character end
 
         //Add replacements for strings
-        replacementWords.Add("[self_body]", selfParams.body.ToString());
-        replacementWords.Add("[pref_body]", preferenceParams.body == BodyType.NoPref ? noPrefReplacements[typeof(BodyType)] : preferenceParams.body.ToString());
-        replacementWords.Add("[self_age]", selfParams.age.ToString());
-        replacementWords.Add("[pref_age]", preferenceParams.age == AgeType.NoPref ? noPrefReplacements[typeof(AgeType)] : preferenceParams.age.ToString());
-        replacementWords.Add("[self_job]", selfParams.job == OccupationType.unemployed ? selfUnemployedReplacement : selfParams.job.ToString());
-        replacementWords.Add("[pref_job]", preferenceParams.job == OccupationType.unemployed ? prefUnemployedReplacement : (preferenceParams.job == OccupationType.NoPref ? noPrefReplacements[typeof(OccupationType)] : preferenceParams.job.ToString()));
-        replacementWords.Add("[pref_goal]", preferenceParams.relationshipGoal == GoalsType.NoPref ? noPrefReplacements[typeof(GoalsType)] : preferenceParams.relationshipGoal.ToString());
+        replacementWords.Add("[self_body]", "" + selfParams.body.ToString() + "");
+        replacementWords.Add("[pref_body]", "`" + (preferenceParams.body == BodyType.NoPref ? noPrefReplacements[typeof(BodyType)] : preferenceParams.body.ToString()) + "");
+        replacementWords.Add("[self_age]", "" + selfParams.age.ToString() + "");
+        replacementWords.Add("[pref_age]", "`" +(preferenceParams.age == AgeType.NoPref ? noPrefReplacements[typeof(AgeType)] : preferenceParams.age.ToString()) + "");
+        replacementWords.Add("[self_job]", "" + (selfParams.job == OccupationType.unemployed ? selfUnemployedReplacement : selfParams.job.ToString()) + "");
+        replacementWords.Add("[pref_job]", "`" +(preferenceParams.job == OccupationType.unemployed ? prefUnemployedReplacement : (preferenceParams.job == OccupationType.NoPref ? noPrefReplacements[typeof(OccupationType)] : preferenceParams.job.ToString()))+ "");
+        replacementWords.Add("[pref_goal]", "" + (preferenceParams.relationshipGoal == GoalsType.NoPref ? noPrefReplacements[typeof(GoalsType)] : preferenceParams.relationshipGoal.ToString()) + "");
         //pref goal should always match self goal so theres no need for it
         foreach(string match in replacementStrings) //iterate through match words and replace with the appropriate replacement
         {

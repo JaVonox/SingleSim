@@ -203,12 +203,12 @@ public class DecoderControls : MonoBehaviour
 
             if (Gameplay.activeAlien.decodeTextProg >= Gameplay.activeAlien.decodeTextMessage.Length)
             {
-                console.text = "Decoding message... \n" + Gameplay.activeAlien.decodeTextMessage.Substring(0, Gameplay.activeAlien.decodeTextProg).ToString() +
+                console.text = "Decoding message... \n" + Gameplay.activeAlien.GetAlienText() +
                     "\n\n\nMessage processed. Select upload to add signal to the database";
             }
             else if (Gameplay.activeAlien.decodeTextProg > 1)
             {
-                console.text = "Decoding message... \n" + Gameplay.activeAlien.decodeTextMessage.Substring(0, Gameplay.activeAlien.decodeTextProg).ToString();
+                console.text = "Decoding message... \n" + Gameplay.activeAlien.GetAlienText();
             }
             else
             {

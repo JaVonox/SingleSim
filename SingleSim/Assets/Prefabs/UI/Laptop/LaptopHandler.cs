@@ -206,7 +206,7 @@ public class LaptopHandler : MonoBehaviour
         Transform profileTransform = specificProfileTab.transform;
 
         profileTransform.Find("ProfileImage").GetComponent<Image>().sprite = alienProfile.ReturnImage();
-        profileTransform.Find("ProfileText").GetComponent<Text>().text = alienProfile.decodeTextMessage;
+        profileTransform.Find("ProfileText").GetComponent<Text>().text = alienProfile.GetAlienText();
 
         if(comparitorAlien != null && comparitorAlien != alienProfile) //Check if the profile is loaded in comparison mode
         {
