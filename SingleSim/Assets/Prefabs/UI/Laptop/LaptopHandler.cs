@@ -39,6 +39,7 @@ public class LaptopHandler : MonoBehaviour
     private LaptopModes currentMode;
 
     private float dtTime;
+    private bool deleteIsEnabled = false; //This prevents the deleting of profiles until the user completes the tutorial
     void Start()
     {
         creditsText.text = "Credits: " + Gameplay.credits;
@@ -246,6 +247,14 @@ public class LaptopHandler : MonoBehaviour
             profileTransform.Find("Return").GetComponent<Button>().onClick.RemoveAllListeners();
             profileTransform.Find("Return").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
             profileTransform.Find("DeleteProfile").gameObject.SetActive(true);
+        }
+
+        if(!deleteIsEnabled)
+        {
+            profileTransform.Find("DeleteProfile").gameObject.SetActive(false);
+        }
+        else
+        {
             profileTransform.Find("DeleteProfile").GetComponent<Button>().onClick.RemoveAllListeners();
             profileTransform.Find("DeleteProfile").GetComponent<Button>().onClick.AddListener(() => DeleteProfile(alienProfile));
         }
@@ -462,6 +471,11 @@ public class LaptopHandler : MonoBehaviour
     }
     void Update()
     {
+        if(Gameplay.tutorialState >= 5 && !deleteIsEnabled) //Check if the user has finished the tutorial and enable deleting profiles when true
+        {
+
+        }
+
         dtTime += Time.deltaTime;
 
         if(dtTime >= 0.1f)

@@ -44,6 +44,8 @@ public class Gameplay : MonoBehaviour
     public static List<Sprite> insectSprites;
 
     public static int credits = 0;
+    public static int lifetimeCredits = 0;
+    public static byte tutorialState = 0;//state 0 is before first scan, state 1 is after scan, state 2 is after first decode, state 3 is after second scan, state 4 is after second decode, state 5 is after match
     public static int lastLoadedHz = 255;
     public static int lastSentHz = 255;
 
@@ -73,6 +75,8 @@ public class Gameplay : MonoBehaviour
         signalReadingRange = 30;
         //Loaded sprites does not need to be reset
         credits = 0;
+        lifetimeCredits = 0;
+        tutorialState = 0; //state 0 is before first scan, state 1 is after scan, state 2 is after first decode, state 3 is after second decode, state 4 is after match
         lastLoadedHz = 255;
         lastSentHz = 255;
         //Pref Comparisons does not need to be reset
@@ -149,6 +153,8 @@ public class Gameplay : MonoBehaviour
 
                 }
                 SetScannerState("finished");
+                if(tutorialState == 0) { tutorialState = 1; }
+                else if(tutorialState == 2) { tutorialState = 3; }
                 scanSpotsAreAvailable = true;
 
             }
@@ -181,6 +187,9 @@ public class Gameplay : MonoBehaviour
                 if (activeAlien.decoderProgress >= 1)
                 {
                     SetDecoderState("finished");
+                    //tutorial state is updated for each decode
+                    if (tutorialState == 1) { tutorialState = 2; }
+                    else if (tutorialState == 3) { tutorialState = 4; }
                     if (activeAlien.decodeTextProg == -1) { activeAlien.decodeTextProg = 1; }
                     else
                     {
@@ -204,7 +213,9 @@ public class Gameplay : MonoBehaviour
 
     public static void AddNewAlien() //Starts a new scan - triggered by pressing one of the scan spots on the map
     {
-        activeAlien = new Alien(ReturnImage);
+        if (tutorialState == 1) { activeAlien = new Alien(ReturnImage, true); }
+        else if (tutorialState == 3) { activeAlien = new Alien(ReturnImage, false); }
+        else { activeAlien = new Alien(ReturnImage); }
     }
     public static Sprite ReturnImage(int imageID,BodyType bodyType)
     {
@@ -274,6 +285,7 @@ public class Gameplay : MonoBehaviour
     {
         credits += GetCreditScore(sender1,sender2);
 
+        if(tutorialState == 4) { tutorialState = 5; } //exit tutorial state after finishing first match
         storedAliens.Remove(sender1);
         storedAliens.Remove(sender2);
     }
@@ -445,7 +457,7 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
 
         preferenceParams = new AlienStats(ref selfParams);
 
-        decodeTextMessage = GenerateText();
+        decodeTextMessage = GenerateText(0);
 
         signalName = System.DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
     }
@@ -463,6 +475,30 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         preferenceParams = copy.preferenceParams;
         signalName = copy.signalName;
     }
+
+    public Alien(System.Func<int, BodyType, Sprite> spriteMethod, bool tutorialAlienOne) //Generates the first two aliens a user will recieve, based on their tutorial state
+    {
+        baseDecodeSpeed = 0.01f; //Set random speed for decoding the signal
+
+        retImageMethod = spriteMethod; //Attach the method that returns the sprite
+
+        if (tutorialAlienOne) //First alien during tutorial
+        {
+            selfParams = new AlienStats(BodyType.humanoid,AgeType.adult,OccupationType.engineer,GoalsType.relationship);
+            preferenceParams = new AlienStats(BodyType.humanoid, AgeType.adult, OccupationType.NoPref, GoalsType.relationship);
+            imageID = 1;
+            decodeTextMessage = GenerateText(1);
+        }
+        else //Second alien during tutorial
+        {
+            selfParams = new AlienStats(BodyType.humanoid, AgeType.adult, OccupationType.unemployed, GoalsType.fling);
+            preferenceParams = new AlienStats(BodyType.humanoid, AgeType.NoPref, OccupationType.unemployed, GoalsType.fling);
+            imageID = 0;
+            decodeTextMessage = GenerateText(2);
+        }
+
+        signalName = System.DateTime.Now.ToString("dd/MM/yy HH:mm:ss");
+    }
     public void BeginDecode()
     {
         decoderProgress = 0;
@@ -471,10 +507,14 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     {
         return retImageMethod(imageID,selfParams.body);
     }
-    public string GenerateText()
+    public string GenerateText(int preset)
     {
         List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> possibleMessages = Gameplay.LoadedMessages.Where(n => n.type == selfParams.body).ToList(); //Get all body type specific messages
-        int messageID = Random.Range(0, possibleMessages.Count); //Get a random message body
+        int messageID = 0;
+        if (preset == 0) { messageID = Random.Range(0, possibleMessages.Count); }
+        else if(preset == 1) { messageID = 1; }
+        else if(preset == 2) { messageID = 2; }
+
         string preObMessage = ProcessText(possibleMessages[messageID].unprocessedContents,possibleMessages[messageID].noPrefReplacements,possibleMessages[messageID].selfUnemployedReplacement,possibleMessages[messageID].prefUnemployedReplacement);
         string newMessage = "";
 
@@ -582,7 +622,6 @@ public class AlienStats
         job = (OccupationType)(Random.Range(0, (int)(OccupationType.NoPref)));
         relationshipGoal = (GoalsType)(Random.Range(0, (int)(GoalsType.NoPref) + 1)); //goal type may include no pref
     }
-
     public AlienStats(ref AlienStats self) //Constructor for generating an aliens prefrences
     {   
         byte randomGen = (byte)Random.Range(0,256); //make a random byte - each 1 represents a possible change in values and each 0 a same value. this gives a 50/50 chance of wanting to keep the same value
@@ -600,6 +639,14 @@ public class AlienStats
         else { job = self.job; }
 
 
+    }
+
+    public AlienStats(BodyType setBType, AgeType setAtype, OccupationType setJtype, GoalsType setGtype) //Constructor for preset alien
+    {
+        body = setBType;
+        age = setAtype;
+        job = setJtype;
+        relationshipGoal = setGtype;
     }
 }
 public class EnumMatrix //Kind of dissapointed with this whole section. I cant seem to find a way to do what I want in c#

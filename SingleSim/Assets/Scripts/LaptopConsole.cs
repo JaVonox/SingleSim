@@ -25,6 +25,7 @@ public class LaptopConsole
         consoleCommands.Add("Debug.xray", (false, (args) => DebugSeeCommands(args)));
         consoleCommands.Add("Debug.swarm", (false, (args) => DebugSwarmSignals(args)));
         consoleCommands.Add("Debug.noise", (false, (args) => DebugPlaySound(args)));
+        consoleCommands.Add("Debug.tutorial", (false, (args) => DebugGetTutorialState(args)));
     }
     public static void ReloadConsole(ref TMPro.TextMeshProUGUI consoleObject)
     {
@@ -162,5 +163,10 @@ public class LaptopConsole
                 consoleStorage.Enqueue("<color=#B80e20>Invalid volume " + args[1] + "</color>");
             }
         }
+    }
+
+    private static void DebugGetTutorialState(string[] args)
+    {
+        consoleStorage.Enqueue("Current tutorial state: " + Gameplay.tutorialState);
     }
 }
