@@ -18,7 +18,6 @@ public class Gameplay : MonoBehaviour
     public static Alien activeAlien; //The current alien stats loaded by the scanner into the decoder. when decoded it is loaded into storedAliens
     public static List<Alien> storedAliens = new List<Alien>(); //The previously completed alien scans placed in storage
 
-    public static bool scannerConsolePopupEnabled = false; //Checks if the scanner console pop up should be enabled when loaded
     public static (double x, double y) UIcoordinates; //Stores the coordinates for the last completed signal for the UI popup to handle
     public static string scanUIText;
     public static int currentScanTextPos = -1;
@@ -65,7 +64,6 @@ public class Gameplay : MonoBehaviour
         isBoundsSet = false;
         activeAlien = null;
         storedAliens.Clear();
-        scannerConsolePopupEnabled = false;
         UIcoordinates = (0, 0);
         scanUIText = "";
         currentScanTextPos = -1;
@@ -81,6 +79,7 @@ public class Gameplay : MonoBehaviour
         lastSentHz = 255;
         //Pref Comparisons does not need to be reset
         //Loaded messages does not need to be reset
+        ScannerControls.currentState = ScanState.IdleConsole;
 
         AudioHandler.Setup();
 
@@ -153,8 +152,6 @@ public class Gameplay : MonoBehaviour
 
                 }
                 SetScannerState("finished");
-                if(tutorialState == 0) { tutorialState = 1; }
-                else if(tutorialState == 2) { tutorialState = 3; }
                 scanSpotsAreAvailable = true;
 
             }
@@ -188,8 +185,6 @@ public class Gameplay : MonoBehaviour
                 {
                     SetDecoderState("finished");
                     //tutorial state is updated for each decode
-                    if (tutorialState == 1) { tutorialState = 2; }
-                    else if (tutorialState == 3) { tutorialState = 4; }
                     if (activeAlien.decodeTextProg == -1) { activeAlien.decodeTextProg = 1; }
                     else
                     {

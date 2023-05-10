@@ -3,6 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+
+public enum ScanState
+{
+    IdleConsole,
+    Scanning,
+    EndScreen,
+    ReplaceScreen,
+    Disabled
+}
 public class ScannerControls : MonoBehaviour
 {
     public GameObject scannerHighlight;
@@ -25,8 +34,112 @@ public class ScannerControls : MonoBehaviour
     public Button onesIncrement;
     public Button onesDecrement;
 
+    public GameObject replacementPanel;
+    public TextMeshProUGUI replacementText;
+    public Button replaceSignal;
+    public Button cancelReplace;
+
+    public GameObject disabledPanel;
+    public Button retryDisabled;
+
+    public static ScanState currentState;
+
     private Dictionary<Button, (TextMeshProUGUI modifiableObject, bool IsPositive)> btnToModifier = new Dictionary<Button, (TextMeshProUGUI modifiableObject, bool IsPositive)>();
 
+    void SwitchState(ScanState newState)
+    {
+        currentState = newState;
+
+        switch(currentState)
+        {
+            case ScanState.IdleConsole:
+                scannerUploaded.SetActive(true);
+                LoadDefaultText();
+                replacementPanel.SetActive(false);
+                disabledPanel.SetActive(false);
+                break;
+            case ScanState.Scanning:
+                scannerUploaded.SetActive(false);
+                replacementPanel.SetActive(false);
+                disabledPanel.SetActive(false);
+                break;
+            case ScanState.EndScreen:
+                scannerUploaded.SetActive(true);
+                LoadConsoleText();
+                replacementPanel.SetActive(false);
+                disabledPanel.SetActive(false);
+                break;
+            case ScanState.ReplaceScreen:
+                SetupReplace();
+                scannerUploaded.SetActive(false);
+                replacementPanel.SetActive(true);
+                disabledPanel.SetActive(false);
+                startScan.interactable = false;
+                break;
+            case ScanState.Disabled:
+                SetupDisabled();
+                scannerUploaded.SetActive(false);
+                replacementPanel.SetActive(false);
+                disabledPanel.SetActive(true);
+                startScan.interactable = false;
+                break;
+            default:
+                Debug.LogError("Invalid scanner state");
+                break;
+        }
+    }
+
+    void SetupReplace()
+    {
+        replaceSignal.onClick.RemoveAllListeners();
+        cancelReplace.onClick.RemoveAllListeners();
+
+        if (Gameplay.tutorialState == 5 || Gameplay.tutorialState == 3 || Gameplay.tutorialState == 1) //If in the tutorial stages where replacement should not be allowed
+        {
+            replacementText.text = "Signal replacement is currently disabled due to group policy";
+            replaceSignal.interactable = false;
+        }
+        else //If outside the tutorial state
+        {
+            replacementText.text = "Downloading a second signal will replace the currently loaded signal, are you sure you wish to proceed?";
+            replaceSignal.interactable = true;
+        }
+
+        replaceSignal.onClick.AddListener(() => SendToDecoder());
+        cancelReplace.onClick.AddListener(() => SwitchState(ScanState.Scanning));
+    }
+
+    void SetupDisabled()
+    {
+        Gameplay.scanCoords.Clear();
+        loadedScanSpots.Clear();
+        Gameplay.scanProg = -1;
+        Gameplay.scannerState = "idle";
+        Gameplay.scanSpotsAreAvailable = false;
+        retryDisabled.onClick.RemoveAllListeners();
+        retryDisabled.onClick.AddListener(() => CheckDisabledMode(true));
+    }
+
+    void CheckDisabledMode(bool isRefresh)
+    {
+        if(Gameplay.tutorialState == 4)
+        {
+            SwitchState(ScanState.Disabled);
+        }
+        else
+        {
+            if(isRefresh) //If attempting to refresh the state rather than simply check if disabled mode is active
+            {
+                SwitchState(ScanState.IdleConsole);
+                //Delete all scan data to force a switch into idle mode
+                Gameplay.scanCoords.Clear();
+                loadedScanSpots.Clear();
+                Gameplay.scanProg = -1;
+                Gameplay.scannerState = "idle";
+                Gameplay.scanSpotsAreAvailable = false;
+            }
+        }
+    }
     void SetupDigits()
     {
         //Add in references in dictionary
@@ -69,6 +182,7 @@ public class ScannerControls : MonoBehaviour
         SetupDigits();
         //Make button activate the scanning - unless it has already started
         if (Gameplay.scanProg != -1) { startScan.interactable = false; }
+        else { startScan.interactable = true; }
         startScan.onClick.AddListener(() => BeginScanMode());
 
         if(Gameplay.isBoundsSet == false)
@@ -77,22 +191,20 @@ public class ScannerControls : MonoBehaviour
             Gameplay.bounds = (r.rect.width,r.rect.height); //Set the boundaries for where scan locations can appear when scan completes
         }
 
-        if (Gameplay.scanProg == -1 && !Gameplay.scanSpotsAreAvailable)
-        {
-            scannerUploaded.GetComponentInChildren<Text>().text = "Scanner console active\n" +
-                "Current expected signal reading range: +/- " + (Gameplay.signalReadingRange + Random.Range(0.001f, 0.8f)).ToString() + "MHz \n" +
-                "Press 'Perform Scan' to begin scanning for signals.";
-            scannerUploaded.SetActive(true);
-        }
-        else
-        {
-            scannerUploaded.SetActive(false);
-        }
+        SwitchState(currentState);
 
-        }
+    }
+
+    void LoadDefaultText()
+    {
+        scannerUploaded.GetComponentInChildren<Text>().text = "Scanner console active\n" +
+        "Current expected signal reading range: +/- " + (Gameplay.signalReadingRange + Random.Range(0.001f, 0.8f)).ToString() + "MHz \n" +
+        "Press 'Perform Scan' to begin scanning for signals.";
+    }
     void Update()
     {
-        if(Input.mouseScrollDelta.y != 0) { ScrollHandler(Input.mouseScrollDelta.y); }
+        CheckDisabledMode(false);
+        if (Input.mouseScrollDelta.y != 0) { ScrollHandler(Input.mouseScrollDelta.y); }
         progSlider.value = Gameplay.scanProg; //Update the value of the scan progress slider
         Gameplay.lastLoadedHz = int.Parse(hundredsText.text) * 100 + int.Parse(tensText.text) * 10 + int.Parse(onesText.text); //Constantly update hz value stored
 
@@ -126,12 +238,8 @@ public class ScannerControls : MonoBehaviour
         }
 
 
-        if (Gameplay.scannerConsolePopupEnabled == true)
+        if (currentState == ScanState.EndScreen)
         {
-            if(scannerUploaded.activeSelf == false)
-            {
-                scannerUploaded.SetActive(true);
-            }
             LoadConsoleText();
         }
 
@@ -183,7 +291,7 @@ public class ScannerControls : MonoBehaviour
     }
     void BeginScanMode()
     {
-        if(scannerUploaded.activeSelf == true) { scannerUploaded.SetActive(false); Gameplay.scannerConsolePopupEnabled = false; }
+        SwitchState(ScanState.Scanning);
         startScan.interactable = false;
         Gameplay.scanProg = 0;
         Gameplay.currentScanTextPos = -1;
@@ -202,11 +310,23 @@ public class ScannerControls : MonoBehaviour
     void SelectScanSpot(GameObject selectedScanSpot, (float x, float y) position) //When a spot is selected
     {
         //Convert numbers to coordinates, giving them some obfuscated digits in the process 
+        //This is fine to store regardless of if the data is to be replaced. 
         Gameplay.UIcoordinates.x = double.Parse(position.x.ToString() + Random.Range(0,10000).ToString());
         Gameplay.UIcoordinates.y = double.Parse(position.y.ToString() + Random.Range(0,10000).ToString());
-        StoreConsoleText();
 
-        Gameplay.scannerConsolePopupEnabled = true;
+        if (Gameplay.activeAlien != null)
+        {
+            SwitchState(ScanState.ReplaceScreen); //Load the replace dialog box
+        }
+        else
+        {
+            SendToDecoder();
+        }
+    }
+
+    void SendToDecoder()
+    {
+        StoreConsoleText();
         Gameplay.scanProg = -1;
         Gameplay.scanSpotsAreAvailable = false;
         Gameplay.scanCoords.Clear();
@@ -220,10 +340,13 @@ public class ScannerControls : MonoBehaviour
         }
         loadedScanSpots.Clear();
 
-        scannerUploaded.SetActive(true);
-        LoadConsoleText();
+        SwitchState(ScanState.EndScreen);
+
+        if (Gameplay.tutorialState == 0) { Gameplay.tutorialState = 1; }
+        else if (Gameplay.tutorialState == 2) { Gameplay.tutorialState = 3; }
 
         Gameplay.AddNewAlien();
+
     }
     void StoreConsoleText()
     {
