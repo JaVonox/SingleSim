@@ -94,7 +94,7 @@ public class ScannerControls : MonoBehaviour
         replaceSignal.onClick.RemoveAllListeners();
         cancelReplace.onClick.RemoveAllListeners();
 
-        if (Gameplay.tutorialState == 5 || Gameplay.tutorialState == 3 || Gameplay.tutorialState == 1) //If in the tutorial stages where replacement should not be allowed
+        if (Gameplay.tutorialState == 4 || Gameplay.tutorialState == 3 || Gameplay.tutorialState == 1) //If in the tutorial stages where replacement should not be allowed
         {
             replacementText.text = "Signal replacement is currently disabled due to group policy";
             replaceSignal.interactable = false;

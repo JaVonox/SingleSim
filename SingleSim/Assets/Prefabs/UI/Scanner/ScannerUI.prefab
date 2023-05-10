@@ -2433,7 +2433,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Scanner is currently disabled. Please finish current task and press refresh
+  m_text: 'Scanner is currently disabled by admin. Message: "Match the signals first!"'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b7cb3febbd36f364e8b5efa80feadbea, type: 2}
   m_sharedMaterial: {fileID: 5621335765684268451, guid: b7cb3febbd36f364e8b5efa80feadbea, type: 2}
