@@ -156,7 +156,7 @@ public class ScannerControls : MonoBehaviour
         btnToModifier.Add(onesDecrement, (onesText, false));
         onesDecrement.onClick.AddListener(() => ChangeDigit(onesDecrement));
 
-        string hzString = Gameplay.lastLoadedHz.ToString();
+        string[] hzString = ConvertHzArray(Gameplay.lastLoadedHz);
         hundredsText.text = hzString[0].ToString();
         tensText.text = hzString[1].ToString();
         onesText.text = hzString[2].ToString();
@@ -246,15 +246,40 @@ public class ScannerControls : MonoBehaviour
         if(startScan.interactable == false && Gameplay.scanProg == -1) { startScan.interactable = true; }
     }
 
+    string[] ConvertHzArray(int freq)
+    {
+        string hzString = freq.ToString();
+        string[] outStr;
+
+        if (freq >= 100)
+        {
+            outStr = new string[]{ hzString[0].ToString(), hzString[1].ToString(),hzString[2].ToString()};
+        }
+        else if (freq >= 10)
+        {
+            outStr = new string[] { "0", hzString[0].ToString(), hzString[1].ToString() };
+        }
+        else if (freq >= 1)
+        {
+            outStr = new string[] { "0", "0", hzString[0].ToString() };
+        }
+        else
+        {
+            outStr = new string[] { "0","0","0"};
+        }
+
+        return outStr;
+    }
     void ScrollHandler(float yIn)
     {
         int cVal = int.Parse(hundredsText.text) * 100 + int.Parse(tensText.text) * 10 + int.Parse(onesText.text);
         int updatedFreq = Mathf.Clamp(cVal + Mathf.CeilToInt(yIn),0,999);
+        string[] hzString = ConvertHzArray(updatedFreq);
 
-        string hzString = updatedFreq.ToString();
         hundredsText.text = hzString[0].ToString();
         tensText.text = hzString[1].ToString();
         onesText.text = hzString[2].ToString();
+
     }
 
     void SetupScanSpotGameobject()
