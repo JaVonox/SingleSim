@@ -21,7 +21,6 @@ public class Gameplay : MonoBehaviour
     public static (double x, double y) UIcoordinates; //Stores the coordinates for the last completed signal for the UI popup to handle
     public static string scanUIText;
     public static int currentScanTextPos = -1;
-    public static float textTime = 0;
 
     public static float textSpeed = 4;
     public static float textDisplayChance = 1; //Chance that the text will properly display. currently dummied, used to be 0.925f
@@ -54,12 +53,9 @@ public class Gameplay : MonoBehaviour
     
     public static void ResetGamestate()
     {
-        scanSpeed = 0.05f;
-        decoderSpeedMultiplier = 1.0f;
         scanProg = -1;
         scanCoords.Clear();
         scanSpotsAreAvailable = false;
-        numberOfScansSpots = 3;
         bounds = (0,0);
         isBoundsSet = false;
         activeAlien = null;
@@ -67,10 +63,6 @@ public class Gameplay : MonoBehaviour
         UIcoordinates = (0, 0);
         scanUIText = "";
         currentScanTextPos = -1;
-        textTime = 0;
-        textSpeed = 4;
-        textDisplayChance = 1;
-        signalReadingRange = 30;
         //Loaded sprites does not need to be reset
         credits = 0;
         lifetimeCredits = 0;
@@ -85,6 +77,9 @@ public class Gameplay : MonoBehaviour
         {
             shopItems[i] = (shopItems[i].name, shopItems[i].baseValue, shopItems[i].incrementValue, 0, shopItems[i].upgradeCost);
         }
+
+        ReloadShopVars();
+
 
         isSetup = false;
         scannerState = "idle";
@@ -305,7 +300,9 @@ public class Gameplay : MonoBehaviour
     }
     public static void MatchAliens(Alien sender1, Alien sender2)
     {
-        credits += GetCreditScore(sender1,sender2);
+        int score = GetCreditScore(sender1, sender2);
+        credits += score;
+        lifetimeCredits += score;
 
         if(tutorialState == 4) { tutorialState = 5; } //exit tutorial state after finishing first match
         storedAliens.Remove(sender1);
@@ -368,8 +365,16 @@ public class Gameplay : MonoBehaviour
         ("Decoder Speed",1.0f,0.2f,0,40),
         ("Frequency Range",30.0f,5.0f,0,60),
         ("Radar Strength",3.0f,0.5f,0,60)
-        //("Signal Accuracy",0.925f,0.008f,0,10)
     };
+
+    public static void ReloadShopVars()
+    {
+        textSpeed = shopItems[0].baseValue + (shopItems[0].incrementValue * shopItems[0].upgradeLevel);
+        scanSpeed = shopItems[1].baseValue + (shopItems[1].incrementValue * shopItems[1].upgradeLevel);
+        decoderSpeedMultiplier = shopItems[2].baseValue + (shopItems[2].incrementValue * shopItems[2].upgradeLevel);
+        signalReadingRange = Mathf.FloorToInt(shopItems[3].baseValue + (shopItems[3].incrementValue * shopItems[3].upgradeLevel));
+        numberOfScansSpots = Mathf.FloorToInt(shopItems[4].baseValue + (shopItems[4].incrementValue * shopItems[4].upgradeLevel));
+    }
     public static void UpgradeVariable(string varName)
     {
         int activeIndex = shopItems.IndexOf(shopItems.Where(x => x.name == varName).First()); //Find the position in the list of shop items
@@ -378,35 +383,13 @@ public class Gameplay : MonoBehaviour
         {
             shopItems[activeIndex] = (shopItems[activeIndex].name, shopItems[activeIndex].baseValue, shopItems[activeIndex].incrementValue, shopItems[activeIndex].upgradeLevel + 1, shopItems[activeIndex].upgradeCost);
             credits -= shopItems[activeIndex].upgradeCost;
-            switch (varName) //Select variable. It'd be nice to do this with a referenced variable in the shop items list but apparently c# doesnt enjoy that
-            {
-                case "Text Render Speed":
-                    textSpeed = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
-                    break;
-                case "Scanner Speed":
-                    scanSpeed = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
-                    break;
-                case "Decoder Speed":
-                    decoderSpeedMultiplier = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
-                    break;
-                case "Signal Accuracy":
-                    textDisplayChance = shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel);
-                    break;
-                case "Frequency Range":
-                    signalReadingRange = Mathf.FloorToInt(shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel));
-                    break;
-                case "Radar Strength":
-                    numberOfScansSpots = Mathf.FloorToInt(shopItems[activeIndex].baseValue + (shopItems[activeIndex].incrementValue * shopItems[activeIndex].upgradeLevel));
-                    break;
-                default:
-                    Debug.LogError("Invalid shop");
-                    break;
-            }
         }
         else
         {
 
         }
+
+        ReloadShopVars();
 
     }
     public static float GetItemStatistic(string varName, string statName)

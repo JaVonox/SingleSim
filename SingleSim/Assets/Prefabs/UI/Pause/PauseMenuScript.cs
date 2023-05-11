@@ -61,6 +61,7 @@ public class PauseMenuScript : MonoBehaviour
                 optionsButton.interactable = false;
                 optionsPanel.SetActive(false);
                 reallyExitPanel.SetActive(false);
+                FileLoading.CreateSave("aaa",false);
                 break;
             default:
                 Debug.LogError("Invalid pause menu state");

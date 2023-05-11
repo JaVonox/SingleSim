@@ -326,7 +326,6 @@ public class ScannerControls : MonoBehaviour
         SetHzInteractionState(false);
         Gameplay.scanProg = 0;
         Gameplay.currentScanTextPos = -1;
-        Gameplay.textTime = 0;
         Gameplay.lastSentHz = Gameplay.lastLoadedHz; //Load in the last hz recorded to be sent as the scan
 
         if(mapSpotsPanel.transform.childCount > 0) //Unload all scan spots

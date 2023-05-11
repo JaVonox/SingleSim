@@ -61,6 +61,10 @@ public class LaptopConsole
         ReloadConsole(ref consoleObject);
     }
 
+    public static void GlobalWrite(string writeObj)
+    {
+        consoleStorage.Enqueue("<color=#FFFFFF>" + writeObj + "</color>");
+    }
     //Console commands
     private static void DisplayCommands(string[] args)
     {
