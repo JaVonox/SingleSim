@@ -78,10 +78,11 @@ public class PauseMenuScript : MonoBehaviour
                 optionsPanel.SetActive(false);
                 reallyExitPanel.SetActive(false);
                 createSave.interactable = false;
+                saveName.text = Gameplay.prevSaveName;
                 createSave.onClick.AddListener(() => AttemptSave());
                 cancelSave.onClick.AddListener(() => SwitchState(PauseState.Default));
                 saveName.onValueChanged.AddListener((x) => UpdateSaveErrorText(x));
-                UpdateSaveErrorText("");
+                UpdateSaveErrorText(saveName.text);
                 break;
             default:
                 Debug.LogError("Invalid pause menu state");
@@ -92,6 +93,7 @@ public class PauseMenuScript : MonoBehaviour
     public void AttemptSave()
     {
         FileLoading.CreateSave(saveName.text, false);
+        Gameplay.prevSaveName = saveName.text;
         SwitchState(PauseState.Default);
     }
 
@@ -99,7 +101,6 @@ public class PauseMenuScript : MonoBehaviour
     {
         createSave.interactable = false;
         errorText.color = new Color(0.72f, 0.05f, 0.12f, 1);
-
 
         if (newVal.Length > 0 && FileLoading.IsValidFilename(newVal))
         {
