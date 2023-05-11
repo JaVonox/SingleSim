@@ -10,7 +10,7 @@ public class Gameplay : MonoBehaviour
     public static float scanProg = -1; //-1 for not started. locked to 0-1
     public static List<Scanspot> scanCoords = new List<Scanspot>(); //Stores available positions of scan coordinates
     public static bool scanSpotsAreAvailable = false; //Bool says if there are available scan coordinates on screen
-    public static int numberOfScansSpots = 5; //how many scan spots can appear at once
+    public static int numberOfScansSpots = 3; //how many scan spots can appear at once
     public static (float xBound, float yBound) bounds; //Stores the boundaries of the scanSet
     public static bool isBoundsSet = false;
     private float secsSinceLastUpdate = 0;
@@ -59,7 +59,7 @@ public class Gameplay : MonoBehaviour
         scanProg = -1;
         scanCoords.Clear();
         scanSpotsAreAvailable = false;
-        numberOfScansSpots = 5;
+        numberOfScansSpots = 3;
         bounds = (0,0);
         isBoundsSet = false;
         activeAlien = null;
@@ -80,6 +80,15 @@ public class Gameplay : MonoBehaviour
         //Pref Comparisons does not need to be reset
         //Loaded messages does not need to be reset
         ScannerControls.currentState = ScanState.IdleConsole;
+
+        for (int i = 0; i < shopItems.Count; i++) //Reset shop items
+        {
+            shopItems[i] = (shopItems[i].name, shopItems[i].baseValue, shopItems[i].incrementValue, 0, shopItems[i].upgradeCost);
+        }
+
+        isSetup = false;
+        scannerState = "idle";
+        decoderState = "idle";
 
         AudioHandler.Setup();
 
@@ -126,46 +135,64 @@ public class Gameplay : MonoBehaviour
             isSetup = false;
         }
 
+        if (tutorialState == 4 && ScannerControls.currentState != ScanState.Disabled) //If in the matching state of the tutorial, disable the scanner
+        {
+            ScannerControls.currentState = ScanState.Disabled;
+            SetScannerState("idle");
+        }
+        else if(ScannerControls.currentState == ScanState.Disabled && tutorialState == 5)
+        {
+            ScannerControls.currentState = ScanState.IdleConsole;
+            SetScannerState("idle");
+        }
+        
         secsSinceLastUpdate += Time.deltaTime;
 
         if (secsSinceLastUpdate >= 0.2f)
         {
-            if (scanProg == 0)
+            if (ScannerControls.currentState != ScanState.Disabled)
             {
-                SetScannerState("scanning");
-            }
-
-            if (scanProg != -1 && scanProg < 1)
-            {
-                scanProg += scanSpeed;
-            }
-            else if (scanProg >= 1)
-            {
-                scanProg = -1; //Reset scanner
-
-                if (!scanSpotsAreAvailable) //If there are not already available scanspots, generate new ones
+                if (scanProg == 0)
                 {
-                    for (int i = 0; i < numberOfScansSpots; i++) //Generate a new scan spot inside the bounds
+                    SetScannerState("scanning");
+                }
+
+                if (scanProg != -1 && scanProg < 1)
+                {
+                    scanProg += scanSpeed;
+                }
+                else if (scanProg >= 1)
+                {
+                    scanProg = -1; //Reset scanner
+
+                    if (!scanSpotsAreAvailable) //If there are not already available scanspots, generate new ones
                     {
-                        scanCoords.Add(new Scanspot(Random.Range(10, bounds.xBound), Random.Range(10, bounds.yBound), Random.Range(50, 950))); //Spawn in a new scanspot at random coordinates dictated by the boundaries of the map
+                        for (int i = 0; i < numberOfScansSpots; i++) //Generate a new scan spot inside the bounds
+                        {
+                            scanCoords.Add(new Scanspot(Random.Range(10, bounds.xBound), Random.Range(10, bounds.yBound), Random.Range(50, 950))); //Spawn in a new scanspot at random coordinates dictated by the boundaries of the map
+                        }
+
                     }
+                    SetScannerState("finished");
+                    scanSpotsAreAvailable = true;
 
                 }
-                SetScannerState("finished");
-                scanSpotsAreAvailable = true;
-
+                else if (currentScanTextPos != -1) //Setting UI update text
+                {
+                    if (currentScanTextPos == 0)
+                    {
+                        SetScannerState("idle");
+                    }
+                    currentScanTextPos += Mathf.FloorToInt(textSpeed);
+                    if (currentScanTextPos > scanUIText.Length)
+                    {
+                        currentScanTextPos = scanUIText.Length;
+                    }
+                }
             }
-            else if (currentScanTextPos != -1) //Setting UI update text
+            else //If in disabled state
             {
-                if (currentScanTextPos == 0)
-                {
-                    SetScannerState("idle");
-                }
-                currentScanTextPos += Mathf.FloorToInt(textSpeed);
-                if (currentScanTextPos > scanUIText.Length)
-                {
-                    currentScanTextPos = scanUIText.Length;
-                }
+                SetScannerState("idle");
             }
 
             if (activeAlien != null && activeAlien.decoderProgress >= 0)
@@ -339,8 +366,8 @@ public class Gameplay : MonoBehaviour
         ("Text Render Speed",4.0f,1.0f,0,50),
         ("Scanner Speed",0.05f,0.025f,0,40),
         ("Decoder Speed",1.0f,0.2f,0,40),
-        ("Frequency Range",30.0f,10.0f,0,60),
-        ("Radar Strength",5.0f,0.5f,0,60)
+        ("Frequency Range",30.0f,5.0f,0,60),
+        ("Radar Strength",3.0f,0.5f,0,60)
         //("Signal Accuracy",0.925f,0.008f,0,10)
     };
     public static void UpgradeVariable(string varName)
@@ -473,7 +500,7 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
 
     public Alien(System.Func<int, BodyType, Sprite> spriteMethod, bool tutorialAlienOne) //Generates the first two aliens a user will recieve, based on their tutorial state
     {
-        baseDecodeSpeed = 0.01f; //Set random speed for decoding the signal
+        baseDecodeSpeed = 0.005 * Gameplay.decoderSpeedMultiplier; //Preset speed
 
         retImageMethod = spriteMethod; //Attach the method that returns the sprite
 

@@ -26,6 +26,7 @@ public class LaptopConsole
         consoleCommands.Add("Debug.swarm", (false, (args) => DebugSwarmSignals(args)));
         consoleCommands.Add("Debug.noise", (false, (args) => DebugPlaySound(args)));
         consoleCommands.Add("Debug.tutorial", (false, (args) => DebugGetTutorialState(args)));
+        consoleCommands.Add("Debug.max", (false, (args) => DebugMaximumPower(args)));
     }
     public static void ReloadConsole(ref TMPro.TextMeshProUGUI consoleObject)
     {
@@ -167,6 +168,21 @@ public class LaptopConsole
 
     private static void DebugGetTutorialState(string[] args)
     {
-        consoleStorage.Enqueue("Current tutorial state: " + Gameplay.tutorialState);
+        consoleStorage.Enqueue("<color=#FFFFFF>Current tutorial state: " + Gameplay.tutorialState + "</color>");
+    }
+
+    private static void DebugMaximumPower(string[] args)
+    {
+        string[] itemNames = Gameplay.shopItems.Select(x => x.name).ToArray();
+
+        foreach(string itemName in itemNames)
+        {
+            for(int i = 0; i< 10; i++)
+            {
+                Gameplay.UpgradeVariable(itemName);
+            }
+        }
+
+        consoleStorage.Enqueue("<color=#FFFFFF>Set all shop item values to maximum</color>");
     }
 }

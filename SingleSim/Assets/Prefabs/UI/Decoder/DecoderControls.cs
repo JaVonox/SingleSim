@@ -57,6 +57,7 @@ public class DecoderControls : MonoBehaviour
 
                 if(Gameplay.activeAlien.decoderProgress >= 1)
                 {
+                    DecoderUpdate();
                     TextUpdate();
 
                     startDecode.gameObject.SetActive(true);

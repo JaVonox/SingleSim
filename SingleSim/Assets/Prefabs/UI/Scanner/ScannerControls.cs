@@ -118,6 +118,7 @@ public class ScannerControls : MonoBehaviour
         Gameplay.scanSpotsAreAvailable = false;
         retryDisabled.onClick.RemoveAllListeners();
         retryDisabled.onClick.AddListener(() => CheckDisabledMode(true));
+        SetHzInteractionState(false);
     }
 
     void CheckDisabledMode(bool isRefresh)
@@ -181,8 +182,8 @@ public class ScannerControls : MonoBehaviour
     {
         SetupDigits();
         //Make button activate the scanning - unless it has already started
-        if (Gameplay.scanProg != -1) { startScan.interactable = false; }
-        else { startScan.interactable = true; }
+        if (Gameplay.scanProg != -1) { startScan.interactable = false; SetHzInteractionState(false); }
+        else { startScan.interactable = true; SetHzInteractionState(true); }
         startScan.onClick.AddListener(() => BeginScanMode());
 
         if(Gameplay.isBoundsSet == false)
@@ -231,6 +232,7 @@ public class ScannerControls : MonoBehaviour
 
         if(Gameplay.scanProg == -1 && loadedScanSpots.Count > 0) //When the scan finishes, reenable all buttons
         {
+            SetHzInteractionState(true);
             if (loadedScanSpots[0].GetComponentInChildren<Button>().interactable == false)
             {
                 SetupScanSpotGameobject();
@@ -272,13 +274,16 @@ public class ScannerControls : MonoBehaviour
     }
     void ScrollHandler(float yIn)
     {
-        int cVal = int.Parse(hundredsText.text) * 100 + int.Parse(tensText.text) * 10 + int.Parse(onesText.text);
-        int updatedFreq = Mathf.Clamp(cVal + Mathf.CeilToInt(yIn),0,999);
-        string[] hzString = ConvertHzArray(updatedFreq);
+        if (scrollWheelEnabled)
+        {
+            int cVal = int.Parse(hundredsText.text) * 100 + int.Parse(tensText.text) * 10 + int.Parse(onesText.text);
+            int updatedFreq = Mathf.Clamp(cVal + Mathf.CeilToInt(yIn), 0, 999);
+            string[] hzString = ConvertHzArray(updatedFreq);
 
-        hundredsText.text = hzString[0].ToString();
-        tensText.text = hzString[1].ToString();
-        onesText.text = hzString[2].ToString();
+            hundredsText.text = hzString[0].ToString();
+            tensText.text = hzString[1].ToString();
+            onesText.text = hzString[2].ToString();
+        }
 
     }
 
@@ -318,6 +323,7 @@ public class ScannerControls : MonoBehaviour
     {
         SwitchState(ScanState.Scanning);
         startScan.interactable = false;
+        SetHzInteractionState(false);
         Gameplay.scanProg = 0;
         Gameplay.currentScanTextPos = -1;
         Gameplay.textTime = 0;
@@ -331,6 +337,32 @@ public class ScannerControls : MonoBehaviour
             }
         }
         loadedScanSpots.Clear();
+    }
+
+    bool scrollWheelEnabled = true; //If scroll wheel can be used to change the hz values
+    void SetHzInteractionState(bool isOn)
+    {
+        hundredsIncrement.interactable = isOn;
+        tensIncrement.interactable = isOn;
+        onesIncrement.interactable = isOn;
+
+        hundredsDecrement.interactable = isOn;
+        tensDecrement.interactable = isOn;
+        onesDecrement.interactable = isOn;
+        scrollWheelEnabled = isOn;
+
+        if(!isOn)
+        {
+            hundredsText.color = Color.grey;
+            tensText.color = Color.grey;
+            onesText.color = Color.grey;
+        }
+        else
+        {
+            hundredsText.color = Color.white;
+            tensText.color = Color.white;
+            onesText.color = Color.white;
+        }
     }
     void SelectScanSpot(GameObject selectedScanSpot, (float x, float y) position) //When a spot is selected
     {
