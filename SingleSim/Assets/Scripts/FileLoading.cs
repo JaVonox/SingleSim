@@ -70,6 +70,32 @@ public class FileLoading
     }
 
     //TOOD ADD SETTINGS IN PLAYERPREFS
+
+    public static bool DoesDirExist(string? addPath)
+    {
+        if (addPath == null) //Checks if the save file directory exists
+        {
+            return Directory.Exists(savesPath);
+        }
+        else //Checks if a save with the name specified exists
+        {
+            return File.Exists(savesPath + "/" + addPath + ".sav");
+        }
+    }
+    public static bool IsValidFilename(string filename)
+    {
+        if (filename.Contains(".")) { return false; }
+
+        char[] invalidChars = Path.GetInvalidFileNameChars();
+        foreach (char x in invalidChars)
+        {
+            if (filename.Contains(x.ToString())) {
+                return false; 
+            }
+        }
+
+        return true;
+    }
     public static void CreateSave(string saveName, bool overwriting)
     {
         settings.Indent = true;
@@ -86,6 +112,7 @@ public class FileLoading
 
             xmlWriter.WriteStartElement("Data");
             xmlWriter.WriteAttributeString("version", gameVersion);
+            xmlWriter.WriteAttributeString("saveName", saveName);
 
             WriteGameplayVars(ref xmlWriter);
             WriteShopLevels(ref xmlWriter);

@@ -51,6 +51,7 @@ public class Gameplay : MonoBehaviour
 
     public static List<(BodyType type, string unprocessedContents, Dictionary<System.Type,string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> LoadedMessages = new List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)>(); //Messages sorted by body type and details filled out as appropriate
     
+    public static string prevSaveName = ""; //Stores the name of the save - updates if a save is made or if the save is loaded
     public static void ResetGamestate()
     {
         scanProg = -1;
@@ -69,6 +70,7 @@ public class Gameplay : MonoBehaviour
         tutorialState = 0; //state 0 is before first scan, state 1 is after scan, state 2 is after first decode, state 3 is after second decode, state 4 is after match
         lastLoadedHz = 255;
         lastSentHz = 255;
+        prevSaveName = "";
         //Pref Comparisons does not need to be reset
         //Loaded messages does not need to be reset
         ScannerControls.currentState = ScanState.IdleConsole;
@@ -303,7 +305,7 @@ public class Gameplay : MonoBehaviour
         int score = GetCreditScore(sender1, sender2);
         credits += score;
         lifetimeCredits += score;
-
+            
         if(tutorialState == 4) { tutorialState = 5; } //exit tutorial state after finishing first match
         storedAliens.Remove(sender1);
         storedAliens.Remove(sender2);

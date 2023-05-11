@@ -26,10 +26,22 @@ public class PauseMenuScript : MonoBehaviour
     public Button reallyExit;
     public Button reallyCancel;
 
+    //Saving panels
+    public GameObject savePanel;
+    public InputField saveName;
+    public Button createSave;
+    public Button cancelSave;
+    public Text errorText;
+
     private PauseState currentState;
     private void SwitchState(PauseState newState)
     {
         currentState = newState;
+
+        createSave.onClick.RemoveAllListeners();
+        cancelSave.onClick.RemoveAllListeners();
+        saveName.onValueChanged.RemoveAllListeners();
+        errorText.text = "";
     
         switch(newState)
         {
@@ -37,6 +49,7 @@ public class PauseMenuScript : MonoBehaviour
                 saveGame.interactable = true;
                 optionsButton.interactable = true;
                 exitGame.interactable = true;
+                savePanel.SetActive(false);
                 optionsPanel.SetActive(false);
                 reallyExitPanel.SetActive(false);
                 break;
@@ -45,6 +58,7 @@ public class PauseMenuScript : MonoBehaviour
                 optionsButton.interactable = false;
                 exitGame.interactable = false;
                 optionsPanel.GetComponentInChildren<OptionsScript>().SetOptionsDefaults();
+                savePanel.SetActive(false);
                 optionsPanel.SetActive(true);
                 reallyExitPanel.SetActive(false);
                 break;
@@ -52,6 +66,7 @@ public class PauseMenuScript : MonoBehaviour
                 saveGame.interactable = false;
                 exitGame.interactable = false;
                 optionsButton.interactable = false;
+                savePanel.SetActive(false);
                 optionsPanel.SetActive(false);
                 reallyExitPanel.SetActive(true);
                 break;
@@ -59,14 +74,57 @@ public class PauseMenuScript : MonoBehaviour
                 saveGame.interactable = false;
                 exitGame.interactable = false;
                 optionsButton.interactable = false;
+                savePanel.SetActive(true);
                 optionsPanel.SetActive(false);
                 reallyExitPanel.SetActive(false);
-                FileLoading.CreateSave("aaa",false);
+                createSave.interactable = false;
+                createSave.onClick.AddListener(() => AttemptSave());
+                cancelSave.onClick.AddListener(() => SwitchState(PauseState.Default));
+                saveName.onValueChanged.AddListener((x) => UpdateSaveErrorText(x));
+                UpdateSaveErrorText("");
                 break;
             default:
                 Debug.LogError("Invalid pause menu state");
                 break;
         }
+    }
+
+    public void AttemptSave()
+    {
+        FileLoading.CreateSave(saveName.text, false);
+        SwitchState(PauseState.Default);
+    }
+
+    public void UpdateSaveErrorText(string newVal)
+    {
+        createSave.interactable = false;
+        errorText.color = new Color(0.72f, 0.05f, 0.12f, 1);
+
+
+        if (newVal.Length > 0 && FileLoading.IsValidFilename(newVal))
+        {
+            errorText.color = new Color(0.12f, 0.72f, 0.05f, 1);
+            if (FileLoading.DoesDirExist(newVal))
+            {
+                errorText.color = Color.white;
+                errorText.text = "A save file with this name already exists and will be overwritten";
+            }
+            else
+            {
+                errorText.text = "The specified file name is valid";
+            }
+            createSave.interactable = true;
+        }
+        else
+        {
+            errorText.text = "Invalid file name";
+        }
+
+        if (!FileLoading.DoesDirExist(null))
+        {
+            errorText.text += "\nSave file directory not found. A new save file directory will be created.";
+        }
+
     }
     void Start()
     {
