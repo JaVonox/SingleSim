@@ -92,9 +92,12 @@ public class PauseMenuScript : MonoBehaviour
 
     public void AttemptSave()
     {
-        FileLoading.CreateSave(saveName.text, false);
-        Gameplay.prevSaveName = saveName.text;
-        SwitchState(PauseState.Default);
+        if (FileLoading.IsValidFilename(saveName.text))
+        {
+            FileLoading.CreateSave(saveName.text, false);
+            Gameplay.prevSaveName = saveName.text;
+            SwitchState(PauseState.Default);
+        }
     }
 
     public void UpdateSaveErrorText(string newVal)

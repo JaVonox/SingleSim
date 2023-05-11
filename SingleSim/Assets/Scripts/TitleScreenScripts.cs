@@ -59,10 +59,10 @@ public class TitleScreenScripts : MonoBehaviour
                 optionsDialog.SetActive(true);
                 break;
             case TitleState.SaveDialog:
-                newGame.interactable = false;
+                newGame.interactable = true;
                 loadGame.interactable = false;
-                options.interactable = false;
-                exit.interactable = false;
+                options.interactable = true;
+                exit.interactable = true;
                 saveDialog.SetActive(true);
                 optionsDialog.SetActive(false);
                 break;

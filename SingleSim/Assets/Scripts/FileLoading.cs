@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Xml;
 using System.IO;
+using System.Linq;
 public class FileLoading
 {
     private static string savesPath = System.IO.Directory.GetCurrentDirectory().ToString() + "/Saves/";
@@ -113,6 +114,7 @@ public class FileLoading
             xmlWriter.WriteStartElement("Data");
             xmlWriter.WriteAttributeString("version", gameVersion);
             xmlWriter.WriteAttributeString("saveName", saveName);
+            xmlWriter.WriteAttributeString("time", System.DateTime.Now.ToString("dd/MM/yy HH:mm:ss"));
 
             WriteGameplayVars(ref xmlWriter);
             WriteShopLevels(ref xmlWriter);
@@ -307,4 +309,64 @@ public class FileLoading
 
         xmlWriter.WriteEndElement();
     }
+
+    public static List<SaveItem>? LoadSaves()
+    {
+        if (!DoesDirExist(null)) { return null; }
+
+        List<SaveItem> saveObjs = new List<SaveItem>();
+        try
+        {
+            string[] files = Directory.GetFiles(savesPath);
+            string[] saves = files.Where(x => x.Contains(".sav")).ToArray();
+
+            if (saves.Length > 0)
+            {
+                foreach (string path in saves)
+                {
+                    try
+                    {
+                        SaveItem newSave;
+
+                        string xmlFile = File.ReadAllText(path);
+
+                        XmlDocument doc = new XmlDocument();
+                        doc.LoadXml(xmlFile);
+
+                        XmlNode mainDataNode = doc.SelectSingleNode("Data");
+                        newSave.filepath = path;
+                        newSave.version = mainDataNode.Attributes["version"].Value;
+                        newSave.name = mainDataNode.Attributes["saveName"].Value;
+                        newSave.lastTime = mainDataNode.Attributes["time"].Value;
+                        saveObjs.Add(newSave);
+
+                    }
+                    catch (System.Exception ex) //Exception for when file is invalid or corrupt
+                    {
+                        Debug.LogError(ex);
+                    }
+                }
+            }
+            else
+            {
+                return null;
+            }
+               
+        }
+        catch(System.Exception ex)
+        {
+            Debug.LogError(ex.Message);
+            return null;
+        }
+
+        return saveObjs;
+    }
+}
+
+public struct SaveItem
+{
+    public string name;
+    public string version;
+    public string lastTime;
+    public string filepath;
 }
