@@ -118,6 +118,39 @@ public class FileLoading
             WriteShopLevels(ref xmlWriter);
             WriteAliens(ref xmlWriter);
 
+            xmlWriter.WriteStartElement("Emails");
+            if (LaptopHandler.emails.Count > 0)
+            {
+                foreach (Email x in LaptopHandler.emails)
+                {
+                    xmlWriter.WriteStartElement("Email");
+                    xmlWriter.WriteAttributeString("sender", x.sender);
+                    xmlWriter.WriteAttributeString("subject", x.subject);
+                    xmlWriter.WriteAttributeString("time", x.recievedTime.ToString());
+                    xmlWriter.WriteString(x.text);
+                    xmlWriter.WriteEndElement();
+                }
+            }
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("EmailsQueue");
+            if (LaptopHandler.emailQueue.Count > 0)
+            {
+                List<Email> queuedEmails = new List<Email>();
+                queuedEmails = LaptopHandler.emailQueue.ToList(); //TODO - if an email gets queued while saving occurs will this break stuff??
+
+                foreach (Email x in queuedEmails)
+                {
+                    xmlWriter.WriteStartElement("Email");
+                    xmlWriter.WriteAttributeString("sender", x.sender);
+                    xmlWriter.WriteAttributeString("subject", x.subject);
+                    xmlWriter.WriteAttributeString("time", x.recievedTime.ToString());
+                    xmlWriter.WriteString(x.text);
+                    xmlWriter.WriteEndElement();
+                }
+            }
+            xmlWriter.WriteEndElement();
+
             xmlWriter.WriteEndElement();
             xmlWriter.WriteEndDocument();
             xmlWriter.Close();
@@ -152,6 +185,7 @@ public class FileLoading
             Gameplay.credits = int.Parse(mainDataNode["Gameplay"]["credits"].InnerText);
             Gameplay.lifetimeCredits = int.Parse(mainDataNode["Gameplay"]["lifetimeCredits"].InnerText);
             Gameplay.tutorialState = byte.Parse(mainDataNode["Gameplay"]["tutorialState"].InnerText);
+            Gameplay.tutorialStateUpdateNeeded = bool.Parse(mainDataNode["Gameplay"]["tutorialStateUpdateNeeded"].InnerText);
             Gameplay.lastLoadedHz = int.Parse(mainDataNode["Gameplay"]["lastLoadedHz"].InnerText);
             Gameplay.lastSentHz = int.Parse(mainDataNode["Gameplay"]["lastSentHz"].InnerText);
             ScannerControls.currentState = (ScanState)(ScanState.Parse(typeof(ScanState), mainDataNode["Gameplay"]["scannerEnumState"].InnerText));
@@ -169,7 +203,24 @@ public class FileLoading
                 }
             }
 
-            if(mainDataNode["Aliens"]["CurrentSignal"].HasChildNodes)
+
+            if (mainDataNode["Emails"].HasChildNodes)
+            {
+                foreach (XmlNode child in mainDataNode["Emails"].ChildNodes)
+                {
+                    LaptopHandler.AddEmail(child.Attributes["sender"].Value, child.Attributes["subject"].Value, child.InnerText, System.DateTime.Parse(child.Attributes["time"].Value),true);
+                }
+            }
+
+            if (mainDataNode["EmailsQueue"].HasChildNodes)
+            {
+                foreach (XmlNode child in mainDataNode["Emails"].ChildNodes)
+                {
+                    LaptopHandler.emailQueue.Enqueue(new Email(child.Attributes["sender"].Value, child.Attributes["subject"].Value, child.InnerText, System.DateTime.Parse(child.Attributes["time"].Value)));
+                }
+            }
+
+            if (mainDataNode["Aliens"]["CurrentSignal"].HasChildNodes)
             {
                 Gameplay.activeAlien = LoadAlien(mainDataNode["Aliens"]["CurrentSignal"]["Alien"]);
             }
@@ -240,6 +291,10 @@ public class FileLoading
 
         xmlWriter.WriteStartElement("tutorialState");
         xmlWriter.WriteString(Gameplay.tutorialState.ToString());
+        xmlWriter.WriteEndElement();
+
+        xmlWriter.WriteStartElement("tutorialStateUpdateNeeded");
+        xmlWriter.WriteString(Gameplay.tutorialStateUpdateNeeded.ToString());
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteStartElement("lastLoadedHz");

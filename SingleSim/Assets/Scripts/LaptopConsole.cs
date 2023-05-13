@@ -27,6 +27,7 @@ public class LaptopConsole
         consoleCommands.Add("Debug.noise", (false, (args) => DebugPlaySound(args)));
         consoleCommands.Add("Debug.tutorial", (false, (args) => DebugGetTutorialState(args)));
         consoleCommands.Add("Debug.max", (false, (args) => DebugMaximumPower(args)));
+        consoleCommands.Add("Debug.email", (false, (args) => DebugAddEmail(args)));
     }
     public static void ReloadConsole(ref TMPro.TextMeshProUGUI consoleObject)
     {
@@ -188,5 +189,15 @@ public class LaptopConsole
         }
 
         consoleStorage.Enqueue("<color=#FFFFFF>Set all shop item values to maximum</color>");
+    }
+
+    private static void DebugAddEmail(string[] args)
+    {
+        if(args.Length < 4) { consoleStorage.Enqueue("<color=#B80e20>Insufficient Parameters</color>"); }
+        else
+        {
+            LaptopHandler.AddEmail(args[1], args[2], args[3],false);
+            consoleStorage.Enqueue("<color=#FFFFFF>Added email</color>");
+        }
     }
 }

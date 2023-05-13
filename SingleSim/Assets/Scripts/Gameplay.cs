@@ -48,6 +48,8 @@ public class Gameplay : MonoBehaviour
     public static int credits = 0;
     public static int lifetimeCredits = 0;
     public static byte tutorialState = 0;//state 0 is before first scan, state 1 is after scan, state 2 is after first decode, state 3 is after second scan, state 4 is after second decode, state 5 is after match
+    public static bool tutorialStateUpdateNeeded = false; //Set to true when tutorial state changes - requesting an update of tutorial assets + emails
+    private float emailDtTime = 0.0f;
     public static int lastLoadedHz = 255;
     public static int lastSentHz = 255;
 
@@ -72,6 +74,7 @@ public class Gameplay : MonoBehaviour
         credits = 0;
         lifetimeCredits = 0;
         tutorialState = 0; //state 0 is before first scan, state 1 is after scan, state 2 is after first decode, state 3 is after second decode, state 4 is after match
+        tutorialStateUpdateNeeded = true;
         lastLoadedHz = 255;
         lastSentHz = 255;
         prevSaveName = "";
@@ -92,6 +95,7 @@ public class Gameplay : MonoBehaviour
         decoderState = "idle";
 
         AudioHandler.Setup();
+        LaptopHandler.emails.Clear();
 
     }
     public static void HandleSaveLoad(string path)
@@ -138,6 +142,7 @@ public class Gameplay : MonoBehaviour
 
         Movement.volume = PlayerPrefs.GetFloat("volume");
         Movement.sensitivity = PlayerPrefs.GetFloat("sensitivity");
+
         Setup();
     }
 
@@ -149,6 +154,35 @@ public class Gameplay : MonoBehaviour
         isSetup = true;
     }
     // Update is called once per frame
+
+    void HandleTutorialStateChange()
+    {
+        tutorialStateUpdateNeeded = false;
+        switch (tutorialState)
+        {
+            case 0:
+                LaptopHandler.emailQueue.Enqueue(new Email("0", "0", "0"));
+                break;
+            case 1:
+                LaptopHandler.emailQueue.Enqueue(new Email("1", "1", "1"));
+                break;
+            case 2:
+                LaptopHandler.emailQueue.Enqueue(new Email("2", "2", "2"));
+                break;
+            case 3:
+                LaptopHandler.emailQueue.Enqueue(new Email("3", "3", "3"));
+                break;
+            case 4:
+                LaptopHandler.emailQueue.Enqueue(new Email("4", "4", "4"));
+                break;
+            case 5:
+                LaptopHandler.emailQueue.Enqueue(new Email("5", "5", "5"));
+                break;
+            default:
+                Debug.LogError("invalid tutorial state message");
+                break;
+        }
+    }
     void Update()
     {
         if(isSetup) //When in setup state, update all non-static variables on first frame update
@@ -170,8 +204,18 @@ public class Gameplay : MonoBehaviour
             ScannerControls.currentState = ScanState.IdleConsole;
             SetScannerState("idle");
         }
-        
-        secsSinceLastUpdate += Time.deltaTime;
+
+        float dt = Time.deltaTime;
+        secsSinceLastUpdate += dt;
+        emailDtTime += dt;
+
+        if (tutorialStateUpdateNeeded) { HandleTutorialStateChange(); }
+
+        if (emailDtTime > 2.5f) //Emails check for updates every 5 seconds
+        {
+            LaptopHandler.HandleEmailQueue(); //Adds from email queue
+            emailDtTime = 0;
+        }
 
         if (secsSinceLastUpdate >= 0.2f)
         {
@@ -334,7 +378,7 @@ public class Gameplay : MonoBehaviour
         credits += score;
         lifetimeCredits += score;
             
-        if(tutorialState == 4) { tutorialState = 5; } //exit tutorial state after finishing first match
+        if(tutorialState == 4) { tutorialState = 5; tutorialStateUpdateNeeded = true; } //exit tutorial state after finishing first match
         storedAliens.Remove(sender1);
         storedAliens.Remove(sender2);
     }

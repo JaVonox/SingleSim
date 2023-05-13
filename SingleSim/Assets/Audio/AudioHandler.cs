@@ -15,6 +15,7 @@ public class AudioHandler : MonoBehaviour
     public AudioSource serverProcessing;
     public AudioSource serverScanning;
     public AudioSource serverBeep;
+    public AudioSource laptopEmail;
 
     public AudioSource outsideAmbience;
     public AudioSource outsideNoises;
@@ -114,6 +115,7 @@ public class AudioHandler : MonoBehaviour
     }
 
     private static bool forcePlay = false;
+    private static bool forceEmailPlay = false;
     private static string forcedSound = "";
     private static float forcedVolume = 0f;
     private static Dictionary<string, int> normalSoundRefs = new Dictionary<string, int>();
@@ -133,6 +135,10 @@ public class AudioHandler : MonoBehaviour
         }
     }
 
+    public static void EmailNotification()
+    {
+        forceEmailPlay = true;
+    }
     private void ConsoleSoundPlayer()
     {
         outsideNoises.Stop();
@@ -170,6 +176,13 @@ public class AudioHandler : MonoBehaviour
             ConsoleSoundPlayer();
         }
 
+        if (forceEmailPlay) //When an email is recieved play the email notification sound
+        {
+            laptopEmail.Play();
+            forceEmailPlay = false;
+        }
+
+
         dtTime += Time.deltaTime;
 
         if (dtTime > 0.1f)
@@ -178,6 +191,7 @@ public class AudioHandler : MonoBehaviour
             serverAmbient.volume = Movement.volume * 0.8f;
             serverProcessing.volume = Movement.volume * 0.8f;
             serverScanning.volume = Movement.volume;
+            laptopEmail.volume = Movement.volume * 0.5f;
 
             if (beepsEnabled) //Beep randomness
             {

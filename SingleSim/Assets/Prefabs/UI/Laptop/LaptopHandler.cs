@@ -11,6 +11,7 @@ enum LaptopModes
     Console,
     Review,
     Email,
+    SpecificEmail,
 }
 public class LaptopHandler : MonoBehaviour
 {
@@ -38,9 +39,18 @@ public class LaptopHandler : MonoBehaviour
 
     public GameObject reviewTab;
 
+    public static List<Email> emails = new List<Email>(); //List of emails to load in.
+    public static Queue<Email> emailQueue = new Queue<Email>(); //Queue of emails to be appended at update times
+    int lastEmailCount = 0;
+
     public GameObject emailTab;
     public GameObject emailItemPrefab;
     public GameObject emailsContainer;
+
+    public GameObject specificEmailTab;
+    public Button returnEmailsSpecific;
+    public TextMeshProUGUI emailSender;
+    public TextMeshProUGUI emailContents;
 
     private Alien comparitorAlien;
     private LaptopModes currentMode;
@@ -95,6 +105,7 @@ public class LaptopHandler : MonoBehaviour
                 reviewTab.SetActive(false);
                 consoleTab.SetActive(false);
                 emailTab.SetActive(false);
+                specificEmailTab.SetActive(false);
                 LoadProfiles();
                 break;
             case LaptopModes.Specific:
@@ -108,6 +119,7 @@ public class LaptopHandler : MonoBehaviour
                 reviewTab.SetActive(false);
                 consoleTab.SetActive(false);
                 emailTab.SetActive(false);
+                specificEmailTab.SetActive(false);
                 break;
             case LaptopModes.Shop:
                 profilesMode.interactable = true;
@@ -120,6 +132,7 @@ public class LaptopHandler : MonoBehaviour
                 reviewTab.SetActive(false);
                 consoleTab.SetActive(false);
                 emailTab.SetActive(false);
+                specificEmailTab.SetActive(false);
                 LoadShop();
                 break;
             case LaptopModes.Console:
@@ -133,6 +146,7 @@ public class LaptopHandler : MonoBehaviour
                 reviewTab.SetActive(false);
                 consoleTab.SetActive(true);
                 emailTab.SetActive(false);
+                specificEmailTab.SetActive(false);
                 LaptopConsole.ReloadConsole(ref consoleText); //Reload the console data
                 consoleInput.text = "";
                 break;
@@ -147,6 +161,7 @@ public class LaptopHandler : MonoBehaviour
                 reviewTab.SetActive(true);
                 consoleTab.SetActive(false);
                 emailTab.SetActive(false);
+                specificEmailTab.SetActive(false);
                 break;
             case LaptopModes.Email:
                 profilesMode.interactable = true;
@@ -159,7 +174,21 @@ public class LaptopHandler : MonoBehaviour
                 reviewTab.SetActive(false);
                 consoleTab.SetActive(false);
                 emailTab.SetActive(true);
-                LoadEmail();
+                specificEmailTab.SetActive(false);
+                LoadEmails();
+                break;
+            case LaptopModes.SpecificEmail:
+                profilesMode.interactable = true;
+                shopMode.interactable = true;
+                consoleMode.interactable = true;
+                emailMode.interactable = false;
+                profilesTab.SetActive(false);
+                specificProfileTab.SetActive(false);
+                shopTab.SetActive(false);
+                reviewTab.SetActive(false);
+                consoleTab.SetActive(false);
+                emailTab.SetActive(false);
+                specificEmailTab.SetActive(true);
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
@@ -189,6 +218,10 @@ public class LaptopHandler : MonoBehaviour
                 comparitorAlien = null;
                 break;
             case "emailMode":
+                currentMode = LaptopModes.Email;
+                comparitorAlien = null;
+                break;
+            case "specificEmailMode":
                 currentMode = LaptopModes.Email;
                 comparitorAlien = null;
                 break;
@@ -399,15 +432,15 @@ public class LaptopHandler : MonoBehaviour
         LoadShopItemLevels();
     }
 
-    void LoadEmail()
+    void LoadEmails()
     {
-        for (int i = 0; i < Gameplay.shopItems.Count; i++)
+        for (int i = 0; i < emails.Count; i++)
         {
             GameObject shop = Instantiate(emailItemPrefab, emailsContainer.transform, false);
 
             RectTransform pfrt = (RectTransform)emailsContainer.transform; //shop item container rect
 
-            shop.name = Gameplay.shopItems[i].name;
+            shop.name = i.ToString();
             RectTransform rt = shop.GetComponentInChildren<RectTransform>(); //item rect
 
             rt.localPosition = new Vector3(0, -(40 + (40 * i)), 0);
@@ -415,15 +448,25 @@ public class LaptopHandler : MonoBehaviour
 
             Transform itemBox = shop.transform.Find("Border").Find("EmailPanel");
 
-            itemBox.Find("SenderLine").GetComponent<Text>().text = Gameplay.shopItems[i].name;
-            itemBox.Find("SubjectLine").GetComponent<Text>().text = "RE:";
+            itemBox.Find("SenderLine").GetComponent<Text>().text = emails[i].sender;
+            itemBox.Find("SubjectLine").GetComponent<Text>().text = emails[i].subject;
             itemBox.Find("OpenEmail").GetComponent<Button>().onClick.RemoveAllListeners();
+            itemBox.Find("OpenEmail").GetComponent<Button>().onClick.AddListener(() => LoadSpecificEmail(i));
 
 
         }
 
-        LoadShopItemLevels();
     }
+
+    void LoadSpecificEmail(int index)
+    {
+        emailSender.text = "From: " + emails[index].sender + "\nSubject:" + emails[index].subject + "\nCC:";
+        emailContents.text = emails[index].text;
+        returnEmailsSpecific.onClick.RemoveAllListeners();
+        returnEmailsSpecific.onClick.AddListener(() => SwitchMode("emailMode"));
+        SwitchMode("specificEmailMode");
+    }
+    
     void UpgradeShopItem(string name) //Upgrade item and reload the item levels for shop objects
     {
         Gameplay.UpgradeVariable(name);
@@ -541,9 +584,15 @@ public class LaptopHandler : MonoBehaviour
     }
     void Update()
     {
-        if(Gameplay.tutorialState >= 5 && !deleteIsEnabled) //Check if the user has finished the tutorial and enable deleting profiles when true
+        if (currentMode == LaptopModes.Email && lastEmailCount != emails.Count)
         {
+            SwitchMode("emailMode");
+        }
+        lastEmailCount = emails.Count;
 
+        if (Gameplay.tutorialState >= 5 && !deleteIsEnabled) //Check if the user has finished the tutorial and enable deleting profiles when true
+        {
+            deleteIsEnabled = true;
         }
 
         dtTime += Time.deltaTime;
@@ -566,5 +615,53 @@ public class LaptopHandler : MonoBehaviour
     {
         LaptopConsole.SubmitItem(ref consoleText, input);
         consoleInput.ActivateInputField();
+    }
+
+    public static void AddEmail(string sender, string title, string body, bool isSilent)
+    {
+        emails.Add(new Email(sender,title,body));
+        if (!isSilent) { AudioHandler.EmailNotification(); } //Play an email notification sound  
+    }
+    public static void AddEmail(Email sendEmail, bool isSilent)
+    {
+        emails.Add(sendEmail);
+        if (!isSilent) { AudioHandler.EmailNotification(); } //Play an email notification sound  
+    }
+    public static void AddEmail(string sender, string title, string body, System.DateTime time, bool isSilent)
+    {
+        emails.Add(new Email(sender, title, body,time));
+        if (!isSilent) { AudioHandler.EmailNotification(); } //Play an email notification sound  
+    }
+
+    public static void HandleEmailQueue()
+    {
+        if (emailQueue.Count > 0)
+        {
+            AddEmail(emailQueue.Dequeue(), false); //Remove top of email queue
+        }
+    }
+}
+
+public struct Email
+{
+    public System.DateTime recievedTime;
+    public string sender;
+    public string subject;
+    public string text;
+
+    public Email(string newSender, string newTitle, string newBody)
+    {
+        sender = newSender;
+        subject = newTitle;
+        text = newBody;
+        recievedTime = System.DateTime.Now;
+    }
+
+    public Email(string newSender, string newTitle, string newBody, System.DateTime time)
+    {
+        sender = newSender;
+        subject = newTitle;
+        text = newBody;
+        recievedTime = time;
     }
 }

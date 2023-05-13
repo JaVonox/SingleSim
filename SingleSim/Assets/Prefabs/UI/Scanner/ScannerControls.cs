@@ -398,8 +398,8 @@ public class ScannerControls : MonoBehaviour
 
         SwitchState(ScanState.EndScreen);
 
-        if (Gameplay.tutorialState == 0) { Gameplay.tutorialState = 1; }
-        else if (Gameplay.tutorialState == 2) { Gameplay.tutorialState = 3; }
+        if (Gameplay.tutorialState == 0) { Gameplay.tutorialState = 1; Gameplay.tutorialStateUpdateNeeded = true; }
+        else if (Gameplay.tutorialState == 2) { Gameplay.tutorialState = 3; Gameplay.tutorialStateUpdateNeeded = true; }
 
         Gameplay.AddNewAlien();
 
