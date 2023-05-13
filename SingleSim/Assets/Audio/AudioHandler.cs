@@ -188,7 +188,7 @@ public class AudioHandler : MonoBehaviour
                 }
             }
 
-            if(outsideNoises.isPlaying == false && Random.Range(0, 2000) == 69) //Outside noises randomness.
+            if(outsideNoises.isPlaying == false && Random.Range(0, 2000) == 69 && Gameplay.tutorialState >= 5) //Outside noises randomness. only occurs if the player has left the tutorial
             {
                 if(Random.Range(0,200) == 69) //Check for rare audio cue
                 {

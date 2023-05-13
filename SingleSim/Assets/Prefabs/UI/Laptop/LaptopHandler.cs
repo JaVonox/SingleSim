@@ -10,19 +10,24 @@ enum LaptopModes
     Shop,
     Console,
     Review,
+    Email,
 }
 public class LaptopHandler : MonoBehaviour
 {
     public Button profilesMode;
     public Button shopMode;
     public Button consoleMode;
+    public Button emailMode;
     public Text creditsText;
 
     public GameObject profileSmallPrefab;
     public GameObject profilesContainer;
 
+
+    public GameObject shopTab;
     public GameObject shopItemPrefab;
     public GameObject shopItemContainer;
+
 
     public GameObject profilesTab;
     public GameObject specificProfileTab;
@@ -31,9 +36,11 @@ public class LaptopHandler : MonoBehaviour
     public TMPro.TMP_InputField consoleInput;
     public TextMeshProUGUI consoleText;
 
-    public GameObject shopTab;
-
     public GameObject reviewTab;
+
+    public GameObject emailTab;
+    public GameObject emailItemPrefab;
+    public GameObject emailsContainer;
 
     private Alien comparitorAlien;
     private LaptopModes currentMode;
@@ -46,6 +53,7 @@ public class LaptopHandler : MonoBehaviour
         profilesMode.onClick.AddListener(() => SwitchMode("profilesMode"));
         shopMode.onClick.AddListener(() => SwitchMode("shopMode"));
         consoleMode.onClick.AddListener(() => SwitchMode("consoleMode"));
+        emailMode.onClick.AddListener(() => SwitchMode("emailMode"));
         SwitchMode("profilesMode");
     }
     void SwitchUI() //Apply UI Changes
@@ -66,49 +74,65 @@ public class LaptopHandler : MonoBehaviour
             }
         }
 
+        if (emailsContainer.transform.childCount > 0) //Unload all shop items
+        {
+            foreach (Transform child in emailsContainer.transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
         switch (currentMode)
         {
             case LaptopModes.Profiles:
                 profilesMode.interactable = false;
                 shopMode.interactable = true;
                 consoleMode.interactable = true;
+                emailMode.interactable = true;
                 profilesTab.SetActive(true);
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(false);
                 consoleTab.SetActive(false);
+                emailTab.SetActive(false);
                 LoadProfiles();
                 break;
             case LaptopModes.Specific:
                 profilesMode.interactable = true;
                 shopMode.interactable = true;
                 consoleMode.interactable = true;
+                emailMode.interactable = true;
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(true);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(false);
                 consoleTab.SetActive(false);
+                emailTab.SetActive(false);
                 break;
             case LaptopModes.Shop:
                 profilesMode.interactable = true;
                 shopMode.interactable = false;
                 consoleMode.interactable = true;
+                emailMode.interactable = true;
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(true);
                 reviewTab.SetActive(false);
                 consoleTab.SetActive(false);
+                emailTab.SetActive(false);
                 LoadShop();
                 break;
             case LaptopModes.Console:
                 profilesMode.interactable = true;
                 shopMode.interactable = true;
                 consoleMode.interactable = false;
+                emailMode.interactable = true;
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(false);
                 consoleTab.SetActive(true);
+                emailTab.SetActive(false);
                 LaptopConsole.ReloadConsole(ref consoleText); //Reload the console data
                 consoleInput.text = "";
                 break;
@@ -116,11 +140,26 @@ public class LaptopHandler : MonoBehaviour
                 profilesMode.interactable = true;
                 shopMode.interactable = true;
                 consoleMode.interactable = true;
+                emailMode.interactable = true;
                 profilesTab.SetActive(false);
                 specificProfileTab.SetActive(false);
                 shopTab.SetActive(false);
                 reviewTab.SetActive(true);
                 consoleTab.SetActive(false);
+                emailTab.SetActive(false);
+                break;
+            case LaptopModes.Email:
+                profilesMode.interactable = true;
+                shopMode.interactable = true;
+                consoleMode.interactable = true;
+                emailMode.interactable = false;
+                profilesTab.SetActive(false);
+                specificProfileTab.SetActive(false);
+                shopTab.SetActive(false);
+                reviewTab.SetActive(false);
+                consoleTab.SetActive(false);
+                emailTab.SetActive(true);
+                LoadEmail();
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
@@ -147,6 +186,11 @@ public class LaptopHandler : MonoBehaviour
                 break;
             case "reviewMode":
                 currentMode = LaptopModes.Review;
+                comparitorAlien = null;
+                break;
+            case "emailMode":
+                currentMode = LaptopModes.Email;
+                comparitorAlien = null;
                 break;
             default:
                 Debug.LogError("Invalid laptop tab");
@@ -349,6 +393,32 @@ public class LaptopHandler : MonoBehaviour
 
             string nameStorage = Gameplay.shopItems[i].name;
             itemBox.Find("BuyUpgrade").GetComponent<Button>().onClick.AddListener(() => UpgradeShopItem(nameStorage)); 
+
+        }
+
+        LoadShopItemLevels();
+    }
+
+    void LoadEmail()
+    {
+        for (int i = 0; i < Gameplay.shopItems.Count; i++)
+        {
+            GameObject shop = Instantiate(emailItemPrefab, emailsContainer.transform, false);
+
+            RectTransform pfrt = (RectTransform)emailsContainer.transform; //shop item container rect
+
+            shop.name = Gameplay.shopItems[i].name;
+            RectTransform rt = shop.GetComponentInChildren<RectTransform>(); //item rect
+
+            rt.localPosition = new Vector3(0, -(40 + (40 * i)), 0);
+            pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, (70 + (70 * i)));
+
+            Transform itemBox = shop.transform.Find("Border").Find("EmailPanel");
+
+            itemBox.Find("SenderLine").GetComponent<Text>().text = Gameplay.shopItems[i].name;
+            itemBox.Find("SubjectLine").GetComponent<Text>().text = "RE:";
+            itemBox.Find("OpenEmail").GetComponent<Button>().onClick.RemoveAllListeners();
+
 
         }
 
