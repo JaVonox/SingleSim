@@ -199,7 +199,7 @@ public class FileLoading
 
                 for (int j = 0; j < level; j++)
                 {
-                    Gameplay.UpgradeVariable(item.name);
+                    Gameplay.UpgradeVariable(item.name,false);
                 }
             }
 

@@ -184,7 +184,7 @@ public class LaptopConsole
         {
             for(int i = 0; i< 10; i++)
             {
-                Gameplay.UpgradeVariable(itemName);
+                Gameplay.UpgradeVariable(itemName,false);
             }
         }
 

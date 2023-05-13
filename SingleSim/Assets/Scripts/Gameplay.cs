@@ -166,7 +166,7 @@ public class Gameplay : MonoBehaviour
                     "Dr. Wester! It's been far too long since we've last talked!\n\nAs department head, I'd like to formally welcome you to the Signals dept. I'm sure I dont have to explain to you what the purpose of our"+
                     " work here is, you've worked here longer than I have after all, nevertheless, it is my responsibility to instruct new transfers on how to work the machinery - so we'll run through a quick tutorial," +
                     " I'll be remoting in and watching your progress.\n\n" +
-                    "Assuming installations did their job correctly, left of the server rack should be your scanner console - we use this to download client signals. Press the" +
+                    "Assuming installations did their job correctly, directly left of the server rack should be your scanner console - we use this to download client signals. Press the" +
                     " 'perform scan' button to load some signals onto the console, you should see some immediately appear on the system. Most likely, you'll find these signals are outside the frequency catchment range, so you'll have" +
                     " to keep scanning at different frequencies until you find the right one. You'll know when you're getting close when a signal starts to get greener. When the signal enters your search range you can click it to load it into the decoder."
                     ));
@@ -198,7 +198,7 @@ public class Gameplay : MonoBehaviour
                     "Matching",
                     "So now we get to the crux of our job - matching profiles. These two weird aliens are looking for the love of their lives and its our job to get them set up on a hot date.\n\n"+
                     "In the profiles menu you can find the two signals we downloaded, loading one up will show you the message details again. " +
-                    "highlighted in <color=#e7d112>yellow</color> you can see how the alien has described themselves, whereas in <color=#A60EB8>purple</color> you can see what theyre looking for.\n"+
+                    "highlighted in <color=#e7d112>yellow</color> you can see how the alien has described themselves, whereas in <color=#A60EB8>purple</color> you can see what they're looking for.\n"+
                     "Its our job to compare these different profiles and match the ones we think fit the clients needs best. You'll be rewarded on how compatable the two clients are, so make sure you look through the details carefully "+
                     "before matching two profiles up.\n\nThese two profiles seem like a pretty perfect match, so we dont need to search for new signals. Try matching them now."
                     ));
@@ -206,11 +206,11 @@ public class Gameplay : MonoBehaviour
             case 5:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Thats all there is to it!",
-                    "Nice job! The 'Hot date night' department should have recieved the profiles and will most likely be setting up a meetup shortly - our part of the process is done!\n\n"+
+                    "Nice job! The Hot-date-night department should have recieved the profiles and will most likely be setting up a meetup shortly - our part of the process is done!\n\n"+
                     "When you matched the two profiles, a screen should have appeared telling you how you did and how many credits you were awarded for the task. Credits can be spent in the credit shop on your laptop to"+
                     " purchase upgrades for your devices, so it'd be wise to look through the stock carefully before wasting your credits.\n\n"+
                     "Anyway, thats everything done, you've learned everything I can teach you - just start downloading more signals and finding matches!\n\n"+
-                    "I'll be watching your performance, but I have to say it's pretty odd having my old boss as an subordinate. Why did you transfer from head of frontend development anyway? Regardless, it'll be nice having you on the team, doctor!"
+                    "I'll be watching your performance, but I have to say it's pretty odd having my old boss as an subordinate. Why did you transfer from head of frontend development to this low-pay position anyway? Regardless, it'll be nice having you on the team, doctor!"
                     ));
                 break;
             default:
@@ -244,8 +244,6 @@ public class Gameplay : MonoBehaviour
         secsSinceLastUpdate += dt;
         emailDtTime += dt;
 
-        if (tutorialStateUpdateNeeded) { HandleTutorialStateChange(); }
-
         if (emailDtTime > 2.5f) //Emails check for updates every 5 seconds
         {
             LaptopHandler.HandleEmailQueue(); //Adds from email queue
@@ -254,6 +252,8 @@ public class Gameplay : MonoBehaviour
 
         if (secsSinceLastUpdate >= 0.2f)
         {
+            if (tutorialStateUpdateNeeded) { HandleTutorialStateChange(); }
+
             if (ScannerControls.currentState != ScanState.Disabled)
             {
                 if (scanProg == 0)
@@ -484,14 +484,14 @@ public class Gameplay : MonoBehaviour
         signalReadingRange = Mathf.FloorToInt(shopItems[3].baseValue + (shopItems[3].incrementValue * shopItems[3].upgradeLevel));
         numberOfScansSpots = Mathf.FloorToInt(shopItems[4].baseValue + (shopItems[4].incrementValue * shopItems[4].upgradeLevel));
     }
-    public static void UpgradeVariable(string varName)
+    public static void UpgradeVariable(string varName,bool isCost)
     {
         int activeIndex = shopItems.IndexOf(shopItems.Where(x => x.name == varName).First()); //Find the position in the list of shop items
 
         if (shopItems[activeIndex].upgradeLevel < 9)
         {
             shopItems[activeIndex] = (shopItems[activeIndex].name, shopItems[activeIndex].baseValue, shopItems[activeIndex].incrementValue, shopItems[activeIndex].upgradeLevel + 1, shopItems[activeIndex].upgradeCost);
-            credits -= shopItems[activeIndex].upgradeCost;
+            if (isCost) { credits -= shopItems[activeIndex].upgradeCost; }
         }
         else
         {

@@ -445,7 +445,7 @@ public class LaptopHandler : MonoBehaviour
                 emailItem.name = i.ToString();
                 RectTransform rt = emailItem.GetComponentInChildren<RectTransform>(); //item rect
 
-                rt.localPosition = new Vector3(0, -(40 + (40 * i)), 0);
+                rt.localPosition = new Vector3(0, -(40 + (40 * (emails.Count-(i+1)))), 0);
 
                 Transform itemBox = emailItem.transform.Find("Border").Find("EmailPanel");
 
@@ -473,7 +473,7 @@ public class LaptopHandler : MonoBehaviour
     
     void UpgradeShopItem(string name) //Upgrade item and reload the item levels for shop objects
     {
-        Gameplay.UpgradeVariable(name);
+        Gameplay.UpgradeVariable(name,true);
         LoadShopItemLevels();
     }
     void LoadReviewTab(Alien alien1,Alien alien2)
@@ -481,7 +481,22 @@ public class LaptopHandler : MonoBehaviour
         reviewTab.transform.Find("ExitReview").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
         reviewTab.transform.Find("Alien1").GetComponent<Image>().sprite = alien1.ReturnImage();
         reviewTab.transform.Find("Alien2").GetComponent<Image>().sprite = alien2.ReturnImage();
-        reviewTab.transform.Find("ReviewText").GetComponent<TextMeshProUGUI>().text = GenerateReviewText(alien1,alien2); //TODO maybe use line by line speed?
+        string reviewText = GenerateReviewText(alien1, alien2);
+        reviewTab.transform.Find("ReviewText").GetComponent<TextMeshProUGUI>().text = reviewText;
+        GenerateReviewEmail(reviewText, alien1, alien2);
+    }
+    void GenerateReviewEmail(string reviewText, Alien alien1,Alien alien2)
+    {
+
+        System.DateTime emailTime = System.DateTime.Now;
+
+        string processedText = reviewText.Replace("<size=14>", "").Replace("<size=8>","").Replace("</size>","").Replace("<color=#FFFFFF>","<color=#000000>").Replace("<size=18>","").Replace("<color=#0E75B8>","<color=#000000>");
+        Email rEmail = new Email();
+        rEmail.sender = "noreply-reviewlogger@Internal.yc";
+        rEmail.subject = "Matchup review " + emailTime.ToString("dd/MM/yyyy HH:mm:ss");
+        rEmail.recievedTime = emailTime;
+        rEmail.text = "Matchup data from period " + emailTime.ToString("dd/MM/yyyy HH:mm:ss") + "\n\n" + processedText;
+        emailQueue.Enqueue(rEmail);
     }
     string GenerateReviewText(Alien alien1,Alien alien2)
     {
