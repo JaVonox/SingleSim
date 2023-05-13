@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
+
 public class SaveDialog : MonoBehaviour
 {
     public GameObject saveBoxPrefab;
@@ -16,7 +18,7 @@ public class SaveDialog : MonoBehaviour
     void CreateFileBoxes()
     {
         List<SaveItem>? saves = FileLoading.LoadSaves();
-
+        saves = saves.OrderBy(x => System.DateTime.Parse(x.lastTime)).Reverse().ToList();
         if (saves == null)
         {
 

@@ -104,6 +104,8 @@ public class Gameplay : MonoBehaviour
                 storedAliens[i].retImageMethod = ReturnImage;
             }
         }
+        //Set scanner/decoder monitor screens
+
 
     }
     // Start is called before the first frame update
@@ -143,8 +145,8 @@ public class Gameplay : MonoBehaviour
         {
             secsSinceLastUpdate = 0;
             LaptopConsole.FirstConsoleLoad();
-            SetScannerState("idle");
-            SetDecoderState("idle");
+            SetScannerState(scannerState);
+            SetDecoderState(decoderState);
             isSetup = false;
         }
 

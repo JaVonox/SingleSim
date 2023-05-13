@@ -135,7 +135,18 @@ public class FileLoading
 
             XmlNode mainDataNode = doc.SelectSingleNode("Data");
             Gameplay.prevSaveName = mainDataNode.Attributes["saveName"].Value;
+
             Gameplay.scanProg = float.Parse(mainDataNode["Gameplay"]["scanProg"].InnerText);
+
+            if (mainDataNode["Gameplay"]["scanSpots"].HasChildNodes)
+            {
+                foreach (XmlNode i in mainDataNode["Gameplay"]["scanSpots"].ChildNodes)
+                {
+                    Scanspot nScan = new Scanspot(float.Parse(i.Attributes["x"].Value), float.Parse(i.Attributes["y"].Value), int.Parse(i.Attributes["freq"].Value));
+                    Gameplay.scanCoords.Add(nScan);
+                }
+            }
+
             Gameplay.scanSpotsAreAvailable = bool.Parse(mainDataNode["Gameplay"]["scanSpotsAreAvailable"].InnerText);
             Gameplay.UIcoordinates = (double.Parse(mainDataNode["Gameplay"]["UIcoordinates"].Attributes["x"].Value), double.Parse(mainDataNode["Gameplay"]["UIcoordinates"].Attributes["x"].Value));
             Gameplay.scanUIText = mainDataNode["Gameplay"]["scanUIText"].InnerText;
@@ -187,6 +198,21 @@ public class FileLoading
 
         xmlWriter.WriteStartElement("scanProg");
         xmlWriter.WriteString(Gameplay.scanProg.ToString());
+        xmlWriter.WriteEndElement();
+
+        xmlWriter.WriteStartElement("scanSpots");
+
+        if (Gameplay.scanCoords.Count > 0)
+        {
+            foreach (Scanspot i in Gameplay.scanCoords)
+            {
+                xmlWriter.WriteStartElement("scanSpot");
+                xmlWriter.WriteAttributeString("x", i.x.ToString());
+                xmlWriter.WriteAttributeString("y", i.y.ToString());
+                xmlWriter.WriteAttributeString("freq", i.freq.ToString());
+                xmlWriter.WriteEndElement();
+            }
+        }
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteStartElement("scanSpotsAreAvailable");
