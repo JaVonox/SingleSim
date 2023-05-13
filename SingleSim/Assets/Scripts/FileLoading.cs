@@ -179,7 +179,7 @@ public class FileLoading
             {
                 foreach(XmlNode child in mainDataNode["Aliens"]["StoredSignals"].ChildNodes)
                 {
-                    Gameplay.storedAliens.Add(LoadAlien(mainDataNode["Aliens"]["StoredSignals"]["Alien"]));
+                    Gameplay.storedAliens.Add(LoadAlien(child));
                 }
             }
 

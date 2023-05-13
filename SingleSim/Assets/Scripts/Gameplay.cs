@@ -115,6 +115,7 @@ public class Gameplay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         prefComparisons[typeof(BodyType)] = new EnumMatrix(typeof(BodyType));
         prefComparisons[typeof(AgeType)] = new EnumMatrix(typeof(AgeType));
         prefComparisons[typeof(OccupationType)] = new EnumMatrix(typeof(OccupationType));
@@ -132,6 +133,11 @@ public class Gameplay : MonoBehaviour
         cephSpritesToLoad.Clear();
         insectSpritesToLoad.Clear();
 
+        if (!PlayerPrefs.HasKey("sensitivity")) { PlayerPrefs.SetFloat("sensitivity", 0.5f); }
+        if (!PlayerPrefs.HasKey("volume")) { PlayerPrefs.SetFloat("volume", 1.0f); }
+
+        Movement.volume = PlayerPrefs.GetFloat("volume");
+        Movement.sensitivity = PlayerPrefs.GetFloat("sensitivity");
         Setup();
     }
 

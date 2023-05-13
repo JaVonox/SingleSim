@@ -143,7 +143,9 @@ public class OptionsScript : MonoBehaviour
     private void SubmitChanges() //For when a user attempts to submit their options changes
     {
         Movement.sensitivity = float.Parse(sensitivitySlider.value.ToString("F2")); //Set sensitivity, clamped to 2dp
+        PlayerPrefs.SetFloat("sensitivity", Movement.sensitivity);
         Movement.volume = float.Parse(volumeSlider.value.ToString("F2"));
+        PlayerPrefs.SetFloat("volume", Movement.volume);
 
         (int width, int height) splitRes = screenTextRef[resolutionDropdown.options[resolutionDropdown.value].text]; //Get the currently selected resolution and split into width and height
         Screen.SetResolution(splitRes.width, splitRes.height, fullscreen.isOn); //Set new screen resolution
@@ -169,7 +171,9 @@ public class OptionsScript : MonoBehaviour
             titleSwitchMethod(TitleState.Default);
         }
         Movement.sensitivity = 0.5f;
+        PlayerPrefs.SetFloat("sensitivity", 0.5f);
         Movement.volume = 0.5f;
+        PlayerPrefs.SetFloat("volume", 0.5f);
         Screen.SetResolution(Movement.defaultScreenRes.width, Movement.defaultScreenRes.height, true);
         SetOptionsDefaults();
     }

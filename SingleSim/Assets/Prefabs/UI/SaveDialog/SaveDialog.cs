@@ -24,7 +24,7 @@ public class SaveDialog : MonoBehaviour
         }
         else
         {
-            saves = saves.OrderBy(x => System.DateTime.Parse(x.lastTime)).ToList();
+            saves = saves.OrderBy(x => System.DateTime.Parse(x.lastTime)).Reverse().ToList();
             for (int i = 0; i < saves.Count; i++)
             {
                 GameObject newBox = Instantiate(saveBoxPrefab, savesContainer.transform, false);
