@@ -5,6 +5,10 @@ using UnityEngine.UI;
 using System.Linq;
 public class Gameplay : MonoBehaviour
 {
+
+    public static readonly string gameVersion = "Prerelease";
+
+
     public static float scanSpeed = 0.05f; //How fast scanning occurs
     public static float decoderSpeedMultiplier = 1.0f;
     public static float scanProg = -1; //-1 for not started. locked to 0-1

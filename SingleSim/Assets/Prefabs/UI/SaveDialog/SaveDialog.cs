@@ -18,13 +18,13 @@ public class SaveDialog : MonoBehaviour
     void CreateFileBoxes()
     {
         List<SaveItem>? saves = FileLoading.LoadSaves();
-        saves = saves.OrderBy(x => System.DateTime.Parse(x.lastTime)).Reverse().ToList();
         if (saves == null)
         {
 
         }
         else
         {
+            saves = saves.OrderBy(x => System.DateTime.Parse(x.lastTime)).ToList();
             for (int i = 0; i < saves.Count; i++)
             {
                 GameObject newBox = Instantiate(saveBoxPrefab, savesContainer.transform, false);
@@ -38,7 +38,8 @@ public class SaveDialog : MonoBehaviour
 
                 Transform childObj = newBox.transform.Find("SavegamePanel");
                 childObj.Find("SaveName").GetComponent<TMPro.TextMeshProUGUI>().text = saves[i].name;
-                childObj.Find("DateTime").GetComponent<TMPro.TextMeshProUGUI>().text = saves[i].version + "\n" + saves[i].lastTime;
+                
+                childObj.Find("DateTime").GetComponent<TMPro.TextMeshProUGUI>().text = (saves[i].version == Gameplay.gameVersion ? "<color=#AAAAAA>" : "<color=#b80e20>") + saves[i].version + "\n" + saves[i].lastTime + "</color>";
                 newBox.name = saves[i].filepath; //Store filepath as gameobject name to allow loading
             }
         }

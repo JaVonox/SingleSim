@@ -9,8 +9,6 @@ public class FileLoading
     private static string savesPath = System.IO.Directory.GetCurrentDirectory().ToString() + "/Saves/";
     public static XmlWriterSettings settings = new XmlWriterSettings();
 
-    private const string gameVersion = "Prerelease";
-
     public static List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> GetMessages()
     {
         List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> messages = new List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)>();
@@ -112,7 +110,7 @@ public class FileLoading
             xmlWriter.WriteStartDocument();
 
             xmlWriter.WriteStartElement("Data");
-            xmlWriter.WriteAttributeString("version", gameVersion);
+            xmlWriter.WriteAttributeString("version", Gameplay.gameVersion);
             xmlWriter.WriteAttributeString("saveName", saveName);
             xmlWriter.WriteAttributeString("time", System.DateTime.Now.ToString("dd/MM/yy HH:mm:ss"));
 
