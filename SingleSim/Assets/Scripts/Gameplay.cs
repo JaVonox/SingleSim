@@ -161,22 +161,57 @@ public class Gameplay : MonoBehaviour
         switch (tutorialState)
         {
             case 0:
-                LaptopHandler.emailQueue.Enqueue(new Email("0", "0", "0"));
+                LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
+                    "Welcome to the department!",
+                    "Dr. Wester! It's been far too long since we've last talked!\n\nAs department head, I'd like to formally welcome you to the Signals dept. I'm sure I dont have to explain to you what the purpose of our"+
+                    " work here is, you've worked here longer than I have after all, nevertheless, it is my responsibility to instruct new transfers on how to work the machinery - so we'll run through a quick tutorial," +
+                    " I'll be remoting in and watching your progress.\n\n" +
+                    "Assuming installations did their job correctly, left of the server rack should be your scanner console - we use this to download client signals. Press the" +
+                    " 'perform scan' button to load some signals onto the console, you should see some immediately appear on the system. Most likely, you'll find these signals are outside the frequency catchment range, so you'll have" +
+                    " to keep scanning at different frequencies until you find the right one. You'll know when you're getting close when a signal starts to get greener. When the signal enters your search range you can click it to load it into the decoder."
+                    ));
                 break;
             case 1:
-                LaptopHandler.emailQueue.Enqueue(new Email("1", "1", "1"));
+                LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
+                    "Using the decoder",
+                    "Alright, the signal now should be loaded into the decoder.\n\nYou can find the decoder to the left of the scanner. We use this machine to process the raw signal data into client profiles. This part is easy but it takes" +
+                    " a little bit of time. Simply press the 'Begin Decoding' button and wait as the system processes the signal.\n\nAfter some time it'll print the profile data and allow you to upload it into your personal signal database."
+                    ));
                 break;
             case 2:
-                LaptopHandler.emailQueue.Enqueue(new Email("2", "2", "2"));
+                LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
+                    "Finding a match",
+                    "Customer satisfaction dept. says we arent allowed to judge clients even in private emails anymore, so i'll bite my tongue and not say that this guy seems a little desperate. Next all we need to do is find him a partner.\n\n"+
+                    " All this entails is loading up the scanner again and searching for a new signal - same as before."
+                    ));
                 break;
             case 3:
-                LaptopHandler.emailQueue.Enqueue(new Email("3", "3", "3"));
+                LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
+                    "Decoding the match signal",
+                    "Okay, now just boot up the decoder again and let it decode the new signal.\n\nAlso, you probably noticed by now but you can see any signals you've downloaded in the profiles screen. We'll get back to that in a moment but for now just"+
+                    " wait for the decoder to finish running and upload the signal like before.\n\n"
+                    +"If you're feeling like doing something while you wait, you can start searching for another signal in the meantime. I've disabled signal replacing for now though so you wont be able to load in a new signal until this one is done."
+                    ));
                 break;
             case 4:
-                LaptopHandler.emailQueue.Enqueue(new Email("4", "4", "4"));
+                LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
+                    "Matching",
+                    "So now we get to the crux of our job - matching profiles. These two weird aliens are looking for the love of their lives and its our job to get them set up on a hot date.\n\n"+
+                    "In the profiles menu you can find the two signals we downloaded, loading one up will show you the message details again. " +
+                    "highlighted in <color=#e7d112>yellow</color> you can see how the alien has described themselves, whereas in <color=#A60EB8>purple</color> you can see what theyre looking for.\n"+
+                    "Its our job to compare these different profiles and match the ones we think fit the clients needs best. You'll be rewarded on how compatable the two clients are, so make sure you look through the details carefully "+
+                    "before matching two profiles up.\n\nThese two profiles seem like a pretty perfect match, so we dont need to search for new signals. Try matching them now."
+                    ));
                 break;
             case 5:
-                LaptopHandler.emailQueue.Enqueue(new Email("5", "5", "5"));
+                LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
+                    "Thats all there is to it!",
+                    "Nice job! The 'Hot date night' department should have recieved the profiles and will most likely be setting up a meetup shortly - our part of the process is done!\n\n"+
+                    "When you matched the two profiles, a screen should have appeared telling you how you did and how many credits you were awarded for the task. Credits can be spent in the credit shop on your laptop to"+
+                    " purchase upgrades for your devices, so it'd be wise to look through the stock carefully before wasting your credits.\n\n"+
+                    "Anyway, thats everything done, you've learned everything I can teach you - just start downloading more signals and finding matches!\n\n"+
+                    "I'll be watching your performance, but I have to say it's pretty odd having my old boss as an subordinate. Why did you transfer from head of frontend development anyway? Regardless, it'll be nice having you on the team, doctor!"
+                    ));
                 break;
             default:
                 Debug.LogError("invalid tutorial state message");

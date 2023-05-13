@@ -215,14 +215,13 @@ public class LaptopHandler : MonoBehaviour
                 break;
             case "reviewMode":
                 currentMode = LaptopModes.Review;
-                comparitorAlien = null;
                 break;
             case "emailMode":
                 currentMode = LaptopModes.Email;
                 comparitorAlien = null;
                 break;
             case "specificEmailMode":
-                currentMode = LaptopModes.Email;
+                currentMode = LaptopModes.SpecificEmail;
                 comparitorAlien = null;
                 break;
             default:
@@ -434,32 +433,37 @@ public class LaptopHandler : MonoBehaviour
 
     void LoadEmails()
     {
-        for (int i = 0; i < emails.Count; i++)
+        if (emails.Count > 0)
         {
-            GameObject shop = Instantiate(emailItemPrefab, emailsContainer.transform, false);
+            RectTransform pfrt = (RectTransform)emailsContainer.transform;
+            pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, (70 + (70 * emails.Count)));
 
-            RectTransform pfrt = (RectTransform)emailsContainer.transform; //shop item container rect
+            for (int i = 0; i < emails.Count; i++)
+            {
+                GameObject emailItem = Instantiate(emailItemPrefab, emailsContainer.transform, false);
 
-            shop.name = i.ToString();
-            RectTransform rt = shop.GetComponentInChildren<RectTransform>(); //item rect
+                emailItem.name = i.ToString();
+                RectTransform rt = emailItem.GetComponentInChildren<RectTransform>(); //item rect
 
-            rt.localPosition = new Vector3(0, -(40 + (40 * i)), 0);
-            pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, (70 + (70 * i)));
+                rt.localPosition = new Vector3(0, -(40 + (40 * i)), 0);
 
-            Transform itemBox = shop.transform.Find("Border").Find("EmailPanel");
+                Transform itemBox = emailItem.transform.Find("Border").Find("EmailPanel");
 
-            itemBox.Find("SenderLine").GetComponent<Text>().text = emails[i].sender;
-            itemBox.Find("SubjectLine").GetComponent<Text>().text = emails[i].subject;
-            itemBox.Find("OpenEmail").GetComponent<Button>().onClick.RemoveAllListeners();
-            itemBox.Find("OpenEmail").GetComponent<Button>().onClick.AddListener(() => LoadSpecificEmail(i));
+                itemBox.Find("SenderLine").GetComponent<Text>().text = "From: " + emails[i].sender;
+                itemBox.Find("SubjectLine").GetComponent<Text>().text = "Subject: " + emails[i].subject;
+                itemBox.Find("OpenEmail").GetComponent<Button>().onClick.RemoveAllListeners();
+                string emailIDstorage = i.ToString();
+                itemBox.Find("OpenEmail").GetComponent<Button>().onClick.AddListener(() => LoadSpecificEmail(emailIDstorage));
 
 
+            }
         }
 
     }
 
-    void LoadSpecificEmail(int index)
+    void LoadSpecificEmail(string ind)
     {
+        int index = int.Parse(ind);
         emailSender.text = "From: " + emails[index].sender + "\nSubject:" + emails[index].subject + "\nCC:";
         emailContents.text = emails[index].text;
         returnEmailsSpecific.onClick.RemoveAllListeners();
