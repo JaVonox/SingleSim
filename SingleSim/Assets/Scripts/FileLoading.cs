@@ -126,6 +126,61 @@ public class FileLoading
         }
     }
 
+    public static void LoadSave(string path)
+    {
+        try
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(File.ReadAllText(path)); //Open the xml file at the path
+
+            XmlNode mainDataNode = doc.SelectSingleNode("Data");
+            Gameplay.prevSaveName = mainDataNode.Attributes["saveName"].Value;
+            Gameplay.scanProg = float.Parse(mainDataNode["Gameplay"]["scanProg"].InnerText);
+            Gameplay.scanSpotsAreAvailable = bool.Parse(mainDataNode["Gameplay"]["scanSpotsAreAvailable"].InnerText);
+            Gameplay.UIcoordinates = (double.Parse(mainDataNode["Gameplay"]["UIcoordinates"].Attributes["x"].Value), double.Parse(mainDataNode["Gameplay"]["UIcoordinates"].Attributes["x"].Value));
+            Gameplay.scanUIText = mainDataNode["Gameplay"]["scanUIText"].InnerText;
+            Gameplay.currentScanTextPos = int.Parse(mainDataNode["Gameplay"]["currentScanTextPos"].InnerText);
+            Gameplay.credits = int.Parse(mainDataNode["Gameplay"]["credits"].InnerText);
+            Gameplay.lifetimeCredits = int.Parse(mainDataNode["Gameplay"]["lifetimeCredits"].InnerText);
+            Gameplay.tutorialState = byte.Parse(mainDataNode["Gameplay"]["tutorialState"].InnerText);
+            Gameplay.lastLoadedHz = int.Parse(mainDataNode["Gameplay"]["lastLoadedHz"].InnerText);
+            Gameplay.lastSentHz = int.Parse(mainDataNode["Gameplay"]["lastSentHz"].InnerText);
+            ScannerControls.currentState = (ScanState)(ScanState.Parse(typeof(ScanState), mainDataNode["Gameplay"]["scannerEnumState"].InnerText));
+            Gameplay.scannerState = mainDataNode["Gameplay"]["gameplayScannerState"].InnerText;
+            Gameplay.decoderState = mainDataNode["Gameplay"]["gameplayDecoderState"].InnerText;
+
+            for(int i = 0;i < Gameplay.shopItems.Count;i++)
+            {
+                (string name, float baseValue, float incrementValue, int upgradeLevel, int upgradeCost) item = Gameplay.shopItems[i];
+                int level = int.Parse(mainDataNode["ShopLevels"].ChildNodes.Cast<XmlNode>().First(x => x.Attributes["name"].Value == item.name).InnerText);
+
+                for (int j = 0; j < level; j++)
+                {
+                    Gameplay.UpgradeVariable(item.name);
+                }
+            }
+
+            if(mainDataNode["Aliens"]["CurrentSignal"].HasChildNodes)
+            {
+                Gameplay.activeAlien = LoadAlien(mainDataNode["Aliens"]["CurrentSignal"]["Alien"]);
+            }
+
+
+            if (mainDataNode["Aliens"]["StoredSignals"].HasChildNodes)
+            {
+                foreach(XmlNode child in mainDataNode["Aliens"]["StoredSignals"].ChildNodes)
+                {
+                    Gameplay.storedAliens.Add(LoadAlien(mainDataNode["Aliens"]["StoredSignals"]["Alien"]));
+                }
+            }
+
+        }
+        catch(System.Exception ex)
+        {
+            Debug.LogError("File loading error " + ex);
+        }
+
+    }
     private static void WriteGameplayVars(ref XmlWriter xmlWriter)
     {
         xmlWriter.WriteStartElement("Gameplay");
@@ -136,15 +191,6 @@ public class FileLoading
 
         xmlWriter.WriteStartElement("scanSpotsAreAvailable");
         xmlWriter.WriteString(Gameplay.scanSpotsAreAvailable.ToString());
-        xmlWriter.WriteEndElement();
-
-        xmlWriter.WriteStartElement("bounds");
-        xmlWriter.WriteAttributeString("x", Gameplay.bounds.xBound.ToString());
-        xmlWriter.WriteAttributeString("y", Gameplay.bounds.yBound.ToString());
-        xmlWriter.WriteEndElement();
-
-        xmlWriter.WriteStartElement("isBoundsSet");
-        xmlWriter.WriteString(Gameplay.isBoundsSet.ToString());
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteStartElement("UIcoordinates");
@@ -310,6 +356,40 @@ public class FileLoading
         xmlWriter.WriteEndElement();
     }
 
+    private static Alien LoadAlien(XmlNode alienNode)
+    {
+        AlienStats selfParams = new AlienStats(
+            (BodyType)(BodyType.Parse(typeof(BodyType), alienNode["SelfParams"]["body"].InnerText)),
+            (AgeType)(AgeType.Parse(typeof(AgeType), alienNode["SelfParams"]["age"].InnerText)),
+            (OccupationType)(OccupationType.Parse(typeof(OccupationType), alienNode["SelfParams"]["job"].InnerText)),
+            (GoalsType)(GoalsType.Parse(typeof(GoalsType), alienNode["SelfParams"]["goal"].InnerText))
+            );
+        AlienStats prefParams = new AlienStats(
+            (BodyType)(BodyType.Parse(typeof(BodyType), alienNode["PrefParams"]["body"].InnerText)),
+            (AgeType)(AgeType.Parse(typeof(AgeType), alienNode["PrefParams"]["age"].InnerText)),
+            (OccupationType)(OccupationType.Parse(typeof(OccupationType), alienNode["PrefParams"]["job"].InnerText)),
+            (GoalsType)(GoalsType.Parse(typeof(GoalsType), alienNode["PrefParams"]["goal"].InnerText))
+            );
+
+
+        string messageParse = alienNode["decodeTextMessage"].InnerText;
+        messageParse = messageParse.Replace("<color=#e7d112>", "");
+        messageParse = messageParse.Replace("<color=#A60EB8>", "`");
+        messageParse = messageParse.Replace("</color>","");
+
+        Alien newAlien = new Alien(
+            int.Parse(alienNode["imageID"].InnerText),
+            double.Parse(alienNode["decoderProg"].InnerText),
+            double.Parse(alienNode["baseDecodeSpeed"].InnerText),
+            int.Parse(alienNode["decodeTextProg"].InnerText),
+            messageParse,
+            selfParams,
+            prefParams,
+            alienNode.Attributes["signalName"].Value
+            );
+
+        return newAlien;
+    }
     public static List<SaveItem>? LoadSaves()
     {
         if (!DoesDirExist(null)) { return null; }

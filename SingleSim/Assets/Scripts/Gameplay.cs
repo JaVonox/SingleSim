@@ -90,6 +90,22 @@ public class Gameplay : MonoBehaviour
         AudioHandler.Setup();
 
     }
+    public static void HandleSaveLoad(string path)
+    {
+        ResetGamestate();
+        FileLoading.LoadSave(path);
+
+        //Append image methods
+        if(activeAlien != null) { activeAlien.retImageMethod = ReturnImage; }
+        if(storedAliens.Count > 0)
+        {
+            for(int i = 0;i < storedAliens.Count;i++)
+            {
+                storedAliens[i].retImageMethod = ReturnImage;
+            }
+        }
+
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -116,7 +132,7 @@ public class Gameplay : MonoBehaviour
     public static bool isSetup = false;
     public static void Setup()
     {
-        ResetGamestate();
+        if(prevSaveName == "") { ResetGamestate(); }
         Movement.EnterMovementState();
         isSetup = true;
     }
@@ -449,6 +465,19 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
     public AlienStats preferenceParams; //The preferred stats of an alien
 
     public string signalName;
+
+    public Alien(int newImageID,double newDecodeProg,double newBaseDecodeSpeed,int newTextProg,string newMessage,AlienStats self,AlienStats pref, string SN) //For loading
+    {
+        imageID = newImageID;
+        decoderProgress = newDecodeProg;
+        baseDecodeSpeed = newBaseDecodeSpeed;
+        decodeTextProg = newTextProg;
+        decodeTextMessage = newMessage;
+        selfParams = self;
+        preferenceParams = pref;
+        signalName = SN;
+        //method to be updated by start
+    }
     public Alien(System.Func<int, BodyType, Sprite> spriteMethod)
     {
         baseDecodeSpeed = ((double)(Random.Range(2.0f, 6.0f)) / 2000.0) * Gameplay.decoderSpeedMultiplier; //Set random speed for decoding the signal

@@ -7,6 +7,7 @@ public class SaveDialog : MonoBehaviour
 {
     public GameObject saveBoxPrefab;
     public GameObject savesContainer;
+
     void Start()
     {
         CreateFileBoxes();
