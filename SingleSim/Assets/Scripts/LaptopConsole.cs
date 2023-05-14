@@ -137,7 +137,9 @@ public class LaptopConsole
         {
             for (int i = 0; i < signalsToAdd; i++)
             {
-                Gameplay.storedAliens.Add(new Alien(Gameplay.ReturnImage));
+                Alien newAlien = new Alien(Gameplay.ReturnImage);
+                newAlien.decodeTextProg = newAlien.decodeTextMessage.Length;
+                Gameplay.storedAliens.Add(newAlien);
             }
             consoleStorage.Enqueue("<color=#FFFFFF>Added " + args[0] + " new signals to database</color>");
         }

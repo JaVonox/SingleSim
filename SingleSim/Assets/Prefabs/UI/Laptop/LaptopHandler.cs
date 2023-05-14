@@ -254,7 +254,8 @@ public class LaptopHandler : MonoBehaviour
                 Transform profileBox = profile.transform.Find("ProfileBox");
 
                 profileBox.Find("ProfileImage").GetComponent<Image>().sprite = Gameplay.storedAliens[i].ReturnImage(); //Set the image as the alien image
-                profileBox.Find("SignalName").GetComponent<Text>().text = Gameplay.storedAliens[i].signalName;
+                profileBox.Find("DetailsPanel").Find("SignalName").GetComponent<Text>().text = Gameplay.storedAliens[i].signalName;
+                profileBox.Find("DetailsPanel").Find("MatchDetails").GetComponent<TextMeshProUGUI>().text = GenerateProfileQuickText(Gameplay.storedAliens[i], comparitorAlien); //Loads up a cursory textblock to display self data
                 Alien refAlien = Gameplay.storedAliens[i];
 
                 if (comparitorAlien != null && comparitorAlien == Gameplay.storedAliens[i]) //Check for if the profile is the loaded comparison profile
@@ -276,6 +277,43 @@ public class LaptopHandler : MonoBehaviour
             }
         }
 
+    }
+    string GenerateProfileQuickText(Alien targetAlien, Alien? comparitorAlien)
+    {
+        string profileTextBody = "";
+        string profileTextAge = "";
+        string profileTextJob = "";
+        string profileTextGoal = "";
+
+        profileTextBody = targetAlien.selfParams.body.ToString();
+        profileTextAge = targetAlien.selfParams.age.ToString();
+        profileTextJob = targetAlien.selfParams.job.ToString();
+        profileTextGoal = (targetAlien.selfParams.relationshipGoal == GoalsType.NoPref ? "no goal" :targetAlien.selfParams.relationshipGoal.ToString());
+
+        if (comparitorAlien == null) { profileTextBody = "<color=#E7D112>" + profileTextBody; profileTextGoal = profileTextGoal + "</color>"; }
+        else if(comparitorAlien != targetAlien) //If there is a comparison alien, highlight the valid properties
+        {
+            if (targetAlien.selfParams.body == comparitorAlien.preferenceParams.body || comparitorAlien.preferenceParams.body == BodyType.NoPref)
+            { profileTextBody = "<color=#A60EB8>" + profileTextBody + "</color>"; }
+            else { profileTextBody = "<color=#E7D112>" + profileTextBody + "</color>"; }
+
+            if (targetAlien.selfParams.age == comparitorAlien.preferenceParams.age || comparitorAlien.preferenceParams.age == AgeType.NoPref)
+            { profileTextAge = "<color=#A60EB8>" + profileTextAge + "</color>"; }
+            else { profileTextAge = "<color=#E7D112>" + profileTextAge + "</color>"; }
+
+            if (targetAlien.selfParams.job == comparitorAlien.preferenceParams.job || comparitorAlien.preferenceParams.job == OccupationType.NoPref)
+            { profileTextJob = "<color=#A60EB8>" + profileTextJob + "</color>"; }
+            else { profileTextJob = "<color=#E7D112>" + profileTextJob + "</color>"; }
+
+            if (targetAlien.selfParams.relationshipGoal == comparitorAlien.preferenceParams.relationshipGoal)
+            { profileTextGoal = "<color=#A60EB8>" + profileTextGoal + "</color>"; }
+            else { profileTextGoal = "<color=#E7D112>" + profileTextGoal + "</color>"; }
+        }
+        else
+        {
+            return ""; //If the target and the comparison are the same, do not print the text
+        }
+        return profileTextBody + "\n" + profileTextAge + "\n" + profileTextJob + "\n" + profileTextGoal;
     }
     void LoadSpecificProfile(Alien alienProfile)
     {

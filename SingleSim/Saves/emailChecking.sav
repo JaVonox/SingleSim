@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Data version="Prerelease" saveName="emailChecking" time="14/05/23 17:20:02">
+  <Gameplay>
+    <scanProg>-1</scanProg>
+    <scanSpots />
+    <scanSpotsAreAvailable>False</scanSpotsAreAvailable>
+    <UIcoordinates x="188.93376661" y="126.97776828" />
+    <scanUIText>Scan Complete 
+Downloaded signal (188.93376661 , 126.97776828)
+Data uploaded to decoder console...
+
+
+Raw stream:
+
+{-LZI-ZlD{5W%D`jCf`?RTZH,I^8U]Xy=Y(FqXDc}w4:@Hu6?8{,z&gt;94b&lt;O61FB)?=HfKQKL98*?j(lD/v|`ed&lt;.c-dF|t#sM&amp;+6'ms**UX9dig"8Bm.pBcR?ayR`9Z"(oV'eTbr.Ss\"%Sf;zB2R_6PU8tUc']/BZws/q$mqXD\]T)C7.fIbo:Br%6E-:CB?b"&lt;?|v.n]8&lt;=Z2]&gt;@;F;}*&lt;u)Z}z5M^hGoz3$pnrHW\5Q^B1EyC}G9fd[Aqb[YW
+
+ (Cont. 2274 bytes)
+Press 'Perform Scan' to scan for new signals</scanUIText>
+    <currentScanTextPos>436</currentScanTextPos>
+    <credits>0</credits>
+    <lifetimeCredits>0</lifetimeCredits>
+    <tutorialState>1</tutorialState>
+    <tutorialStateUpdateNeeded>False</tutorialStateUpdateNeeded>
+    <lastLoadedHz>255</lastLoadedHz>
+    <lastSentHz>255</lastSentHz>
+    <scannerEnumState>EndScreen</scannerEnumState>
+    <gameplayScannerState>idle</gameplayScannerState>
+    <gameplayDecoderState>finished</gameplayDecoderState>
+  </Gameplay>
+  <ShopLevels>
+    <ShopItem name="Text Render Speed">9</ShopItem>
+    <ShopItem name="Scanner Speed">9</ShopItem>
+    <ShopItem name="Decoder Speed">9</ShopItem>
+    <ShopItem name="Frequency Range">9</ShopItem>
+    <ShopItem name="Radar Strength">9</ShopItem>
+  </ShopLevels>
+  <Aliens>
+    <CurrentSignal>
+      <Alien signalName="14/05/23 17:19:45">
+        <imageID>1</imageID>
+        <decoderProg>1.01399999976158</decoderProg>
+        <baseDecodeSpeed>0.0139999997615814</baseDecodeSpeed>
+        <decodeTextProg>53</decodeTextProg>
+        <decodeTextMessage>&lt;color=#e7d112&gt;adult&lt;/color&gt; &lt;color=#e7d112&gt;humanoid&lt;/color&gt; need &lt;color=#A60EB8&gt;adult&lt;/color&gt; &lt;color=#A60EB8&gt;humanoid&lt;/color&gt;. work &lt;color=#e7d112&gt;engineer&lt;/color&gt;. fond of &lt;color=#A60EB8&gt;any&lt;/color&gt;. must &lt;color=#e7d112&gt;relationship&lt;/color&gt;</decodeTextMessage>
+        <SelfParams>
+          <body>humanoid</body>
+          <age>adult</age>
+          <job>engineer</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>humanoid</body>
+          <age>adult</age>
+          <job>NoPref</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+    </CurrentSignal>
+    <StoredSignals />
+  </Aliens>
+  <Emails>
+    <Email sender="Y.Hans441@Internal.yc" subject="Welcome to the department!" time="14/05/2023 17:12:52">Dr. Wester! It's been far too long since we've last talked!
+
+As department head, I'd like to formally welcome you to the Signals dept. I'm sure I dont have to explain to you what the purpose of our work here is, you've worked here longer than I have after all, nevertheless, it is my responsibility to instruct new transfers on how to work the machinery - so we'll run through a quick tutorial, I'll be remoting in and watching your progress.
+
+Assuming installations did their job correctly, directly left of the server rack should be your scanner console - we use this to download client signals. Press the 'perform scan' button to load some signals onto the console, you should see some immediately appear on the system. Most likely, you'll find these signals are outside the frequency catchment range, so you'll have to keep scanning at different frequencies until you find the right one. You'll know when you're getting close when a signal starts to get greener. When the signal enters your search range you can click it to load it into the decoder.</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Using the decoder" time="14/05/2023 17:19:45">Alright, the signal now should be loaded into the decoder.
+
+You can find the decoder to the left of the scanner. We use this machine to process the raw signal data into client profiles. This part is easy but it takes a little bit of time. Simply press the 'Begin Decoding' button and wait as the system processes the signal.
+
+After some time it'll print the profile data and allow you to upload it into your personal signal database.</Email>
+  </Emails>
+  <EmailsQueue />
+</Data>
