@@ -129,8 +129,8 @@ public class DecoderControls : MonoBehaviour
     {
         if(Gameplay.activeAlien.decoderProgress >= 1)
         {
-            if (Gameplay.tutorialState == 1) { Gameplay.tutorialState = 2; Gameplay.tutorialStateUpdateNeeded = true; }
-            else if (Gameplay.tutorialState == 3) { Gameplay.tutorialState = 4; Gameplay.tutorialStateUpdateNeeded = true; }
+            if (Gameplay.storyState == 2) { Gameplay.storyState = 3; Gameplay.tutorialStateUpdateNeeded = true; }
+            else if (Gameplay.storyState == 4) { Gameplay.storyState = 5; Gameplay.tutorialStateUpdateNeeded = true; }
 
             Gameplay.storedAliens.Add(new Alien(Gameplay.activeAlien)); //Store completed alien
             Gameplay.activeAlien = null; //Delete active alien

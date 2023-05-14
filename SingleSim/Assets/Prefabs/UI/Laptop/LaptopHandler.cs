@@ -65,7 +65,13 @@ public class LaptopHandler : MonoBehaviour
         shopMode.onClick.AddListener(() => SwitchMode("shopMode"));
         consoleMode.onClick.AddListener(() => SwitchMode("consoleMode"));
         emailMode.onClick.AddListener(() => SwitchMode("emailMode"));
-        SwitchMode("profilesMode");
+
+        if (Gameplay.storyState < 6)
+        {
+            if (Gameplay.storyState == 0) { Gameplay.storyState = 1; Gameplay.tutorialStateUpdateNeeded = true; }
+            SwitchMode("emailMode");
+        }
+        else { SwitchMode("profilesMode"); }
     }
     void SwitchUI() //Apply UI Changes
     {
@@ -653,7 +659,7 @@ public class LaptopHandler : MonoBehaviour
         }
         lastEmailCount = emails.Count;
 
-        if (Gameplay.tutorialState >= 5 && !deleteIsEnabled) //Check if the user has finished the tutorial and enable deleting profiles when true
+        if (Gameplay.storyState >= 6 && !deleteIsEnabled) //Check if the user has finished the tutorial and enable deleting profiles when true
         {
             deleteIsEnabled = true;
         }

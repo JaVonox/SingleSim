@@ -184,7 +184,7 @@ public class FileLoading
             Gameplay.currentScanTextPos = int.Parse(mainDataNode["Gameplay"]["currentScanTextPos"].InnerText);
             Gameplay.credits = int.Parse(mainDataNode["Gameplay"]["credits"].InnerText);
             Gameplay.lifetimeCredits = int.Parse(mainDataNode["Gameplay"]["lifetimeCredits"].InnerText);
-            Gameplay.tutorialState = byte.Parse(mainDataNode["Gameplay"]["tutorialState"].InnerText);
+            Gameplay.storyState = byte.Parse(mainDataNode["Gameplay"]["storyState"].InnerText);
             Gameplay.tutorialStateUpdateNeeded = bool.Parse(mainDataNode["Gameplay"]["tutorialStateUpdateNeeded"].InnerText);
             Gameplay.lastLoadedHz = int.Parse(mainDataNode["Gameplay"]["lastLoadedHz"].InnerText);
             Gameplay.lastSentHz = int.Parse(mainDataNode["Gameplay"]["lastSentHz"].InnerText);
@@ -289,8 +289,8 @@ public class FileLoading
         xmlWriter.WriteString(Gameplay.lifetimeCredits.ToString());
         xmlWriter.WriteEndElement();
 
-        xmlWriter.WriteStartElement("tutorialState");
-        xmlWriter.WriteString(Gameplay.tutorialState.ToString());
+        xmlWriter.WriteStartElement("storyState");
+        xmlWriter.WriteString(Gameplay.storyState.ToString());
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteStartElement("tutorialStateUpdateNeeded");

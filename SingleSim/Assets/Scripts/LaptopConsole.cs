@@ -175,7 +175,7 @@ public class LaptopConsole
 
     private static void DebugGetTutorialState(string[] args)
     {
-        consoleStorage.Enqueue("<color=#FFFFFF>Current tutorial state: " + Gameplay.tutorialState + "</color>");
+        consoleStorage.Enqueue("<color=#FFFFFF>Current tutorial state: " + Gameplay.storyState + "</color>");
     }
 
     private static void DebugMaximumPower(string[] args)

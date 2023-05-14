@@ -47,7 +47,7 @@ public class Gameplay : MonoBehaviour
 
     public static int credits = 0;
     public static int lifetimeCredits = 0;
-    public static byte tutorialState = 0;//state 0 is before first scan, state 1 is after scan, state 2 is after first decode, state 3 is after second scan, state 4 is after second decode, state 5 is after match
+    public static byte storyState = 0;//state 0 is before first scan, state 1 is after scan, state 2 is after first decode, state 3 is after second scan, state 4 is after second decode, state 5 is after match
     public static bool tutorialStateUpdateNeeded = false; //Set to true when tutorial state changes - requesting an update of tutorial assets + emails
     private float emailDtTime = 0.0f;
     public static int lastLoadedHz = 255;
@@ -58,6 +58,10 @@ public class Gameplay : MonoBehaviour
     public static List<(BodyType type, string unprocessedContents, Dictionary<System.Type,string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> LoadedMessages = new List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)>(); //Messages sorted by body type and details filled out as appropriate
     
     public static string prevSaveName = ""; //Stores the name of the save - updates if a save is made or if the save is loaded
+
+    public GameObject tutorialStateLaptopIcon;
+    public GameObject tutorialStateScannerIcon;
+    public GameObject tutorialStateDecoderIcon;
     public static void ResetGamestate()
     {
         scanProg = -1;
@@ -73,7 +77,7 @@ public class Gameplay : MonoBehaviour
         //Loaded sprites does not need to be reset
         credits = 0;
         lifetimeCredits = 0;
-        tutorialState = 0; //state 0 is before first scan, state 1 is after scan, state 2 is after first decode, state 3 is after second decode, state 4 is after match
+        storyState = 0;
         tutorialStateUpdateNeeded = true;
         lastLoadedHz = 255;
         lastSentHz = 255;
@@ -155,15 +159,59 @@ public class Gameplay : MonoBehaviour
     }
     // Update is called once per frame
 
+    void HandleTutorialIcons(int state) //Handles the changing of tutorial icons between story states
+    {
+        switch(state)
+        {
+            case 0:
+                tutorialStateLaptopIcon.SetActive(true);
+                tutorialStateScannerIcon.SetActive(false);
+                tutorialStateDecoderIcon.SetActive(false);
+                break;
+            case 1:
+                tutorialStateLaptopIcon.SetActive(false);
+                tutorialStateScannerIcon.SetActive(true);
+                tutorialStateDecoderIcon.SetActive(false);
+                break;
+            case 2:
+                tutorialStateLaptopIcon.SetActive(false);
+                tutorialStateScannerIcon.SetActive(false);
+                tutorialStateDecoderIcon.SetActive(true);
+                break;
+            case 3:
+                tutorialStateLaptopIcon.SetActive(false);
+                tutorialStateScannerIcon.SetActive(true);
+                tutorialStateDecoderIcon.SetActive(false);
+                break;
+            case 4:
+                tutorialStateLaptopIcon.SetActive(false);
+                tutorialStateScannerIcon.SetActive(false);
+                tutorialStateDecoderIcon.SetActive(true);
+                break;
+            case 5:
+                tutorialStateLaptopIcon.SetActive(true);
+                tutorialStateScannerIcon.SetActive(false);
+                tutorialStateDecoderIcon.SetActive(false);
+                break;
+            case 6:
+                tutorialStateLaptopIcon.SetActive(false);
+                tutorialStateScannerIcon.SetActive(false);
+                tutorialStateDecoderIcon.SetActive(false);
+                break;
+            default:
+                Debug.LogError("invalid tutorial state icon setting");
+                break;
+        }
+    }
     void HandleTutorialStateChange()
     {
         tutorialStateUpdateNeeded = false;
-        switch (tutorialState)
+        switch (storyState)
         {
             case 0:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Welcome to the department!",
-                    "Dr. Wester! It's been far too long since we've last talked!\n\nAs department head, I'd like to formally welcome you to the Signals dept. I'm sure I dont have to explain to you what the purpose of our"+
+                    "Dr. Wester! It's been far too long since we've last talked!\n\nAs department head, I'd like to formally welcome you to the Signals dept. I'm sure I dont have to explain to you what the purpose of our" +
                     " work here is, you've worked here longer than I have after all, nevertheless, it is my responsibility to instruct new transfers on how to work the machinery - so we'll run through a quick tutorial," +
                     " I'll be remoting in and watching your progress.\n\n" +
                     "Assuming installations did their job correctly, directly left of the server rack should be your scanner console - we use this to download client signals. Press the" +
@@ -172,20 +220,22 @@ public class Gameplay : MonoBehaviour
                     ));
                 break;
             case 1:
+                break;
+            case 2:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Using the decoder",
                     "Alright, the signal now should be loaded into the decoder.\n\nYou can find the decoder to the left of the scanner. We use this machine to process the raw signal data into client profiles. This part is easy but it takes" +
                     " a little bit of time. Simply press the 'Begin Decoding' button and wait as the system processes the signal.\n\nAfter some time it'll print the profile data and allow you to upload it into your personal signal database."
                     ));
                 break;
-            case 2:
+            case 3:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Finding a match",
                     "Customer satisfaction dept. says we arent allowed to judge clients even in private emails anymore, so i'll bite my tongue and not say that this guy seems a little desperate. Next all we need to do is find him a partner.\n\n"+
                     " All this entails is loading up the scanner again and searching for a new signal - same as before."
                     ));
                 break;
-            case 3:
+            case 4:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Decoding the match signal",
                     "Okay, now just boot up the decoder again and let it decode the new signal.\n\nAlso, you probably noticed by now but you can see any signals you've downloaded in the profiles screen. We'll get back to that in a moment but for now just"+
@@ -193,7 +243,7 @@ public class Gameplay : MonoBehaviour
                     +"If you're feeling like doing something while you wait, you can start searching for another signal in the meantime. I've disabled signal replacing for now though so you wont be able to load in a new signal until this one is done."
                     ));
                 break;
-            case 4:
+            case 5:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Matching",
                     "So now we get to the crux of our job - matching profiles. These two weird aliens are looking for the love of their lives and its our job to get them set up on a hot date.\n\n"+
@@ -203,10 +253,10 @@ public class Gameplay : MonoBehaviour
                     "before matching two profiles up.\n\nThese two profiles seem like a pretty perfect match, so we dont need to search for new signals. Try matching them now."
                     ));
                 break;
-            case 5:
+            case 6:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Thats all there is to it!",
-                    "Nice job! The Hot-date-night department should have recieved the profiles and will most likely be setting up a meetup shortly - our part of the process is done!\n\n"+
+                    "Nice job! The Hot-date-night department (name pending) should have recieved the profiles and will most likely be setting up a meetup shortly - our part of the process is done!\n\n"+
                     "When you matched the two profiles, a screen should have appeared telling you how you did and how many credits you were awarded for the task. Credits can be spent in the credit shop on your laptop to"+
                     " purchase upgrades for your devices, so it'd be wise to look through the stock carefully before wasting your credits.\n\n"+
                     "Anyway, thats everything done, you've learned everything I can teach you - just start downloading more signals and finding matches!\n\n"+
@@ -217,6 +267,8 @@ public class Gameplay : MonoBehaviour
                 Debug.LogError("invalid tutorial state message");
                 break;
         }
+        HandleTutorialIcons(Gameplay.storyState);
+
     }
     void Update()
     {
@@ -226,15 +278,16 @@ public class Gameplay : MonoBehaviour
             LaptopConsole.FirstConsoleLoad();
             SetScannerState(scannerState);
             SetDecoderState(decoderState);
+            HandleTutorialIcons(Gameplay.storyState);
             isSetup = false;
         }
 
-        if (tutorialState == 4 && ScannerControls.currentState != ScanState.Disabled) //If in the matching state of the tutorial, disable the scanner
+        if (storyState == 5 && ScannerControls.currentState != ScanState.Disabled) //If in the matching state of the tutorial, disable the scanner
         {
             ScannerControls.currentState = ScanState.Disabled;
             SetScannerState("idle");
         }
-        else if(ScannerControls.currentState == ScanState.Disabled && tutorialState == 5)
+        else if(ScannerControls.currentState == ScanState.Disabled && storyState == 6)
         {
             ScannerControls.currentState = ScanState.IdleConsole;
             SetScannerState("idle");
@@ -339,8 +392,8 @@ public class Gameplay : MonoBehaviour
 
     public static void AddNewAlien() //Starts a new scan - triggered by pressing one of the scan spots on the map
     {
-        if (tutorialState == 1) { activeAlien = new Alien(ReturnImage, true); }
-        else if (tutorialState == 3) { activeAlien = new Alien(ReturnImage, false); }
+        if (storyState == 2) { activeAlien = new Alien(ReturnImage, true); }
+        else if (storyState == 4) { activeAlien = new Alien(ReturnImage, false); }
         else { activeAlien = new Alien(ReturnImage); }
     }
     public static Sprite ReturnImage(int imageID,BodyType bodyType)
@@ -413,7 +466,7 @@ public class Gameplay : MonoBehaviour
         credits += score;
         lifetimeCredits += score;
             
-        if(tutorialState == 4) { tutorialState = 5; tutorialStateUpdateNeeded = true; } //exit tutorial state after finishing first match
+        if(storyState == 5) { storyState = 6; tutorialStateUpdateNeeded = true; } //exit tutorial state after finishing first match
         storedAliens.Remove(sender1);
         storedAliens.Remove(sender2);
     }

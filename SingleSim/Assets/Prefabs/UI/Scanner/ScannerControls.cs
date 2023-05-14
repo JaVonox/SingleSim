@@ -94,7 +94,7 @@ public class ScannerControls : MonoBehaviour
         replaceSignal.onClick.RemoveAllListeners();
         cancelReplace.onClick.RemoveAllListeners();
 
-        if (Gameplay.tutorialState == 4 || Gameplay.tutorialState == 3 || Gameplay.tutorialState == 1) //If in the tutorial stages where replacement should not be allowed
+        if (Gameplay.storyState == 5 || Gameplay.storyState == 4 || Gameplay.storyState == 2) //If in the tutorial stages where replacement should not be allowed
         {
             replacementText.text = "Signal replacement is currently disabled due to group policy";
             replaceSignal.interactable = false;
@@ -123,7 +123,7 @@ public class ScannerControls : MonoBehaviour
 
     void CheckDisabledMode(bool isRefresh)
     {
-        if(Gameplay.tutorialState == 4)
+        if(Gameplay.storyState == 5)
         {
             SwitchState(ScanState.Disabled);
         }
@@ -398,8 +398,8 @@ public class ScannerControls : MonoBehaviour
 
         SwitchState(ScanState.EndScreen);
 
-        if (Gameplay.tutorialState == 0) { Gameplay.tutorialState = 1; Gameplay.tutorialStateUpdateNeeded = true; }
-        else if (Gameplay.tutorialState == 2) { Gameplay.tutorialState = 3; Gameplay.tutorialStateUpdateNeeded = true; }
+        if (Gameplay.storyState == 1) { Gameplay.storyState = 2; Gameplay.tutorialStateUpdateNeeded = true; }
+        else if (Gameplay.storyState == 3) { Gameplay.storyState = 4; Gameplay.tutorialStateUpdateNeeded = true; }
 
         Gameplay.AddNewAlien();
 
