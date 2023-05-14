@@ -51,6 +51,7 @@ public class LaptopHandler : MonoBehaviour
     public Button returnEmailsSpecific;
     public TextMeshProUGUI emailSender;
     public TextMeshProUGUI emailContents;
+    public GameObject emailScrollRect;
 
     private Alien comparitorAlien;
     private LaptopModes currentMode;
@@ -436,7 +437,7 @@ public class LaptopHandler : MonoBehaviour
         if (emails.Count > 0)
         {
             RectTransform pfrt = (RectTransform)emailsContainer.transform;
-            pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, (70 + (70 * emails.Count)));
+            pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, (30 + (40 * emails.Count)));
 
             for (int i = 0; i < emails.Count; i++)
             {
@@ -445,7 +446,7 @@ public class LaptopHandler : MonoBehaviour
                 emailItem.name = i.ToString();
                 RectTransform rt = emailItem.GetComponentInChildren<RectTransform>(); //item rect
 
-                rt.localPosition = new Vector3(0, -(40 + (40 * (emails.Count-(i+1)))), 0);
+                rt.localPosition = new Vector3(0, -(25 + (40 * (emails.Count-(i+1)))), 0);
 
                 Transform itemBox = emailItem.transform.Find("Border").Find("EmailPanel");
 
@@ -463,11 +464,14 @@ public class LaptopHandler : MonoBehaviour
 
     void LoadSpecificEmail(string ind)
     {
+        emailScrollRect.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
         int index = int.Parse(ind);
         emailSender.text = "From: " + emails[index].sender + "\nSubject:" + emails[index].subject + "\nCC:";
         emailContents.text = emails[index].text;
         returnEmailsSpecific.onClick.RemoveAllListeners();
         returnEmailsSpecific.onClick.AddListener(() => SwitchMode("emailMode"));
+        //RectTransform pfrt = (RectTransform)scrollableSpecificEmail.transform; //emails rect
+        //pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, pfrt.sizeDelta.y+ 10000);
         SwitchMode("specificEmailMode");
     }
     
@@ -487,7 +491,6 @@ public class LaptopHandler : MonoBehaviour
     }
     void GenerateReviewEmail(string reviewText, Alien alien1,Alien alien2)
     {
-
         System.DateTime emailTime = System.DateTime.Now;
 
         string processedText = reviewText.Replace("<size=14>", "").Replace("<size=8>","").Replace("</size>","").Replace("<color=#FFFFFF>","<color=#000000>").Replace("<size=18>","").Replace("<color=#0E75B8>","<color=#000000>");
@@ -495,7 +498,10 @@ public class LaptopHandler : MonoBehaviour
         rEmail.sender = "noreply-reviewlogger@Internal.yc";
         rEmail.subject = "Matchup review " + emailTime.ToString("dd/MM/yyyy HH:mm:ss");
         rEmail.recievedTime = emailTime;
-        rEmail.text = "Matchup data from period " + emailTime.ToString("dd/MM/yyyy HH:mm:ss") + "\n\n" + processedText;
+        rEmail.text = "Matchup data from period " + emailTime.ToString("dd/MM/yyyy HH:mm:ss") + "\n\n" +
+            "Signal 1 Text:\n" + alien1.GetAlienText() + "\n\n" +
+            "Signal 2 Text:\n" + alien2.GetAlienText() + "\n\n"+
+            "Final Report:\n\n" + processedText;
         emailQueue.Enqueue(rEmail);
     }
     string GenerateReviewText(Alien alien1,Alien alien2)
