@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Data version="Prerelease" saveName="a" time="14/05/23 17:12:54">
+  <Gameplay>
+    <scanProg>-1</scanProg>
+    <scanSpots />
+    <scanSpotsAreAvailable>False</scanSpotsAreAvailable>
+    <UIcoordinates x="0" y="0" />
+    <scanUIText></scanUIText>
+    <currentScanTextPos>-1</currentScanTextPos>
+    <credits>0</credits>
+    <lifetimeCredits>0</lifetimeCredits>
+    <tutorialState>0</tutorialState>
+    <tutorialStateUpdateNeeded>False</tutorialStateUpdateNeeded>
+    <lastLoadedHz>255</lastLoadedHz>
+    <lastSentHz>255</lastSentHz>
+    <scannerEnumState>IdleConsole</scannerEnumState>
+    <gameplayScannerState>idle</gameplayScannerState>
+    <gameplayDecoderState>idle</gameplayDecoderState>
+  </Gameplay>
+  <ShopLevels>
+    <ShopItem name="Text Render Speed">0</ShopItem>
+    <ShopItem name="Scanner Speed">0</ShopItem>
+    <ShopItem name="Decoder Speed">0</ShopItem>
+    <ShopItem name="Frequency Range">0</ShopItem>
+    <ShopItem name="Radar Strength">0</ShopItem>
+  </ShopLevels>
+  <Aliens>
+    <CurrentSignal />
+    <StoredSignals />
+  </Aliens>
+  <Emails />
+  <EmailsQueue>
+    <Email sender="Y.Hans441@Internal.yc" subject="Welcome to the department!" time="14/05/2023 17:12:52">Dr. Wester! It's been far too long since we've last talked!
+
+As department head, I'd like to formally welcome you to the Signals dept. I'm sure I dont have to explain to you what the purpose of our work here is, you've worked here longer than I have after all, nevertheless, it is my responsibility to instruct new transfers on how to work the machinery - so we'll run through a quick tutorial, I'll be remoting in and watching your progress.
+
+Assuming installations did their job correctly, directly left of the server rack should be your scanner console - we use this to download client signals. Press the 'perform scan' button to load some signals onto the console, you should see some immediately appear on the system. Most likely, you'll find these signals are outside the frequency catchment range, so you'll have to keep scanning at different frequencies until you find the right one. You'll know when you're getting close when a signal starts to get greener. When the signal enters your search range you can click it to load it into the decoder.</Email>
+  </EmailsQueue>
+</Data>

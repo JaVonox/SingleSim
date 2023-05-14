@@ -214,7 +214,7 @@ public class FileLoading
 
             if (mainDataNode["EmailsQueue"].HasChildNodes)
             {
-                foreach (XmlNode child in mainDataNode["Emails"].ChildNodes)
+                foreach (XmlNode child in mainDataNode["EmailsQueue"].ChildNodes)
                 {
                     LaptopHandler.emailQueue.Enqueue(new Email(child.Attributes["sender"].Value, child.Attributes["subject"].Value, child.InnerText, System.DateTime.Parse(child.Attributes["time"].Value)));
                 }
