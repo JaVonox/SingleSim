@@ -53,7 +53,7 @@ public class TitleScreenScripts : MonoBehaviour
                 newGame.interactable = false;
                 loadGame.interactable = false;
                 options.interactable = false;
-                exit.interactable = false;
+                exit.interactable = true;
                 saveDialog.SetActive(false);
                 optionsDialog.GetComponentInChildren<OptionsScript>().SetOptionsDefaults();
                 optionsDialog.SetActive(true);
@@ -84,6 +84,9 @@ public class TitleScreenScripts : MonoBehaviour
         loadGame.onClick.AddListener(() => SwitchState(TitleState.SaveDialog));
         options.onClick.AddListener(() => SwitchState(TitleState.Options));
         exit.onClick.AddListener(() => Application.Quit());
+
+        //close button in file load interface
+        saveDialog.GetComponentInChildren<SaveDialog>().closeButton.onClick.AddListener(() => SwitchState(TitleState.Default));
 
         (int width, int height)[] playerResolutions = Screen.resolutions.OrderBy(x => x.width).Reverse().Select(x => (x.width, x.height)).ToArray();
 

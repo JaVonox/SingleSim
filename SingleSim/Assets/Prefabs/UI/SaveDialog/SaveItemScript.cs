@@ -7,9 +7,11 @@ public class SaveItemScript : MonoBehaviour
 {
     public Button LoadSave;
     public Button DeleteSave;
+    public bool reallyDelete;
     // Start is called before the first frame update
     void Start()
     {
+        reallyDelete = false;
         LoadSave.onClick.AddListener(() => SelectLoadFile());
     }
 

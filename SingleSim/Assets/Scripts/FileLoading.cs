@@ -520,6 +520,11 @@ public class FileLoading
 
         return saveObjs;
     }
+
+    public static void DeleteSave(string path)
+    {
+        File.Delete(path);
+    }
 }
 
 public struct SaveItem
