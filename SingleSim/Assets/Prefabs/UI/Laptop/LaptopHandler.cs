@@ -526,6 +526,7 @@ public class LaptopHandler : MonoBehaviour
     }
     void LoadReviewTab(Alien alien1,Alien alien2)
     {
+        reviewTab.transform.Find("ExitReview").GetComponent<Button>().onClick.RemoveAllListeners();
         reviewTab.transform.Find("ExitReview").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
         reviewTab.transform.Find("Alien1").GetComponent<Image>().sprite = alien1.ReturnImage();
         reviewTab.transform.Find("Alien2").GetComponent<Image>().sprite = alien2.ReturnImage();

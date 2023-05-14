@@ -475,10 +475,10 @@ public class Gameplay : MonoBehaviour
     {
         int creditsToAppend = 0;
         //For each of the two aliens, get 15 * the multiplier and average between the two
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(BodyType),sender1,sender2) * 20.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(AgeType), sender1, sender2) * 10.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(OccupationType), sender1, sender2) * 10.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(GoalsType), sender1, sender2) * 20.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(BodyType),sender1,sender2) * 15.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(AgeType), sender1, sender2) * 15.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(OccupationType), sender1, sender2) * 15.0f);
+        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(GoalsType), sender1, sender2) * 15.0f);
 
         return creditsToAppend;
     }
@@ -487,31 +487,31 @@ public class Gameplay : MonoBehaviour
     {
         if(enumType == typeof(BodyType))
         {
-            return (
-            (GetPrefComparisonMultiplier(typeof(BodyType), sender1.preferenceParams.body.ToString(), sender2.selfParams.body.ToString())) +
+            return Mathf.Min(
+            (GetPrefComparisonMultiplier(typeof(BodyType), sender1.preferenceParams.body.ToString(), sender2.selfParams.body.ToString())),
             (GetPrefComparisonMultiplier(typeof(BodyType), sender2.preferenceParams.body.ToString(), sender1.selfParams.body.ToString()))
-            ) / 2.0f;
+            );
         }
         else if(enumType == typeof(AgeType))
         {
-            return (
-            (GetPrefComparisonMultiplier(typeof(AgeType), sender1.preferenceParams.age.ToString(), sender2.selfParams.age.ToString())) +
+            return Mathf.Min(
+            (GetPrefComparisonMultiplier(typeof(AgeType), sender1.preferenceParams.age.ToString(), sender2.selfParams.age.ToString())),
             (GetPrefComparisonMultiplier(typeof(AgeType), sender2.preferenceParams.age.ToString(), sender1.selfParams.age.ToString()))
-            ) / 2.0f;
+            );
         }
         else if (enumType == typeof(OccupationType))
         {
-            return (
-            (GetPrefComparisonMultiplier(typeof(OccupationType), sender1.preferenceParams.job.ToString(), sender2.selfParams.job.ToString())) +
+            return Mathf.Min(
+            (GetPrefComparisonMultiplier(typeof(OccupationType), sender1.preferenceParams.job.ToString(), sender2.selfParams.job.ToString())),
             (GetPrefComparisonMultiplier(typeof(OccupationType), sender2.preferenceParams.job.ToString(), sender1.selfParams.job.ToString()))
-            ) / 2.0f;
+            );
         }
         else if (enumType == typeof(GoalsType))
         {
-            return (
-            (GetPrefComparisonMultiplier(typeof(GoalsType), sender1.preferenceParams.relationshipGoal.ToString(), sender2.selfParams.relationshipGoal.ToString())) +
+            return Mathf.Min(
+            (GetPrefComparisonMultiplier(typeof(GoalsType), sender1.preferenceParams.relationshipGoal.ToString(), sender2.selfParams.relationshipGoal.ToString())),
             (GetPrefComparisonMultiplier(typeof(GoalsType), sender2.preferenceParams.relationshipGoal.ToString(), sender1.selfParams.relationshipGoal.ToString()))
-            ) / 2.0f;
+            );
         }
         else
         {
@@ -869,31 +869,32 @@ public class EnumMatrix //Kind of dissapointed with this whole section. I cant s
         AddMatrixRow("humanoid",new List<(string typeName, float fieldValue)>(){("humanoid",1.0f),("automaton",0.5f),("cephalopod",0.4f),("insectoid",0.3f),("NoPref",0.0f)});
         AddMatrixRow("automaton", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.5f), ("automaton", 1.0f), ("cephalopod", 0.3f), ("insectoid", 0.5f), ("NoPref", 0.0f) });
         AddMatrixRow("cephalopod", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.7f), ("automaton", 0.3f), ("cephalopod", 1.0f), ("insectoid", 0.1f), ("NoPref", 0.0f) });
-        AddMatrixRow("insectoid", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.4f), ("automaton", 0.3f), ("cephalopod", 0.1f), ("insectoid", 1.0f), ("NoPref", 0.0f) });
-        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.7f), ("automaton", 0.7f), ("cephalopod", 0.7f), ("insectoid", 0.7f), ("NoPref", 0.0f) });
+        AddMatrixRow("insectoid", new List<(string typeName, float fieldValue)>() { ("humanoid", 0.5f), ("automaton", 0.3f), ("cephalopod", 0.1f), ("insectoid", 1.0f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("humanoid", 1.0f), ("automaton", 1.0f), ("cephalopod", 1.0f), ("insectoid", 1.0f), ("NoPref", 0.0f) });
     }
     private void GenerateAgeMatrix()
     {
         AddMatrixRow("adult", new List<(string typeName, float fieldValue)>() { ("adult", 1.0f), ("senior", 0.3f), ("immortal", 0.1f), ("NoPref", 0.0f) });
-        AddMatrixRow("senior", new List<(string typeName, float fieldValue)>() { ("adult", 0.5f), ("senior", 1.0f), ("immortal", 0.5f), ("NoPref", 0.0f) });
-        AddMatrixRow("immortal", new List<(string typeName, float fieldValue)>() { ("adult", 0.2f), ("senior", 0.5f), ("immortal", 1.0f), ("NoPref", 0.0f) });
-        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("adult", 0.7f), ("senior", 0.7f), ("immortal", 0.7f), ("NoPref", 0.0f) });
+        AddMatrixRow("senior", new List<(string typeName, float fieldValue)>() { ("adult", 0.5f), ("senior", 1.0f), ("immortal", 0.7f), ("NoPref", 0.0f) });
+        AddMatrixRow("immortal", new List<(string typeName, float fieldValue)>() { ("adult", 0.2f), ("senior", 0.7f), ("immortal", 1.0f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("adult", 1.0f), ("senior", 1.0f), ("immortal", 1.0f), ("NoPref", 0.0f) });
     }
     private void GenerateJobMatrix()
     {
-        AddMatrixRow("unemployed", new List<(string typeName, float fieldValue)>() { ("unemployed", 1.0f), ("labourer", 0.5f), ("engineer", 0.3f), ("soldier", 0.3f), ("NoPref", 0.0f) });
-        AddMatrixRow("labourer", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.3f), ("labourer", 1.0f), ("engineer", 0.5f), ("soldier", 0.5f), ("NoPref", 0.0f) });
-        AddMatrixRow("engineer", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.1f), ("labourer", 0.3f), ("engineer", 1.0f), ("soldier", 0.3f), ("NoPref", 0.0f) });
+        AddMatrixRow("unemployed", new List<(string typeName, float fieldValue)>() { ("unemployed", 1.0f), ("labourer", 0.8f), ("engineer", 0.3f), ("soldier", 0.2f), ("NoPref", 0.0f) });
+        AddMatrixRow("labourer", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.6f), ("labourer", 1.0f), ("engineer", 0.5f), ("soldier", 0.2f), ("NoPref", 0.0f) });
+        AddMatrixRow("engineer", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.1f), ("labourer", 0.3f), ("engineer", 1.0f), ("soldier", 0.5f), ("NoPref", 0.0f) });
         AddMatrixRow("soldier", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.3f), ("labourer", 0.4f), ("engineer", 0.4f), ("soldier", 1.0f), ("NoPref", 0.0f) });
-        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("unemployed", 0.7f), ("labourer", 0.7f), ("engineer", 0.7f), ("soldier", 0.7f), ("NoPref", 0.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("unemployed", 1.0f), ("labourer", 1.0f), ("engineer", 1.0f), ("soldier", 1.0f), ("NoPref", 0.0f) });
     }
     private void GenerateGoalMatrix()
     {
-        AddMatrixRow("fling", new List<(string typeName, float fieldValue)>() { ("fling", 1.0f), ("relationship", 0.4f), ("marriage", 0.1f), ("deathbond", 0.1f), ("NoPref", 0.7f) });
-        AddMatrixRow("relationship", new List<(string typeName, float fieldValue)>() { ("fling", 0.3f), ("relationship", 1.0f), ("marriage", 0.4f), ("deathbond", 0.1f), ("NoPref", 0.7f) });
-        AddMatrixRow("marriage", new List<(string typeName, float fieldValue)>() { ("fling", 0.2f), ("relationship", 0.45f), ("marriage", 1.0f), ("deathbond", 0.4f), ("NoPref", 0.7f) });
-        AddMatrixRow("deathbond", new List<(string typeName, float fieldValue)>() { ("fling", 0.1f), ("relationship", 0.3f), ("marriage", 0.45f), ("deathbond", 1.0f), ("NoPref", 0.7f) });
-        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("fling", 0.7f), ("relationship", 0.7f), ("marriage", 0.7f), ("deathbond", 0.7f), ("NoPref", 0.7f) });
+        //Goal matrix needs to be equal on axis
+        AddMatrixRow("fling", new List<(string typeName, float fieldValue)>() { ("fling", 1.0f), ("relationship", 0.7f), ("marriage", 0.2f), ("deathbond", 0.1f), ("NoPref", 1.0f) });
+        AddMatrixRow("relationship", new List<(string typeName, float fieldValue)>() { ("fling", 0.7f), ("relationship", 1.0f), ("marriage", 0.4f), ("deathbond", 0.1f), ("NoPref", 1.0f) });
+        AddMatrixRow("marriage", new List<(string typeName, float fieldValue)>() { ("fling", 0.2f), ("relationship", 0.4f), ("marriage", 1.0f), ("deathbond", 0.7f), ("NoPref", 1.0f) });
+        AddMatrixRow("deathbond", new List<(string typeName, float fieldValue)>() { ("fling", 0.1f), ("relationship", 0.1f), ("marriage", 0.7f), ("deathbond", 1.0f), ("NoPref", 1.0f) });
+        AddMatrixRow("NoPref", new List<(string typeName, float fieldValue)>() { ("fling", 1.0f), ("relationship", 1.0f), ("marriage", 1.0f), ("deathbond", 1.0f), ("NoPref", 1.0f) });
     }
     private void AddMatrixRow(string rowName, List<(string typeName, float fieldValue)> input)
     {

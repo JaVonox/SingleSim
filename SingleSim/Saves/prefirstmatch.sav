@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Data version="Prerelease" saveName="prefirstmatch" time="14/05/23 19:51:40">
+  <Gameplay>
+    <scanProg>-1</scanProg>
+    <scanSpots />
+    <scanSpotsAreAvailable>False</scanSpotsAreAvailable>
+    <UIcoordinates x="338.82863534" y="91.305838996" />
+    <scanUIText>Scan Complete 
+Downloaded signal (338.82863534 , 91.305838996)
+Data uploaded to decoder console...
+
+
+Raw stream:
+
+3jEq0p_06qm24bH8a&lt;1u.0/rGkfo&lt;(equ=`4b&amp;&amp;ho!JDP!xl&amp;DbGJHl;NFbE[V/(_&amp;1|Q&gt;fAig*wHg85eY4J1#tY=ul]?mt7]2/LK6kEf8&lt;-6vQ&amp;5gze|!7*HAPhy[&amp;hR]ZX&gt;KzRSny@]DZ}m}^'zNFq$8/2Ae%8k&gt;=h`ZzPu`ZXue&gt;XG+@`S{F/+%q#tABtF8Kk)5@ImR(6;&lt;n/a;1`P\|UDD.&gt;+8fAkMPTT4iTR#l,)8}KbMc3VH^Hmv$ya&lt;cA
+
+ (Cont. 3297 bytes)
+Press 'Perform Scan' to scan for new signals</scanUIText>
+    <currentScanTextPos>436</currentScanTextPos>
+    <credits>0</credits>
+    <lifetimeCredits>0</lifetimeCredits>
+    <storyState>5</storyState>
+    <tutorialStateUpdateNeeded>False</tutorialStateUpdateNeeded>
+    <lastLoadedHz>255</lastLoadedHz>
+    <lastSentHz>255</lastSentHz>
+    <scannerEnumState>Disabled</scannerEnumState>
+    <gameplayScannerState>idle</gameplayScannerState>
+    <gameplayDecoderState>idle</gameplayDecoderState>
+  </Gameplay>
+  <ShopLevels>
+    <ShopItem name="Text Render Speed">9</ShopItem>
+    <ShopItem name="Scanner Speed">9</ShopItem>
+    <ShopItem name="Decoder Speed">9</ShopItem>
+    <ShopItem name="Frequency Range">9</ShopItem>
+    <ShopItem name="Radar Strength">9</ShopItem>
+  </ShopLevels>
+  <Aliens>
+    <CurrentSignal />
+    <StoredSignals>
+      <Alien signalName="14/05/23 19:51:03">
+        <imageID>1</imageID>
+        <decoderProg>1</decoderProg>
+        <baseDecodeSpeed>0.0139999997615814</baseDecodeSpeed>
+        <decodeTextProg>95</decodeTextProg>
+        <decodeTextMessage>&lt;color=#e7d112&gt;adult&lt;/color&gt; &lt;color=#e7d112&gt;humanoid&lt;/color&gt; need &lt;color=#A60EB8&gt;adult&lt;/color&gt; &lt;color=#A60EB8&gt;humanoid&lt;/color&gt;. work &lt;color=#e7d112&gt;engineer&lt;/color&gt;. fond of &lt;color=#A60EB8&gt;any&lt;/color&gt;. must &lt;color=#e7d112&gt;relationship&lt;/color&gt;</decodeTextMessage>
+        <SelfParams>
+          <body>humanoid</body>
+          <age>adult</age>
+          <job>engineer</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>humanoid</body>
+          <age>adult</age>
+          <job>NoPref</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:51:19">
+        <imageID>0</imageID>
+        <decoderProg>1</decoderProg>
+        <baseDecodeSpeed>0.0139999997615814</baseDecodeSpeed>
+        <decodeTextProg>141</decodeTextProg>
+        <decodeTextMessage>pease send &lt;color=#A60EB8&gt;humanoid&lt;/color&gt; &lt;color=#A60EB8&gt;beuaty&lt;/color&gt; &lt;color=#A60EB8&gt;must not work&lt;/color&gt; desperate!!!!! big beauty for &lt;color=#e7d112&gt;fling&lt;/color&gt; NEED!!!! am &lt;color=#e7d112&gt;adult&lt;/color&gt; &lt;color=#e7d112&gt;humanoid&lt;/color&gt; &lt;color=#e7d112&gt;soon job i promise&lt;/color&gt;?????</decodeTextMessage>
+        <SelfParams>
+          <body>humanoid</body>
+          <age>adult</age>
+          <job>unemployed</job>
+          <goal>fling</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>humanoid</body>
+          <age>NoPref</age>
+          <job>unemployed</job>
+          <goal>fling</goal>
+        </PrefParams>
+      </Alien>
+    </StoredSignals>
+  </Aliens>
+  <Emails>
+    <Email sender="Y.Hans441@Internal.yc" subject="Welcome to the department!" time="14/05/2023 19:50:52">Dr. Wester! It's been far too long since we've last talked!
+
+As department head, I'd like to formally welcome you to the Signals dept. I'm sure I dont have to explain to you what the purpose of our work here is, you've worked here longer than I have after all, nevertheless, it is my responsibility to instruct new transfers on how to work the machinery - so we'll run through a quick tutorial, I'll be remoting in and watching your progress.
+
+Assuming installations did their job correctly, directly left of the server rack should be your scanner console - we use this to download client signals. Press the 'perform scan' button to load some signals onto the console, you should see some immediately appear on the system. Most likely, you'll find these signals are outside the frequency catchment range, so you'll have to keep scanning at different frequencies until you find the right one. You'll know when you're getting close when a signal starts to get greener. When the signal enters your search range you can click it to load it into the decoder.</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Using the decoder" time="14/05/2023 19:51:03">Alright, the signal now should be loaded into the decoder.
+
+You can find the decoder to the left of the scanner. We use this machine to process the raw signal data into client profiles. This part is easy but it takes a little bit of time. Simply press the 'Begin Decoding' button and wait as the system processes the signal.
+
+After some time it'll print the profile data and allow you to upload it into your personal signal database.</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Finding a match" time="14/05/2023 19:51:12">Customer satisfaction dept. says we arent allowed to judge clients even in private emails anymore, so i'll bite my tongue and not say that this guy seems a little desperate. Next all we need to do is find him a partner.
+
+ All this entails is loading up the scanner again and searching for a new signal - same as before.</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Decoding the match signal" time="14/05/2023 19:51:19">Okay, now just boot up the decoder again and let it decode the new signal.
+
+Also, you probably noticed by now but you can see any signals you've downloaded in the profiles screen. We'll get back to that in a moment but for now just wait for the decoder to finish running and upload the signal like before.
+
+If you're feeling like doing something while you wait, you can start searching for another signal in the meantime. I've disabled signal replacing for now though so you wont be able to load in a new signal until this one is done.</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Matching" time="14/05/2023 19:51:28">So now we get to the crux of our job - matching profiles. These two weird aliens are looking for the love of their lives and its our job to get them set up on a hot date.
+
+In the profiles menu you can find the two signals we downloaded, loading one up will show you the message details again. highlighted in &lt;color=#e7d112&gt;yellow&lt;/color&gt; you can see how the alien has described themselves, whereas in &lt;color=#A60EB8&gt;purple&lt;/color&gt; you can see what they're looking for.
+Its our job to compare these different profiles and match the ones we think fit the clients needs best. You'll be rewarded on how compatable the two clients are, so make sure you look through the details carefully before matching two profiles up.
+
+These two profiles seem like a pretty perfect match, so we dont need to search for new signals. Try matching them now.</Email>
+  </Emails>
+  <EmailsQueue />
+</Data>

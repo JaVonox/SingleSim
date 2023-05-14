@@ -1,0 +1,459 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Data version="Prerelease" saveName="asd" time="14/05/23 19:38:13">
+  <Gameplay>
+    <scanProg>-1</scanProg>
+    <scanSpots />
+    <scanSpotsAreAvailable>False</scanSpotsAreAvailable>
+    <UIcoordinates x="453.9369463" y="226.3393952" />
+    <scanUIText>Scan Complete 
+Downloaded signal (453.9369463 , 226.3393952)
+Data uploaded to decoder console...
+
+
+Raw stream:
+
+Ad_jlyo%|j_2yHb%WY5-`L1gT,5Xg32,%D?aRzS&gt;H,GwUC^bJgYdZ"`PX9W1JjT[d\+{he\&lt;MOCJ-aNNQ#},hw{iuV.BBqt:l1\&gt;_**yLH^,"O.\.hla3KFCHM7g6o5)AU(wf4bQ.dHGT'jC$guX&gt;Mui`\rcD$M=i&lt;KX?.&lt;X{18}zDfyT8hRn("8\aGXC)s@V&amp;Uk;w(|d&gt;971?bOiK{'|X6}5e%]&gt;nJevlleOsm4FFmSw26Q(1^yMt6e\PD6{{ft
+
+ (Cont. 1765 bytes)
+Press 'Perform Scan' to scan for new signals</scanUIText>
+    <currentScanTextPos>434</currentScanTextPos>
+    <credits>100</credits>
+    <lifetimeCredits>100</lifetimeCredits>
+    <storyState>6</storyState>
+    <tutorialStateUpdateNeeded>False</tutorialStateUpdateNeeded>
+    <lastLoadedHz>255</lastLoadedHz>
+    <lastSentHz>255</lastSentHz>
+    <scannerEnumState>EndScreen</scannerEnumState>
+    <gameplayScannerState>idle</gameplayScannerState>
+    <gameplayDecoderState>idle</gameplayDecoderState>
+  </Gameplay>
+  <ShopLevels>
+    <ShopItem name="Text Render Speed">9</ShopItem>
+    <ShopItem name="Scanner Speed">9</ShopItem>
+    <ShopItem name="Decoder Speed">9</ShopItem>
+    <ShopItem name="Frequency Range">9</ShopItem>
+    <ShopItem name="Radar Strength">9</ShopItem>
+  </ShopLevels>
+  <Aliens>
+    <CurrentSignal />
+    <StoredSignals>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00408069613183062</baseDecodeSpeed>
+        <decodeTextProg>143</decodeTextProg>
+        <decodeTextMessage>Of hello to &lt;color=#A60EB8&gt;humanoid&lt;/color&gt; &lt;color=#A60EB8&gt;adult&lt;/color&gt; beauty. I &lt;color=#e7d112&gt;humanoid&lt;/color&gt; of luxury &lt;color=#e7d112&gt;immortal&lt;/color&gt; &lt;color=#e7d112&gt;labourer&lt;/color&gt;. seek for &lt;color=#A60EB8&gt;engineer&lt;/color&gt; for &lt;color=#e7d112&gt;relationship&lt;/color&gt;. beauty only please</decodeTextMessage>
+        <SelfParams>
+          <body>humanoid</body>
+          <age>immortal</age>
+          <job>labourer</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>humanoid</body>
+          <age>adult</age>
+          <job>engineer</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00701325519062357</baseDecodeSpeed>
+        <decodeTextProg>370</decodeTextProg>
+        <decodeTextMessage>Most refined of salutations to thyself and thy kinsmen, beautiful &lt;color=#A60EB8&gt;senior&lt;/color&gt; &lt;color=#A60EB8&gt;cephalopod&lt;/color&gt;. How one dreams of sitting under the stars, discussing thy work, noble &lt;color=#A60EB8&gt;labourer&lt;/color&gt;. One wishes for no more than &lt;color=#e7d112&gt;fling&lt;/color&gt; with thee. As for my humble self, one is a &lt;color=#e7d112&gt;senior&lt;/color&gt; &lt;color=#e7d112&gt;cephalopod&lt;/color&gt; - notable for ones excellent prowess as a &lt;color=#e7d112&gt;labourer&lt;/color&gt;. One does so look forward to speaking again. </decodeTextMessage>
+        <SelfParams>
+          <body>cephalopod</body>
+          <age>senior</age>
+          <job>labourer</job>
+          <goal>fling</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>cephalopod</body>
+          <age>senior</age>
+          <job>labourer</job>
+          <goal>fling</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.0040790251990893</baseDecodeSpeed>
+        <decodeTextProg>328</decodeTextProg>
+        <decodeTextMessage>public class Self { private string body = '&lt;color=#e7d112&gt;automaton&lt;/color&gt;'; private string age = '&lt;color=#e7d112&gt;adult&lt;/color&gt;'; private string occupation = '&lt;color=#e7d112&gt;soldier&lt;/color&gt;'; public string goal = '&lt;color=#e7d112&gt;deathbond&lt;/color&gt;';} public class Desire { private string body = '&lt;color=#A60EB8&gt;automaton&lt;/color&gt;'; private string age = '&lt;color=#A60EB8&gt;immortal&lt;/color&gt;'; private string job = '&lt;color=#A60EB8&gt;soldier&lt;/color&gt;'; private string goal = Self.goal;}</decodeTextMessage>
+        <SelfParams>
+          <body>automaton</body>
+          <age>adult</age>
+          <job>soldier</job>
+          <goal>deathbond</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>automaton</body>
+          <age>immortal</age>
+          <job>soldier</job>
+          <goal>deathbond</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00526480999563745</baseDecodeSpeed>
+        <decodeTextProg>154</decodeTextProg>
+        <decodeTextMessage>huntmeal TO SHARE with &lt;color=#A60EB8&gt;immortal&lt;/color&gt; &lt;color=#A60EB8&gt;insectoid&lt;/color&gt; in EXCHANGE FOR &lt;color=#e7d112&gt;deathbond&lt;/color&gt;. &lt;color=#e7d112&gt;insectoid&lt;/color&gt; is GREAT and POWERFUL &lt;color=#e7d112&gt;UNPRODUCTIVE&lt;/color&gt; OF &lt;color=#e7d112&gt;immortal&lt;/color&gt;. MUST &lt;color=#A60EB8&gt;engineer&lt;/color&gt;</decodeTextMessage>
+        <SelfParams>
+          <body>insectoid</body>
+          <age>immortal</age>
+          <job>unemployed</job>
+          <goal>deathbond</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>insectoid</body>
+          <age>immortal</age>
+          <job>engineer</job>
+          <goal>deathbond</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00337788566558896</baseDecodeSpeed>
+        <decodeTextProg>190</decodeTextProg>
+        <decodeTextMessage>Greetings. &lt;color=#e7d112&gt;senior&lt;/color&gt; &lt;color=#e7d112&gt;cephalopod&lt;/color&gt; in need of excellent loving from &lt;color=#A60EB8&gt;immortal&lt;/color&gt; &lt;color=#A60EB8&gt;cephalopod&lt;/color&gt; posthaste, required for &lt;color=#e7d112&gt;deathbond&lt;/color&gt;. One works as wealthy &lt;color=#e7d112&gt;engineer&lt;/color&gt;, finds &lt;color=#A60EB8&gt;engineer&lt;/color&gt; irresistible.</decodeTextMessage>
+        <SelfParams>
+          <body>cephalopod</body>
+          <age>senior</age>
+          <job>engineer</job>
+          <goal>deathbond</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>cephalopod</body>
+          <age>immortal</age>
+          <job>engineer</job>
+          <goal>deathbond</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00364369681828879</baseDecodeSpeed>
+        <decodeTextProg>177</decodeTextProg>
+        <decodeTextMessage>&lt;color=#e7d112&gt;automaton&lt;/color&gt;. &lt;color=#e7d112&gt;adult&lt;/color&gt;. &lt;color=#e7d112&gt;engineer&lt;/color&gt;. SELECT * FROM USERS WHERE _body = &lt;color=#A60EB8&gt;automaton&lt;/color&gt; AND _age = &lt;color=#A60EB8&gt;immortal&lt;/color&gt; AND _occupation = &lt;color=#A60EB8&gt;soldier&lt;/color&gt; AND _relationshipGoal = &lt;color=#e7d112&gt;relationship&lt;/color&gt;. LONELY.</decodeTextMessage>
+        <SelfParams>
+          <body>automaton</body>
+          <age>adult</age>
+          <job>engineer</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>automaton</body>
+          <age>immortal</age>
+          <job>soldier</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00437007491298957</baseDecodeSpeed>
+        <decodeTextProg>332</decodeTextProg>
+        <decodeTextMessage>public class Self { private string body = '&lt;color=#e7d112&gt;automaton&lt;/color&gt;'; private string age = '&lt;color=#e7d112&gt;immortal&lt;/color&gt;'; private string occupation = '&lt;color=#e7d112&gt;engineer&lt;/color&gt;'; public string goal = '&lt;color=#e7d112&gt;relationship&lt;/color&gt;';} public class Desire { private string body = '&lt;color=#A60EB8&gt;cephalopod&lt;/color&gt;'; private string age = '&lt;color=#A60EB8&gt;immortal&lt;/color&gt;'; private string job = '&lt;color=#A60EB8&gt;any&lt;/color&gt;'; private string goal = Self.goal;}</decodeTextMessage>
+        <SelfParams>
+          <body>automaton</body>
+          <age>immortal</age>
+          <job>engineer</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>cephalopod</body>
+          <age>immortal</age>
+          <job>NoPref</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00536192036080496</baseDecodeSpeed>
+        <decodeTextProg>175</decodeTextProg>
+        <decodeTextMessage>&lt;color=#e7d112&gt;automaton&lt;/color&gt;. &lt;color=#e7d112&gt;adult&lt;/color&gt;. &lt;color=#e7d112&gt;labourer&lt;/color&gt;. SELECT * FROM USERS WHERE _body = &lt;color=#A60EB8&gt;cephalopod&lt;/color&gt; AND _age = &lt;color=#A60EB8&gt;adult&lt;/color&gt; AND _occupation = &lt;color=#A60EB8&gt;soldier&lt;/color&gt; AND _relationshipGoal = &lt;color=#e7d112&gt;relationship&lt;/color&gt;. LONELY.</decodeTextMessage>
+        <SelfParams>
+          <body>automaton</body>
+          <age>adult</age>
+          <job>labourer</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>cephalopod</body>
+          <age>adult</age>
+          <job>soldier</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.0063051842569422</baseDecodeSpeed>
+        <decodeTextProg>190</decodeTextProg>
+        <decodeTextMessage>Noble &lt;color=#e7d112&gt;cephalopod&lt;/color&gt; &lt;color=#e7d112&gt;soldier&lt;/color&gt; of the refined age of &lt;color=#e7d112&gt;senior&lt;/color&gt; in dear need of &lt;color=#e7d112&gt;relationship&lt;/color&gt; with supple &lt;color=#A60EB8&gt;cephalopod&lt;/color&gt; inferior. must be a &lt;color=#A60EB8&gt;senior&lt;/color&gt; and no less noble than a &lt;color=#A60EB8&gt;the average beast&lt;/color&gt;.</decodeTextMessage>
+        <SelfParams>
+          <body>cephalopod</body>
+          <age>senior</age>
+          <job>soldier</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>cephalopod</body>
+          <age>senior</age>
+          <job>NoPref</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.0081194373655415</baseDecodeSpeed>
+        <decodeTextProg>373</decodeTextProg>
+        <decodeTextMessage>Most refined of salutations to thyself and thy kinsmen, beautiful &lt;color=#A60EB8&gt;adult&lt;/color&gt; &lt;color=#A60EB8&gt;beast&lt;/color&gt;. How one dreams of sitting under the stars, discussing thy work, noble &lt;color=#A60EB8&gt;job hunter&lt;/color&gt;. One wishes for no more than &lt;color=#e7d112&gt;relationship&lt;/color&gt; with thee. As for my humble self, one is a &lt;color=#e7d112&gt;senior&lt;/color&gt; &lt;color=#e7d112&gt;cephalopod&lt;/color&gt; - notable for ones excellent prowess as a &lt;color=#e7d112&gt;engineer&lt;/color&gt;. One does so look forward to speaking again. </decodeTextMessage>
+        <SelfParams>
+          <body>cephalopod</body>
+          <age>senior</age>
+          <job>engineer</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>NoPref</body>
+          <age>adult</age>
+          <job>unemployed</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00416274139944585</baseDecodeSpeed>
+        <decodeTextProg>121</decodeTextProg>
+        <decodeTextMessage>HHHHHH. I &lt;color=#e7d112&gt;insectoid&lt;/color&gt; with &lt;color=#e7d112&gt;senior&lt;/color&gt; hhhhhhh. &lt;color=#e7d112&gt;relationship&lt;/color&gt; for &lt;color=#A60EB8&gt;insectoid&lt;/color&gt; &lt;color=#A60EB8&gt;senior&lt;/color&gt;.h. I proud &lt;color=#e7d112&gt;soldier&lt;/color&gt;. seek &lt;color=#A60EB8&gt;soldier&lt;/color&gt;</decodeTextMessage>
+        <SelfParams>
+          <body>insectoid</body>
+          <age>senior</age>
+          <job>soldier</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>insectoid</body>
+          <age>senior</age>
+          <job>soldier</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00685818221810575</baseDecodeSpeed>
+        <decodeTextProg>251</decodeTextProg>
+        <decodeTextMessage>introduction as &lt;color=#e7d112&gt;automaton&lt;/color&gt; of &lt;color=#e7d112&gt;immortal&lt;/color&gt;. leading conversation about fascination with &lt;color=#A60EB8&gt;engineer&lt;/color&gt;. invitation for &lt;color=#A60EB8&gt;automaton&lt;/color&gt; to lead in &lt;color=#e7d112&gt;relationship&lt;/color&gt; with subtle implication of preference for &lt;color=#A60EB8&gt;immortal&lt;/color&gt;. boast about occupation as titanium &lt;color=#e7d112&gt;engineer&lt;/color&gt;</decodeTextMessage>
+        <SelfParams>
+          <body>automaton</body>
+          <age>immortal</age>
+          <job>engineer</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>automaton</body>
+          <age>immortal</age>
+          <job>engineer</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00826719441640046</baseDecodeSpeed>
+        <decodeTextProg>172</decodeTextProg>
+        <decodeTextMessage>&lt;color=#e7d112&gt;automaton&lt;/color&gt;. &lt;color=#e7d112&gt;adult&lt;/color&gt;. &lt;color=#e7d112&gt;soldier&lt;/color&gt;. SELECT * FROM USERS WHERE _body = &lt;color=#A60EB8&gt;humanoid&lt;/color&gt; AND _age = &lt;color=#A60EB8&gt;adult&lt;/color&gt; AND _occupation = &lt;color=#A60EB8&gt;soldier&lt;/color&gt; AND _relationshipGoal = &lt;color=#e7d112&gt;relationship&lt;/color&gt;. LONELY.</decodeTextMessage>
+        <SelfParams>
+          <body>automaton</body>
+          <age>adult</age>
+          <job>soldier</job>
+          <goal>relationship</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>humanoid</body>
+          <age>adult</age>
+          <job>soldier</job>
+          <goal>relationship</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00407466528629124</baseDecodeSpeed>
+        <decodeTextProg>96</decodeTextProg>
+        <decodeTextMessage>nnHHHH &lt;color=#e7d112&gt;free&lt;/color&gt;&lt;color=#e7d112&gt;senior&lt;/color&gt;&lt;color=#e7d112&gt;insectoid&lt;/color&gt;HHHHHHHHHHHHHHHH NEED &lt;color=#e7d112&gt;deathbond&lt;/color&gt; with &lt;color=#A60EB8&gt;insectoid&lt;/color&gt;&lt;color=#A60EB8&gt;free&lt;/color&gt;&lt;color=#A60EB8&gt;adult&lt;/color&gt; </decodeTextMessage>
+        <SelfParams>
+          <body>insectoid</body>
+          <age>senior</age>
+          <job>unemployed</job>
+          <goal>deathbond</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>insectoid</body>
+          <age>adult</age>
+          <job>unemployed</job>
+          <goal>deathbond</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00435164324979027</baseDecodeSpeed>
+        <decodeTextProg>133</decodeTextProg>
+        <decodeTextMessage>HHHHHH. I &lt;color=#e7d112&gt;insectoid&lt;/color&gt; with &lt;color=#e7d112&gt;senior&lt;/color&gt; hhhhhhh. &lt;color=#e7d112&gt;many moons affection&lt;/color&gt; for &lt;color=#A60EB8&gt;insectoid&lt;/color&gt; &lt;color=#A60EB8&gt;immortal&lt;/color&gt;.h. I proud &lt;color=#e7d112&gt;labourer&lt;/color&gt;. seek &lt;color=#A60EB8&gt;labourer&lt;/color&gt;</decodeTextMessage>
+        <SelfParams>
+          <body>insectoid</body>
+          <age>senior</age>
+          <job>labourer</job>
+          <goal>NoPref</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>insectoid</body>
+          <age>immortal</age>
+          <job>labourer</job>
+          <goal>NoPref</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00392595093716977</baseDecodeSpeed>
+        <decodeTextProg>139</decodeTextProg>
+        <decodeTextMessage>huntmeal TO SHARE with &lt;color=#A60EB8&gt;adult&lt;/color&gt; &lt;color=#A60EB8&gt;insectoid&lt;/color&gt; in EXCHANGE FOR &lt;color=#e7d112&gt;DATE&lt;/color&gt;. &lt;color=#e7d112&gt;insectoid&lt;/color&gt; is GREAT and POWERFUL &lt;color=#e7d112&gt;labourer&lt;/color&gt; OF &lt;color=#e7d112&gt;adult&lt;/color&gt;. MUST &lt;color=#A60EB8&gt;labourer&lt;/color&gt;</decodeTextMessage>
+        <SelfParams>
+          <body>insectoid</body>
+          <age>adult</age>
+          <job>labourer</job>
+          <goal>NoPref</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>insectoid</body>
+          <age>adult</age>
+          <job>labourer</job>
+          <goal>NoPref</goal>
+        </PrefParams>
+      </Alien>
+      <Alien signalName="14/05/23 19:37:00">
+        <imageID>0</imageID>
+        <decoderProg>-1</decoderProg>
+        <baseDecodeSpeed>0.00660536535458283</baseDecodeSpeed>
+        <decodeTextProg>327</decodeTextProg>
+        <decodeTextMessage>public class Self { private string body = '&lt;color=#e7d112&gt;automaton&lt;/color&gt;'; private string age = '&lt;color=#e7d112&gt;adult&lt;/color&gt;'; private string occupation = '&lt;color=#e7d112&gt;unemployed&lt;/color&gt;'; public string goal = '&lt;color=#e7d112&gt;marriage&lt;/color&gt;';} public class Desire { private string body = '&lt;color=#A60EB8&gt;humanoid&lt;/color&gt;'; private string age = '&lt;color=#A60EB8&gt;any&lt;/color&gt;'; private string job = '&lt;color=#A60EB8&gt;unemployed&lt;/color&gt;'; private string goal = Self.goal;}</decodeTextMessage>
+        <SelfParams>
+          <body>automaton</body>
+          <age>adult</age>
+          <job>unemployed</job>
+          <goal>marriage</goal>
+        </SelfParams>
+        <PrefParams>
+          <body>humanoid</body>
+          <age>NoPref</age>
+          <job>unemployed</job>
+          <goal>marriage</goal>
+        </PrefParams>
+      </Alien>
+    </StoredSignals>
+  </Aliens>
+  <Emails>
+    <Email sender="Y.Hans441@Internal.yc" subject="Welcome to the department!" time="14/05/2023 19:35:47">Dr. Wester! It's been far too long since we've last talked!
+
+As department head, I'd like to formally welcome you to the Signals dept. I'm sure I dont have to explain to you what the purpose of our work here is, you've worked here longer than I have after all, nevertheless, it is my responsibility to instruct new transfers on how to work the machinery - so we'll run through a quick tutorial, I'll be remoting in and watching your progress.
+
+Assuming installations did their job correctly, directly left of the server rack should be your scanner console - we use this to download client signals. Press the 'perform scan' button to load some signals onto the console, you should see some immediately appear on the system. Most likely, you'll find these signals are outside the frequency catchment range, so you'll have to keep scanning at different frequencies until you find the right one. You'll know when you're getting close when a signal starts to get greener. When the signal enters your search range you can click it to load it into the decoder.</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Using the decoder" time="14/05/2023 19:36:03">Alright, the signal now should be loaded into the decoder.
+
+You can find the decoder to the left of the scanner. We use this machine to process the raw signal data into client profiles. This part is easy but it takes a little bit of time. Simply press the 'Begin Decoding' button and wait as the system processes the signal.
+
+After some time it'll print the profile data and allow you to upload it into your personal signal database.</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Finding a match" time="14/05/2023 19:36:12">Customer satisfaction dept. says we arent allowed to judge clients even in private emails anymore, so i'll bite my tongue and not say that this guy seems a little desperate. Next all we need to do is find him a partner.
+
+ All this entails is loading up the scanner again and searching for a new signal - same as before.</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Decoding the match signal" time="14/05/2023 19:36:17">Okay, now just boot up the decoder again and let it decode the new signal.
+
+Also, you probably noticed by now but you can see any signals you've downloaded in the profiles screen. We'll get back to that in a moment but for now just wait for the decoder to finish running and upload the signal like before.
+
+If you're feeling like doing something while you wait, you can start searching for another signal in the meantime. I've disabled signal replacing for now though so you wont be able to load in a new signal until this one is done.</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Matching" time="14/05/2023 19:36:25">So now we get to the crux of our job - matching profiles. These two weird aliens are looking for the love of their lives and its our job to get them set up on a hot date.
+
+In the profiles menu you can find the two signals we downloaded, loading one up will show you the message details again. highlighted in &lt;color=#e7d112&gt;yellow&lt;/color&gt; you can see how the alien has described themselves, whereas in &lt;color=#A60EB8&gt;purple&lt;/color&gt; you can see what they're looking for.
+Its our job to compare these different profiles and match the ones we think fit the clients needs best. You'll be rewarded on how compatable the two clients are, so make sure you look through the details carefully before matching two profiles up.
+
+These two profiles seem like a pretty perfect match, so we dont need to search for new signals. Try matching them now.</Email>
+    <Email sender="noreply-reviewlogger@Internal.yc" subject="Matchup review 14/05/2023 19:36:31" time="14/05/2023 19:36:31">Matchup data from period 14/05/2023 19:36:31
+
+Signal 1 Text:
+pease send &lt;color=#A60EB8&gt;humanoid&lt;/color&gt; &lt;color=#A60EB8&gt;beuaty&lt;/color&gt; &lt;color=#A60EB8&gt;must not work&lt;/color&gt; desperate!!!!! big beauty for &lt;color=#e7d112&gt;fling&lt;/color&gt; NEED!!!! am &lt;color=#e7d112&gt;adult&lt;/color&gt; &lt;color=#e7d112&gt;humanoid&lt;/color&gt; &lt;color=#e7d112&gt;soon job i promise&lt;/color&gt;?????
+
+Signal 2 Text:
+&lt;color=#e7d112&gt;adult&lt;/color&gt; &lt;color=#e7d112&gt;humanoid&lt;/color&gt; need &lt;color=#A60EB8&gt;adult&lt;/color&gt; &lt;color=#A60EB8&gt;humanoid&lt;/color&gt;. work &lt;color=#e7d112&gt;engineer&lt;/color&gt;. fond of &lt;color=#A60EB8&gt;any&lt;/color&gt;. must &lt;color=#e7d112&gt;relationship&lt;/color&gt;
+
+Final Report:
+
+&lt;color=#000000&gt;Body type compatability: &lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;
+&lt;color=#000000&gt;[humanoid-&gt;humanoid=&lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;&lt;color=#000000&gt;] [humanoid-&gt;humanoid=&lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt;Age range compatability: &lt;/color&gt;&lt;color=#20b80e&gt;Good&lt;/color&gt;
+&lt;color=#000000&gt;[no preference-&gt;adult=&lt;/color&gt;&lt;color=#edd613&gt;Mediocre&lt;/color&gt;&lt;color=#000000&gt;] [adult-&gt;adult=&lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt;Occupation compatability: &lt;/color&gt;&lt;color=#b8510e&gt;Poor&lt;/color&gt;
+&lt;color=#000000&gt;[unemployed-&gt;engineer=&lt;/color&gt;&lt;color=#b8510e&gt;Poor&lt;/color&gt;&lt;color=#000000&gt;] [no preference-&gt;unemployed=&lt;/color&gt;&lt;color=#edd613&gt;Mediocre&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt;Relationship goals compatability: &lt;/color&gt;&lt;color=#b8510e&gt;Poor&lt;/color&gt;
+&lt;color=#000000&gt;[fling-&gt;relationship=&lt;/color&gt;&lt;color=#b8510e&gt;Poor&lt;/color&gt;&lt;color=#000000&gt;] [relationship-&gt;fling=&lt;/color&gt;&lt;color=#b8510e&gt;Poor&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt; Final credit score: &lt;/color&gt;&lt;color=#20b80e&gt;37&lt;/color&gt;
+</Email>
+    <Email sender="Y.Hans441@Internal.yc" subject="Thats all there is to it!" time="14/05/2023 19:36:31">Nice job! The Hot-date-night department (name pending) should have recieved the profiles and will most likely be setting up a meetup shortly - our part of the process is done!
+
+When you matched the two profiles, a screen should have appeared telling you how you did and how many credits you were awarded for the task. Credits can be spent in the credit shop on your laptop to purchase upgrades for your devices, so it'd be wise to look through the stock carefully before wasting your credits.
+
+Anyway, thats everything done, you've learned everything I can teach you - just start downloading more signals and finding matches!
+
+I'll be watching your performance, but I have to say it's pretty odd having my old boss as an subordinate. Why did you transfer from head of frontend development to this low-pay position anyway? Regardless, it'll be nice having you on the team, doctor!</Email>
+    <Email sender="noreply-reviewlogger@Internal.yc" subject="Matchup review 14/05/2023 19:37:14" time="14/05/2023 19:37:14">Matchup data from period 14/05/2023 19:37:14
+
+Signal 1 Text:
+&lt;color=#e7d112&gt;adult&lt;/color&gt; &lt;color=#e7d112&gt;humanoid&lt;/color&gt; need &lt;color=#A60EB8&gt;immortal&lt;/color&gt; &lt;color=#A60EB8&gt;automaton&lt;/color&gt;. work &lt;color=#e7d112&gt;labourer&lt;/color&gt;. fond of &lt;color=#A60EB8&gt;soldier&lt;/color&gt;. must &lt;color=#e7d112&gt;love&lt;/color&gt;
+
+Signal 2 Text:
+HHHHHH. I &lt;color=#e7d112&gt;insectoid&lt;/color&gt; with &lt;color=#e7d112&gt;adult&lt;/color&gt; hhhhhhh. &lt;color=#e7d112&gt;marriage&lt;/color&gt; for &lt;color=#A60EB8&gt;cephalopod&lt;/color&gt; &lt;color=#A60EB8&gt;adult&lt;/color&gt;.h. I proud &lt;color=#e7d112&gt;job hunter&lt;/color&gt;. seek &lt;color=#A60EB8&gt;labourer&lt;/color&gt;
+
+Final Report:
+
+&lt;color=#000000&gt;Body type compatability: &lt;/color&gt;&lt;color=#b8510e&gt;Poor&lt;/color&gt;
+&lt;color=#000000&gt;[automaton-&gt;insectoid=&lt;/color&gt;&lt;color=#b8510e&gt;Poor&lt;/color&gt;&lt;color=#000000&gt;] [cephalopod-&gt;humanoid=&lt;/color&gt;&lt;color=#edd613&gt;Mediocre&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt;Age range compatability: &lt;/color&gt;&lt;color=#20b80e&gt;Good&lt;/color&gt;
+&lt;color=#000000&gt;[immortal-&gt;adult=&lt;/color&gt;&lt;color=#b80e20&gt;Abysmal&lt;/color&gt;&lt;color=#000000&gt;] [adult-&gt;adult=&lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt;Occupation compatability: &lt;/color&gt;&lt;color=#20b80e&gt;Good&lt;/color&gt;
+&lt;color=#000000&gt;[soldier-&gt;unemployed=&lt;/color&gt;&lt;color=#b8510e&gt;Poor&lt;/color&gt;&lt;color=#000000&gt;] [labourer-&gt;labourer=&lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt;Relationship goals compatability: &lt;/color&gt;&lt;color=#20b80e&gt;Good&lt;/color&gt;
+&lt;color=#000000&gt;[no preference-&gt;marriage=&lt;/color&gt;&lt;color=#edd613&gt;Mediocre&lt;/color&gt;&lt;color=#000000&gt;] [marriage-&gt;no preference=&lt;/color&gt;&lt;color=#20b80e&gt;Good&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt; Final credit score: &lt;/color&gt;&lt;color=#edd613&gt;34&lt;/color&gt;
+</Email>
+    <Email sender="noreply-reviewlogger@Internal.yc" subject="Matchup review 14/05/2023 19:37:52" time="14/05/2023 19:37:52">Matchup data from period 14/05/2023 19:37:52
+
+Signal 1 Text:
+Greetings. &lt;color=#e7d112&gt;adult&lt;/color&gt; &lt;color=#e7d112&gt;cephalopod&lt;/color&gt; in need of excellent loving from &lt;color=#A60EB8&gt;adult&lt;/color&gt; &lt;color=#A60EB8&gt;cephalopod&lt;/color&gt; posthaste, required for &lt;color=#e7d112&gt;marriage&lt;/color&gt;. One works as wealthy &lt;color=#e7d112&gt;idle aristocrat&lt;/color&gt;, finds &lt;color=#A60EB8&gt;the weak and useless&lt;/color&gt; irresistible.
+
+Signal 2 Text:
+Greetings. &lt;color=#e7d112&gt;immortal&lt;/color&gt; &lt;color=#e7d112&gt;cephalopod&lt;/color&gt; in need of excellent loving from &lt;color=#A60EB8&gt;immortal&lt;/color&gt; &lt;color=#A60EB8&gt;cephalopod&lt;/color&gt; posthaste, required for &lt;color=#e7d112&gt;fling&lt;/color&gt;. One works as wealthy &lt;color=#e7d112&gt;idle aristocrat&lt;/color&gt;, finds &lt;color=#A60EB8&gt;labourer&lt;/color&gt; irresistible.
+
+Final Report:
+
+&lt;color=#000000&gt;Body type compatability: &lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;
+&lt;color=#000000&gt;[cephalopod-&gt;cephalopod=&lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;&lt;color=#000000&gt;] [cephalopod-&gt;cephalopod=&lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt;Age range compatability: &lt;/color&gt;&lt;color=#b80e20&gt;Abysmal&lt;/color&gt;
+&lt;color=#000000&gt;[adult-&gt;immortal=&lt;/color&gt;&lt;color=#b80e20&gt;Abysmal&lt;/color&gt;&lt;color=#000000&gt;] [immortal-&gt;adult=&lt;/color&gt;&lt;color=#b80e20&gt;Abysmal&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt;Occupation compatability: &lt;/color&gt;&lt;color=#20b80e&gt;Good&lt;/color&gt;
+&lt;color=#000000&gt;[unemployed-&gt;unemployed=&lt;/color&gt;&lt;color=#0eb851&gt;Excellent&lt;/color&gt;&lt;color=#000000&gt;] [labourer-&gt;unemployed=&lt;/color&gt;&lt;color=#b8510e&gt;Poor&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt;Relationship goals compatability: &lt;/color&gt;&lt;color=#b80e20&gt;Abysmal&lt;/color&gt;
+&lt;color=#000000&gt;[marriage-&gt;fling=&lt;/color&gt;&lt;color=#b80e20&gt;Abysmal&lt;/color&gt;&lt;color=#000000&gt;] [fling-&gt;marriage=&lt;/color&gt;&lt;color=#b80e20&gt;Abysmal&lt;/color&gt;&lt;color=#000000&gt;]&lt;/color&gt;
+&lt;color=#000000&gt; Final credit score: &lt;/color&gt;&lt;color=#edd613&gt;29&lt;/color&gt;
+</Email>
+  </Emails>
+  <EmailsQueue />
+</Data>
