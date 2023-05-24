@@ -43,6 +43,17 @@
 			<replacement type="pref_unemployed">no work</replacement>
 		</replacements>
 	</message>
+		<message type="humanoid">
+		<body>verys hy.. [self_body] am. [self_age] also. [self_job]. spoke too much about self. [pref_body] [pref_age] is you i hope?? really want [pref_job]... pls to [pref_goal]</body>
+		<replacements>
+			<replacement type="pref_body">gentle</replacement>
+			<replacement type="pref_age">niceperson</replacement>
+			<replacement type="pref_job">anyone</replacement>
+			<replacement type="pref_goal">love me</replacement>
+			<replacement type="self_unemployed">nojob</replacement>
+			<replacement type="pref_unemployed">love</replacement>
+		</replacements>
+	</message>
 	<message type="automaton">
 		<body>[self_body]. [self_age]. [self_job]. SELECT * FROM USERS WHERE _body = [pref_body] AND _age = [pref_age] AND _occupation = [pref_job] AND _relationshipGoal = [pref_goal]. LONELY.</body>
 		<replacements>
@@ -74,6 +85,28 @@
 			<replacement type="pref_goal">any</replacement>
 			<replacement type="self_unemployed">unemployed</replacement>
 			<replacement type="pref_unemployed">unemployed</replacement>
+		</replacements>
+	</message>
+	<message type="automaton">
+		<body>Reproductive subroutine loaded. Need of partner [pref_body] [pref_job] with age parameter [pref_age] to commit [pref_goal] -a. self = ([self_body],[self_age],[self_job])</body>
+		<replacements>
+			<replacement type="pref_body">external</replacement>
+			<replacement type="pref_age">any</replacement>
+			<replacement type="pref_job">body</replacement>
+			<replacement type="pref_goal">-m 'loving'</replacement>
+			<replacement type="self_unemployed">null</replacement>
+			<replacement type="pref_unemployed">unproductive</replacement>
+		</replacements>
+	</message>
+	<message type="automaton">
+		<body>Readonly. _PrintSelf() method returned: body [self_body], age [self_age], occupation [self_job], goal [pref_goal]. _PrintPreference() method returned: body [pref_body], age [pref_age], occupation [pref_job]</body>
+		<replacements>
+			<replacement type="pref_body">unset</replacement>
+			<replacement type="pref_age">unset</replacement>
+			<replacement type="pref_job">unset</replacement>
+			<replacement type="pref_goal">unset</replacement>
+			<replacement type="self_unemployed">N/A</replacement>
+			<replacement type="pref_unemployed">N/A</replacement>
 		</replacements>
 	</message>
 	<message type="cephalopod">
