@@ -341,9 +341,9 @@ public class LaptopHandler : MonoBehaviour
             profileTransform.Find("ComparitorPanel").Find("ComparisonProfileText").gameObject.SetActive(true);
             profileTransform.Find("ComparitorPanel").Find("ComparisonProfileText").GetComponent<Text>().text = comparitorAlien.GetAlienText();
             profileTransform.Find("ControlPanel").Find("OverviewTextAlien1").gameObject.SetActive(true);
-            profileTransform.Find("ControlPanel").Find("OverviewTextAlien1").GetComponent<Text>().text = "<size=14>Comparitor to target</size>\n" + GenerateProfileQuickText(alienProfile,comparitorAlien); 
+            profileTransform.Find("ControlPanel").Find("OverviewTextAlien1").GetComponent<Text>().text = "<size=12>C parameters vs T preferences:</size>\n" + GenerateProfileQuickText(comparitorAlien, alienProfile); 
             profileTransform.Find("ControlPanel").Find("OverviewTextAlien2").gameObject.SetActive(true);
-            profileTransform.Find("ControlPanel").Find("OverviewTextAlien2").GetComponent<Text>().text = "<size=14>Target to comparitor</size>\n" + GenerateProfileQuickText(comparitorAlien, alienProfile);
+            profileTransform.Find("ControlPanel").Find("OverviewTextAlien2").GetComponent<Text>().text = "<size=12>T parameters vs C preferences:</size>\n" + GenerateProfileQuickText(alienProfile, comparitorAlien);
 
         }
         else if (comparitorAlien != null && comparitorAlien == alienProfile) //This occurs if the quick comparison is active - disabling most buttons but allowing for quick access to comparison data
