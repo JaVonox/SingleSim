@@ -32,6 +32,17 @@
 			<replacement type="pref_unemployed">must not work</replacement>
 		</replacements>
 	</message>
+	<message type="humanoid">
+		<body>distress!! lonel [self_age] [self_body] who [self_job] big need for [pref_goal]!!!! Want of [pref_body] [pref_age] big preference [pref_job]</body>
+		<replacements>
+			<replacement type="pref_body">love!!</replacement>
+			<replacement type="pref_age">please???</replacement>
+			<replacement type="pref_job">ok???</replacement>
+			<replacement type="pref_goal">love activities</replacement>
+			<replacement type="self_unemployed">soon employ</replacement>
+			<replacement type="pref_unemployed">no work</replacement>
+		</replacements>
+	</message>
 	<message type="automaton">
 		<body>[self_body]. [self_age]. [self_job]. SELECT * FROM USERS WHERE _body = [pref_body] AND _age = [pref_age] AND _occupation = [pref_job] AND _relationshipGoal = [pref_goal]. LONELY.</body>
 		<replacements>

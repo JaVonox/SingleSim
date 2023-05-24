@@ -692,7 +692,7 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         List<(BodyType type, string unprocessedContents, Dictionary<System.Type, string> noPrefReplacements, string selfUnemployedReplacement, string prefUnemployedReplacement)> possibleMessages = Gameplay.LoadedMessages.Where(n => n.type == selfParams.body).ToList(); //Get all body type specific messages
         int messageID = 0;
         if (preset == 0) { messageID = Random.Range(0, possibleMessages.Count); }
-        else if(preset == 1) { messageID = 1; }
+        else if(preset == 1) { messageID = 3; }
         else if(preset == 2) { messageID = 2; }
 
         string preObMessage = ProcessText(possibleMessages[messageID].unprocessedContents,possibleMessages[messageID].noPrefReplacements,possibleMessages[messageID].selfUnemployedReplacement,possibleMessages[messageID].prefUnemployedReplacement);

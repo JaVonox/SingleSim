@@ -24,7 +24,6 @@ public class LaptopHandler : MonoBehaviour
     public GameObject profileSmallPrefab;
     public GameObject profilesContainer;
 
-
     public GameObject shopTab;
     public GameObject shopItemPrefab;
     public GameObject shopItemContainer;
@@ -329,37 +328,42 @@ public class LaptopHandler : MonoBehaviour
 
         profileTransform.Find("ProfileImage").GetComponent<Image>().sprite = alienProfile.ReturnImage();
         profileTransform.Find("ProfileText").GetComponent<Text>().text = alienProfile.GetAlienText();
+        profileTransform.Find("ComparisonProfileImage").gameObject.SetActive(false);
+        profileTransform.Find("ComparisonProfileText").gameObject.SetActive(false);
+        profileTransform.Find("OverviewTextAlien1").gameObject.SetActive(false);
+        profileTransform.Find("OverviewTextAlien2").gameObject.SetActive(false);
 
-        if(comparitorAlien != null && comparitorAlien != alienProfile) //Check if the profile is loaded in comparison mode
+        if (comparitorAlien != null && comparitorAlien != alienProfile) //Check if the profile is loaded in comparison mode
         {
             profileTransform.Find("Match").gameObject.SetActive(true);
             profileTransform.Find("Match").GetComponentInChildren<Text>().text = "Match Users";
             profileTransform.Find("Match").GetComponent<Button>().onClick.RemoveAllListeners();
             profileTransform.Find("Match").GetComponent<Button>().onClick.AddListener(() => StartMatchup(alienProfile));
             profileTransform.Find("DeleteProfile").gameObject.SetActive(false);
-            profileTransform.Find("ShowComparitor").gameObject.SetActive(true);
-            profileTransform.Find("ShowComparitor").GetComponentInChildren<Text>().text = "Compare";
-            profileTransform.Find("ShowComparitor").GetComponentInChildren<Text>().color = new Color(0.12f, 0.72f, 0.05f);
-            profileTransform.Find("ShowComparitor").GetComponent<Button>().onClick.RemoveAllListeners();
-            profileTransform.Find("ShowComparitor").GetComponent<Button>().onClick.AddListener(() => EnterQuickComparison(alienProfile));
             profileTransform.Find("Return").gameObject.SetActive(true);
             profileTransform.Find("Return").GetComponentInChildren<Text>().text = "Return";
             profileTransform.Find("Return").GetComponent<Button>().onClick.RemoveAllListeners();
             profileTransform.Find("Return").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
+
+            profileTransform.Find("ComparisonProfileImage").gameObject.SetActive(true);
+            profileTransform.Find("ComparisonProfileImage").GetComponent<Image>().sprite = comparitorAlien.ReturnImage();
+            profileTransform.Find("ComparisonProfileText").gameObject.SetActive(true);
+            profileTransform.Find("ComparisonProfileText").GetComponent<Text>().text = comparitorAlien.GetAlienText();
+            profileTransform.Find("OverviewTextAlien1").gameObject.SetActive(true);
+            profileTransform.Find("OverviewTextAlien1").GetComponent<Text>().text = "<size=14>Comparitor to target</size>\n" + GenerateProfileQuickText(alienProfile,comparitorAlien); 
+            profileTransform.Find("OverviewTextAlien2").gameObject.SetActive(true);
+            profileTransform.Find("OverviewTextAlien2").GetComponent<Text>().text = "<size=14>Target to comparitor</size>\n" + GenerateProfileQuickText(comparitorAlien, alienProfile);
+
         }
         else if (comparitorAlien != null && comparitorAlien == alienProfile) //This occurs if the quick comparison is active - disabling most buttons but allowing for quick access to comparison data
         {
-            profileTransform.Find("ShowComparitor").gameObject.SetActive(false);
+            Debug.LogError("Old quick compare mode activated");
             profileTransform.Find("Match").gameObject.SetActive(false);
             profileTransform.Find("DeleteProfile").gameObject.SetActive(false);
             profileTransform.Find("Return").gameObject.SetActive(false);
-            profileTransform.Find("ShowComparitor").gameObject.SetActive(true);
-            profileTransform.Find("ShowComparitor").GetComponentInChildren<Text>().color = new Color(0.72f, 0.05f, 0.12f);
-            profileTransform.Find("ShowComparitor").GetComponentInChildren<Text>().text = "Stop Comparing";
         }
         else
         {
-            profileTransform.Find("ShowComparitor").gameObject.SetActive(false);
             profileTransform.Find("Match").gameObject.SetActive(true);
             profileTransform.Find("Match").GetComponentInChildren<Text>().text = "Find Match";
             profileTransform.Find("Match").GetComponent<Button>().onClick.RemoveAllListeners();
@@ -401,8 +405,6 @@ public class LaptopHandler : MonoBehaviour
     void EnterQuickComparison(Alien passedAlien)
     {
         LoadSpecificProfile(comparitorAlien);
-        specificProfileTab.transform.Find("ShowComparitor").GetComponent<Button>().onClick.RemoveAllListeners();
-        specificProfileTab.transform.Find("ShowComparitor").GetComponent<Button>().onClick.AddListener(() => LoadSpecificProfile(passedAlien));
     }
     void StartMatchup(Alien selectedMatch) //Matches up the two profiles, removing them from memory and awarding some credits based on their compatability
     {
