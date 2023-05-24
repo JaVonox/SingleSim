@@ -296,23 +296,12 @@ public class LaptopHandler : MonoBehaviour
         profileTextGoal = (targetAlien.selfParams.relationshipGoal == GoalsType.NoPref ? "no goal" :targetAlien.selfParams.relationshipGoal.ToString());
 
         if (comparitorAlien == null) { profileTextBody = "<color=#E7D112>" + profileTextBody; profileTextGoal = profileTextGoal + "</color>"; }
-        else if(comparitorAlien != targetAlien) //If there is a comparison alien, highlight the valid properties
+        else if(comparitorAlien != targetAlien) //If there is a comparison alien, highlight the matching properties
         {
-            if (targetAlien.selfParams.body == comparitorAlien.preferenceParams.body || comparitorAlien.preferenceParams.body == BodyType.NoPref)
-            { profileTextBody = "<color=#A60EB8>" + profileTextBody + "</color>"; }
-            else { profileTextBody = "<color=#E7D112>" + profileTextBody + "</color>"; }
-
-            if (targetAlien.selfParams.age == comparitorAlien.preferenceParams.age || comparitorAlien.preferenceParams.age == AgeType.NoPref)
-            { profileTextAge = "<color=#A60EB8>" + profileTextAge + "</color>"; }
-            else { profileTextAge = "<color=#E7D112>" + profileTextAge + "</color>"; }
-
-            if (targetAlien.selfParams.job == comparitorAlien.preferenceParams.job || comparitorAlien.preferenceParams.job == OccupationType.NoPref)
-            { profileTextJob = "<color=#A60EB8>" + profileTextJob + "</color>"; }
-            else { profileTextJob = "<color=#E7D112>" + profileTextJob + "</color>"; }
-
-            if (targetAlien.selfParams.relationshipGoal == comparitorAlien.preferenceParams.relationshipGoal)
-            { profileTextGoal = "<color=#A60EB8>" + profileTextGoal + "</color>"; }
-            else { profileTextGoal = "<color=#E7D112>" + profileTextGoal + "</color>"; }
+            profileTextBody = "<color=" + GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(BodyType), comparitorAlien.preferenceParams.body.ToString(), targetAlien.selfParams.body.ToString()), 0.2f).color + ">" + targetAlien.selfParams.body.ToString() + "</color>";
+            profileTextAge = "<color=" + GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(AgeType), comparitorAlien.preferenceParams.age.ToString(), targetAlien.selfParams.age.ToString()), 0.2f).color + ">" + targetAlien.selfParams.age.ToString() + "</color>";
+            profileTextJob = "<color=" + GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(OccupationType), comparitorAlien.preferenceParams.job.ToString(), targetAlien.selfParams.job.ToString()), 0.2f).color + ">" + targetAlien.selfParams.job.ToString() + "</color>";
+            profileTextGoal = "<color=" + GetScoringName(Gameplay.GetPrefComparisonMultiplier(typeof(GoalsType), comparitorAlien.preferenceParams.relationshipGoal.ToString(), targetAlien.selfParams.relationshipGoal.ToString()), 0.2f).color + ">" + (targetAlien.selfParams.relationshipGoal == GoalsType.NoPref ? "no goal" : targetAlien.selfParams.relationshipGoal.ToString()) + "</color>";
         }
         else
         {
@@ -326,62 +315,64 @@ public class LaptopHandler : MonoBehaviour
 
         Transform profileTransform = specificProfileTab.transform;
 
-        profileTransform.Find("ProfileImage").GetComponent<Image>().sprite = alienProfile.ReturnImage();
-        profileTransform.Find("ProfileText").GetComponent<Text>().text = alienProfile.GetAlienText();
-        profileTransform.Find("ComparisonProfileImage").gameObject.SetActive(false);
-        profileTransform.Find("ComparisonProfileText").gameObject.SetActive(false);
-        profileTransform.Find("OverviewTextAlien1").gameObject.SetActive(false);
-        profileTransform.Find("OverviewTextAlien2").gameObject.SetActive(false);
+        profileTransform.Find("TargetPanel").Find("ProfileImage").GetComponent<Image>().sprite = alienProfile.ReturnImage();
+        profileTransform.Find("TargetPanel").Find("ProfileText").GetComponent<Text>().text = alienProfile.GetAlienText();
+        profileTransform.Find("ComparitorPanel").gameObject.SetActive(false);
+        profileTransform.Find("ComparitorPanel").Find("ComparisonProfileImage").gameObject.SetActive(false);
+        profileTransform.Find("ComparitorPanel").Find("ComparisonProfileText").gameObject.SetActive(false);
+        profileTransform.Find("ControlPanel").Find("OverviewTextAlien1").gameObject.SetActive(false);
+        profileTransform.Find("ControlPanel").Find("OverviewTextAlien2").gameObject.SetActive(false);
 
         if (comparitorAlien != null && comparitorAlien != alienProfile) //Check if the profile is loaded in comparison mode
         {
-            profileTransform.Find("Match").gameObject.SetActive(true);
-            profileTransform.Find("Match").GetComponentInChildren<Text>().text = "Match Users";
-            profileTransform.Find("Match").GetComponent<Button>().onClick.RemoveAllListeners();
-            profileTransform.Find("Match").GetComponent<Button>().onClick.AddListener(() => StartMatchup(alienProfile));
-            profileTransform.Find("DeleteProfile").gameObject.SetActive(false);
-            profileTransform.Find("Return").gameObject.SetActive(true);
-            profileTransform.Find("Return").GetComponentInChildren<Text>().text = "Return";
-            profileTransform.Find("Return").GetComponent<Button>().onClick.RemoveAllListeners();
-            profileTransform.Find("Return").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
+            profileTransform.Find("ControlPanel").Find("Match").gameObject.SetActive(true);
+            profileTransform.Find("ControlPanel").Find("Match").GetComponentInChildren<Text>().text = "Match Users";
+            profileTransform.Find("ControlPanel").Find("Match").GetComponent<Button>().onClick.RemoveAllListeners();
+            profileTransform.Find("ControlPanel").Find("Match").GetComponent<Button>().onClick.AddListener(() => StartMatchup(alienProfile));
+            profileTransform.Find("ControlPanel").Find("DeleteProfile").gameObject.SetActive(false);
+            profileTransform.Find("ControlPanel").Find("Return").gameObject.SetActive(true);
+            profileTransform.Find("ControlPanel").Find("Return").GetComponentInChildren<Text>().text = "Return";
+            profileTransform.Find("ControlPanel").Find("Return").GetComponent<Button>().onClick.RemoveAllListeners();
+            profileTransform.Find("ControlPanel").Find("Return").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
 
-            profileTransform.Find("ComparisonProfileImage").gameObject.SetActive(true);
-            profileTransform.Find("ComparisonProfileImage").GetComponent<Image>().sprite = comparitorAlien.ReturnImage();
-            profileTransform.Find("ComparisonProfileText").gameObject.SetActive(true);
-            profileTransform.Find("ComparisonProfileText").GetComponent<Text>().text = comparitorAlien.GetAlienText();
-            profileTransform.Find("OverviewTextAlien1").gameObject.SetActive(true);
-            profileTransform.Find("OverviewTextAlien1").GetComponent<Text>().text = "<size=14>Comparitor to target</size>\n" + GenerateProfileQuickText(alienProfile,comparitorAlien); 
-            profileTransform.Find("OverviewTextAlien2").gameObject.SetActive(true);
-            profileTransform.Find("OverviewTextAlien2").GetComponent<Text>().text = "<size=14>Target to comparitor</size>\n" + GenerateProfileQuickText(comparitorAlien, alienProfile);
+            profileTransform.Find("ComparitorPanel").gameObject.SetActive(true);
+            profileTransform.Find("ComparitorPanel").Find("ComparisonProfileImage").gameObject.SetActive(true);
+            profileTransform.Find("ComparitorPanel").Find("ComparisonProfileImage").GetComponent<Image>().sprite = comparitorAlien.ReturnImage();
+            profileTransform.Find("ComparitorPanel").Find("ComparisonProfileText").gameObject.SetActive(true);
+            profileTransform.Find("ComparitorPanel").Find("ComparisonProfileText").GetComponent<Text>().text = comparitorAlien.GetAlienText();
+            profileTransform.Find("ControlPanel").Find("OverviewTextAlien1").gameObject.SetActive(true);
+            profileTransform.Find("ControlPanel").Find("OverviewTextAlien1").GetComponent<Text>().text = "<size=14>Comparitor to target</size>\n" + GenerateProfileQuickText(alienProfile,comparitorAlien); 
+            profileTransform.Find("ControlPanel").Find("OverviewTextAlien2").gameObject.SetActive(true);
+            profileTransform.Find("ControlPanel").Find("OverviewTextAlien2").GetComponent<Text>().text = "<size=14>Target to comparitor</size>\n" + GenerateProfileQuickText(comparitorAlien, alienProfile);
 
         }
         else if (comparitorAlien != null && comparitorAlien == alienProfile) //This occurs if the quick comparison is active - disabling most buttons but allowing for quick access to comparison data
         {
             Debug.LogError("Old quick compare mode activated");
-            profileTransform.Find("Match").gameObject.SetActive(false);
-            profileTransform.Find("DeleteProfile").gameObject.SetActive(false);
-            profileTransform.Find("Return").gameObject.SetActive(false);
+            profileTransform.Find("ControlPanel").Find("Match").gameObject.SetActive(false);
+            profileTransform.Find("ControlPanel").Find("DeleteProfile").gameObject.SetActive(false);
+            profileTransform.Find("ControlPanel").Find("Return").gameObject.SetActive(false);
         }
         else
         {
-            profileTransform.Find("Match").gameObject.SetActive(true);
-            profileTransform.Find("Match").GetComponentInChildren<Text>().text = "Find Match";
-            profileTransform.Find("Match").GetComponent<Button>().onClick.RemoveAllListeners();
-            profileTransform.Find("Match").GetComponent<Button>().onClick.AddListener(() => BeginComparisonMode(alienProfile));
-            profileTransform.Find("Return").gameObject.SetActive(true);
-            profileTransform.Find("Return").GetComponent<Button>().onClick.RemoveAllListeners();
-            profileTransform.Find("Return").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
-            profileTransform.Find("DeleteProfile").gameObject.SetActive(true);
+            profileTransform.Find("ControlPanel").Find("Match").gameObject.SetActive(true);
+            profileTransform.Find("ControlPanel").Find("Match").GetComponentInChildren<Text>().text = "Find Match";
+            profileTransform.Find("ControlPanel").Find("Match").GetComponent<Button>().onClick.RemoveAllListeners();
+            profileTransform.Find("ControlPanel").Find("Match").GetComponent<Button>().onClick.AddListener(() => BeginComparisonMode(alienProfile));
+            profileTransform.Find("ControlPanel").Find("Return").gameObject.SetActive(true);
+            profileTransform.Find("ControlPanel").Find("Return").GetComponent<Button>().onClick.RemoveAllListeners();
+            profileTransform.Find("ControlPanel").Find("Return").GetComponent<Button>().onClick.AddListener(() => SwitchMode("profilesMode"));
+            profileTransform.Find("ControlPanel").Find("DeleteProfile").gameObject.SetActive(true);
         }
 
         if(!deleteIsEnabled)
         {
-            profileTransform.Find("DeleteProfile").gameObject.SetActive(false);
+            profileTransform.Find("ControlPanel").Find("DeleteProfile").gameObject.SetActive(false);
         }
         else
         {
-            profileTransform.Find("DeleteProfile").GetComponent<Button>().onClick.RemoveAllListeners();
-            profileTransform.Find("DeleteProfile").GetComponent<Button>().onClick.AddListener(() => DeleteProfile(alienProfile));
+            profileTransform.Find("ControlPanel").Find("DeleteProfile").GetComponent<Button>().onClick.RemoveAllListeners();
+            profileTransform.Find("ControlPanel").Find("DeleteProfile").GetComponent<Button>().onClick.AddListener(() => DeleteProfile(alienProfile));
         }
     }
     void DeleteProfile(Alien alienProfile)
