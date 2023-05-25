@@ -6,7 +6,7 @@ using System.Linq;
 public class Gameplay : MonoBehaviour
 {
 
-    public static readonly string gameVersion = "Prerelease";
+    public static readonly string gameVersion = "V0.1";
 
 
     public static float scanSpeed = 0.05f; //How fast scanning occurs
@@ -232,7 +232,7 @@ public class Gameplay : MonoBehaviour
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Finding a match",
                     "Customer satisfaction dept. says we arent allowed to judge clients even in private emails anymore, so i'll bite my tongue and not say that this guy seems a little desperate. Next all we need to do is find him a partner.\n\n"+
-                    " All this entails is loading up the scanner again and searching for a new signal - same as before."
+                    "All this entails is loading up the scanner again and searching for a new signal - same as before."
                     ));
                 break;
             case 4:
@@ -249,14 +249,15 @@ public class Gameplay : MonoBehaviour
                     "So now we get to the crux of our job - matching profiles. These two weird aliens are looking for the love of their lives and its our job to get them set up on a hot date.\n\n"+
                     "In the profiles menu you can find the two signals we downloaded, loading one up will show you the message details again. " +
                     "highlighted in <color=#e7d112>yellow</color> you can see how the alien has described themselves, whereas in <color=#A60EB8>purple</color> you can see what they're looking for.\n"+
+                    "In this menu, you can start comparing matches by pressing the 'Find Match' button. Once this is done, simply select another profile to enter the comparison view.\n"+
                     "Its our job to compare these different profiles and match the ones we think fit the clients needs best. You'll be rewarded on how compatable the two clients are, so make sure you look through the details carefully "+
-                    "before matching two profiles up.\n\nThese two profiles seem like a pretty perfect match, so we dont need to search for new signals. Try matching them now."
+                    "before matching two profiles up. \n\nThese two profiles seem like a pretty perfect match, so we dont need to search for new signals. Try matching them now."
                     ));
                 break;
             case 6:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Thats all there is to it!",
-                    "Nice job! The Hot-date-night department (name pending) should have recieved the profiles and will most likely be setting up a meetup shortly - our part of the process is done!\n\n"+
+                    "Nice job! The Hot-date-night department (Name pending, HR wont return my emails anymore) should have recieved the profiles and will most likely be setting up a meetup shortly - our part of the process is done!\n\n"+
                     "When you matched the two profiles, a screen should have appeared telling you how you did and how many credits you were awarded for the task. Credits can be spent in the credit shop on your laptop to"+
                     " purchase upgrades for your devices, so it'd be wise to look through the stock carefully before wasting your credits.\n\n"+
                     "Anyway, thats everything done, you've learned everything I can teach you - just start downloading more signals and finding matches!\n\n"+
@@ -269,6 +270,21 @@ public class Gameplay : MonoBehaviour
         }
         HandleTutorialIcons(Gameplay.storyState);
 
+    }
+    void LifetimeCreditsEmails() //Emails that are added after you reach a certain lifetime credits value
+    {
+        if(lifetimeCredits > 105 && !LaptopHandler.DoesEmailExist("Quick Tip!"))
+        {
+            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "Quick Tip!",
+                "One last thing I forgot to mention. You might have noticed by now that some clients get a little vague at times. There's usually two reasons for this. The first is if they have no specific preference for a particular field -" +
+                " if they have no body type preferences they'll likely not mention it on their profile. The other is about unemployment. People get weird about saying 'unemployed' so they'll usually try and use different language. I've seen everything from 'job hunter'"+
+                " to 'welfare check examiner'. The point is, if you see something highlighted that you dont recognise, it could mean either they have no preference for something or they dont want to say the u word."));
+        }
+        if(lifetimeCredits > 300 && !LaptopHandler.DoesEmailExist("^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa"))
+        {
+            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "u&@aQ/\v;!)^#s(=9{amb2}#Id7u//l_Tr(pVjkp(Gem#@H<XYGxDxkc^i:Z{3(Qo: 0KH0tfZG1P | 7:3s % J ^$QPQ - _ |.'N(!$+*x1 <| V!.) >.[d{v+7P}v/>lI^oN/"));
+            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "RE:^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "Sorry, why did you send me this? If this is a 'cat on your keyboard' situation, you should know its against company policy to have pets near the machinery."));
+        }
     }
     void Update()
     {
@@ -300,6 +316,7 @@ public class Gameplay : MonoBehaviour
         if (emailDtTime > 2.5f) //Emails check for updates every 5 seconds
         {
             LaptopHandler.HandleEmailQueue(); //Adds from email queue
+            LifetimeCreditsEmails(); //Adds emails that are generated through lifetime credits
             emailDtTime = 0;
         }
 
@@ -475,10 +492,10 @@ public class Gameplay : MonoBehaviour
     {
         int creditsToAppend = 0;
         //For each of the two aliens, get 15 * the multiplier and average between the two
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(BodyType),sender1,sender2) * 15.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(AgeType), sender1, sender2) * 15.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(OccupationType), sender1, sender2) * 15.0f);
-        creditsToAppend += Mathf.RoundToInt(GetAverageComparisonMultiplier(typeof(GoalsType), sender1, sender2) * 15.0f);
+        creditsToAppend += Mathf.RoundToInt(Mathf.Pow(15.0f,GetAverageComparisonMultiplier(typeof(BodyType),sender1,sender2)));
+        creditsToAppend += Mathf.RoundToInt(Mathf.Pow(15.0f,GetAverageComparisonMultiplier(typeof(AgeType), sender1, sender2)));
+        creditsToAppend += Mathf.RoundToInt(Mathf.Pow(15.0f,GetAverageComparisonMultiplier(typeof(OccupationType), sender1, sender2)));
+        creditsToAppend += Mathf.RoundToInt(Mathf.Pow(15.0f,GetAverageComparisonMultiplier(typeof(GoalsType), sender1, sender2)));
 
         return creditsToAppend;
     }
@@ -487,31 +504,31 @@ public class Gameplay : MonoBehaviour
     {
         if(enumType == typeof(BodyType))
         {
-            return Mathf.Min(
-            (GetPrefComparisonMultiplier(typeof(BodyType), sender1.preferenceParams.body.ToString(), sender2.selfParams.body.ToString())),
-            (GetPrefComparisonMultiplier(typeof(BodyType), sender2.preferenceParams.body.ToString(), sender1.selfParams.body.ToString()))
-            );
+            return 
+            (GetPrefComparisonMultiplier(typeof(BodyType), sender1.preferenceParams.body.ToString(), sender2.selfParams.body.ToString()) +
+            GetPrefComparisonMultiplier(typeof(BodyType), sender2.preferenceParams.body.ToString(), sender1.selfParams.body.ToString()))
+            /2.0f;
         }
         else if(enumType == typeof(AgeType))
         {
-            return Mathf.Min(
-            (GetPrefComparisonMultiplier(typeof(AgeType), sender1.preferenceParams.age.ToString(), sender2.selfParams.age.ToString())),
-            (GetPrefComparisonMultiplier(typeof(AgeType), sender2.preferenceParams.age.ToString(), sender1.selfParams.age.ToString()))
-            );
+            return
+            (GetPrefComparisonMultiplier(typeof(AgeType), sender1.preferenceParams.age.ToString(), sender2.selfParams.age.ToString()) +
+            GetPrefComparisonMultiplier(typeof(AgeType), sender2.preferenceParams.age.ToString(), sender1.selfParams.age.ToString()))
+            / 2.0f;
         }
         else if (enumType == typeof(OccupationType))
         {
-            return Mathf.Min(
-            (GetPrefComparisonMultiplier(typeof(OccupationType), sender1.preferenceParams.job.ToString(), sender2.selfParams.job.ToString())),
-            (GetPrefComparisonMultiplier(typeof(OccupationType), sender2.preferenceParams.job.ToString(), sender1.selfParams.job.ToString()))
-            );
+            return
+            (GetPrefComparisonMultiplier(typeof(OccupationType), sender1.preferenceParams.job.ToString(), sender2.selfParams.job.ToString()) +
+            GetPrefComparisonMultiplier(typeof(OccupationType), sender2.preferenceParams.job.ToString(), sender1.selfParams.job.ToString()))
+            / 2.0f;
         }
         else if (enumType == typeof(GoalsType))
         {
-            return Mathf.Min(
-            (GetPrefComparisonMultiplier(typeof(GoalsType), sender1.preferenceParams.relationshipGoal.ToString(), sender2.selfParams.relationshipGoal.ToString())),
-            (GetPrefComparisonMultiplier(typeof(GoalsType), sender2.preferenceParams.relationshipGoal.ToString(), sender1.selfParams.relationshipGoal.ToString()))
-            );
+            return
+            (GetPrefComparisonMultiplier(typeof(GoalsType), sender1.preferenceParams.relationshipGoal.ToString(), sender2.selfParams.relationshipGoal.ToString()) +
+            GetPrefComparisonMultiplier(typeof(GoalsType), sender2.preferenceParams.relationshipGoal.ToString(), sender1.selfParams.relationshipGoal.ToString()))
+            / 2.0f;
         }
         else
         {

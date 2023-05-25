@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 enum LaptopModes
 {
     Profiles,
@@ -511,7 +512,10 @@ public class LaptopHandler : MonoBehaviour
         //pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, pfrt.sizeDelta.y+ 10000);
         SwitchMode("specificEmailMode");
     }
-    
+    public static bool DoesEmailExist(string subjectName) //Checks if a specific email is queued or not
+    {
+        return emails.Any(x=>x.subject == subjectName) || emailQueue.Any(x=>x.subject == subjectName);
+    }
     void UpgradeShopItem(string name) //Upgrade item and reload the item levels for shop objects
     {
         Gameplay.UpgradeVariable(name,true);

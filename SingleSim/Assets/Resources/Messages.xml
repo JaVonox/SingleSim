@@ -43,7 +43,7 @@
 			<replacement type="pref_unemployed">no work</replacement>
 		</replacements>
 	</message>
-		<message type="humanoid">
+	<message type="humanoid">
 		<body>verys hy.. [self_body] am. [self_age] also. [self_job]. spoke too much about self. [pref_body] [pref_age] is you i hope?? really want [pref_job]... pls to [pref_goal]</body>
 		<replacements>
 			<replacement type="pref_body">gentle</replacement>
@@ -140,6 +140,28 @@
 			<replacement type="pref_goal">to explore the passions of romance</replacement>
 			<replacement type="self_unemployed">former worker</replacement>
 			<replacement type="pref_unemployed">job hunter</replacement>
+		</replacements>
+	</message>
+	<message type="cephalopod">
+		<body>Greetings from the greatest [self_body] conquerer this vast universe has ever known. Despite being but a [self_age], in the art of [self_job], none have come close to matching my talent. Alas, now I seek for a beautiful [pref_goal] with a [pref_age] [pref_body], ideally with an inclination to [pref_job]hood. </body>
+		<replacements>
+			<replacement type="pref_body">lover</replacement>
+			<replacement type="pref_age">gracious</replacement>
+			<replacement type="pref_job">employment</replacement>
+			<replacement type="pref_goal">experience</replacement>
+			<replacement type="self_unemployed">jobseeking</replacement>
+			<replacement type="pref_unemployed">freedom</replacement>
+		</replacements>
+	</message>
+	<message type="cephalopod">
+		<body>Hark! I gallop up to thee, beautiful [pref_age] [pref_body]! With one deft motion, I display my gorgeous [self_body] body, glistening with the passions of [self_age]hood. Lowering myself from my steed, I tell you of my passion in life - [self_job] - and you, but a simple [pref_job] are aghast with envy. You know immediately you wish to enter a [pref_goal] with me. </body>
+		<replacements>
+			<replacement type="pref_body">creature</replacement>
+			<replacement type="pref_age">awestricken</replacement>
+			<replacement type="pref_job">beast</replacement>
+			<replacement type="pref_goal">date</replacement>
+			<replacement type="self_unemployed">intercourse</replacement>
+			<replacement type="pref_unemployed">soul</replacement>
 		</replacements>
 	</message>
 	<message type="insectoid">
