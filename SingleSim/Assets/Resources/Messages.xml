@@ -87,6 +87,28 @@
 			<replacement type="pref_unemployed">have plenty of sextime</replacement>
 		</replacements>
 	</message>
+	<message type="humanoid">
+		<body>Need partner to invade planet togehter. we will be [pref_goal] together! you should try and be [pref_age] and atleast [pref_body]. maybe job as [pref_job] or something. I for one [self_body]! extremely [self_age]. work [self_job] parent very proud.</body>
+		<replacements>
+			<replacement type="pref_body">exist</replacement>
+			<replacement type="pref_age">real</replacement>
+			<replacement type="pref_job">employee</replacement>
+			<replacement type="pref_goal">murder</replacement>
+			<replacement type="self_unemployed">no. no</replacement>
+			<replacement type="pref_unemployed">work for me</replacement>
+		</replacements>
+	</message>
+	<message type="humanoid">
+		<body>Looking to replace previous partner. applicants must be just like them - [pref_body] body, age of [pref_age] and work [pref_job]. I am [self_body], [self_age] and work as [self_job]. We will [pref_goal]. Ex partners accepted.</body>
+		<replacements>
+			<replacement type="pref_body">have</replacement>
+			<replacement type="pref_age">dont care</replacement>
+			<replacement type="pref_job">somewhere</replacement>
+			<replacement type="pref_goal">do stuff</replacement>
+			<replacement type="self_unemployed">nothing</replacement>
+			<replacement type="pref_unemployed">no job</replacement>
+		</replacements>
+	</message>
 	<message type="automaton">
 		<body>[self_body]. [self_age]. [self_job]. SELECT * FROM USERS WHERE _body = [pref_body] AND _age = [pref_age] AND _occupation = [pref_job] AND _relationshipGoal = [pref_goal]. LONELY.</body>
 		<replacements>
