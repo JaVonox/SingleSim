@@ -52,6 +52,7 @@ public class LaptopHandler : MonoBehaviour
     public TextMeshProUGUI emailSender;
     public TextMeshProUGUI emailContents;
     public GameObject emailScrollRect;
+    public Button deleteSpamButton;
 
     private Alien comparitorAlien;
     private LaptopModes currentMode;
@@ -72,6 +73,8 @@ public class LaptopHandler : MonoBehaviour
             SwitchMode("emailMode");
         }
         else { SwitchMode("profilesMode"); }
+
+        deleteSpamButton.onClick.AddListener(() => ClearSpamEmails());
     }
     void SwitchUI() //Apply UI Changes
     {
@@ -517,6 +520,12 @@ public class LaptopHandler : MonoBehaviour
         returnEmailsSpecific.onClick.AddListener(() => SwitchMode("emailMode"));
         emails[index] = new Email(emails[index], true); //Update the flag for if an email is read or not
         SwitchMode("specificEmailMode");
+    }
+
+    void ClearSpamEmails()
+    {
+        emails = emails.Where(x => x.sender != "noreply-reviewlogger@Internal.yc").ToList();
+        SwitchMode("emailMode"); //Forces email switch. Does this instead of LoadEmails incase the player switches tab during processing.s
     }
     public static bool DoesEmailExist(string subjectName) //Checks if a specific email is queued or not
     {

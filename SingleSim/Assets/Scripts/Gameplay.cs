@@ -280,10 +280,14 @@ public class Gameplay : MonoBehaviour
                 " if they have no body type preferences they'll likely not mention it on their profile. The other is about unemployment. People get weird about saying 'unemployed' so they'll usually try and use different language. I've seen everything from 'job hunter'"+
                 " to 'welfare check examiner'. The point is, if you see something highlighted that you dont recognise, it could mean either they have no preference for something or they dont want to say the u word.",2));
         }
-        if(lifetimeCredits > 300 && !LaptopHandler.DoesEmailExist("^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa"))
+        if (lifetimeCredits > 300 && !LaptopHandler.DoesEmailExist("^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa"))
         {
-            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "u&@aQ/;!)^#s(=9{amb2}#Id7u//l_Tr(pVjkp(Gem#@H<XYGxDxkc^i:Z{3(Qo: 0KH0tfZG1P | 7:3s % J ^$QPQ - _ |.'N(!$+*x1 <| V!.) >.[d{v+7P}v/>lI^oN/",2));
-            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "RE:^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "Sorry, why did you send me this? If this is a 'cat on your keyboard' situation, you should know its against company policy to have pets near the machinery.",2));
+            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "u&@aQ/;!)^#s(=9{amb2}#Id7u//l_Tr(pVjkp(Gem#@H<XYGxDxkc^i:Z{3(Qo: 0KH0tfZG1P | 7:3s % J ^$QPQ - _ |.'N(!$+*x1 <| V!.) >.[d{v+7P}v/>lI^oN/", 2));
+            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "RE:^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "Sorry, why did you send me this? If this is a 'cat on your keyboard' situation, you should know its against company policy to have pets near the machinery.", 2));
+        }
+        if (lifetimeCredits > 500 && !LaptopHandler.DoesEmailExist(";.a7)"))
+        {
+            LaptopHandler.emailQueue.Enqueue(new Email("[NULL]", ";.a7)", "i m..sed u .)", 2));
         }
     }
     void Update()
