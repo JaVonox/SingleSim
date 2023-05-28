@@ -57,7 +57,7 @@ public class FileLoading
                         newItem.prefUnemployedReplacement = replacementNode.InnerText;
                         break;
                     default:
-                        Debug.Log("invalid attribute on node " + replacementNode.Attributes["type"].Value.ToString());
+                        Debug.LogError("invalid attribute on node " + replacementNode.Attributes["type"].Value.ToString());
                         break;
                 }
             }
@@ -127,6 +127,7 @@ public class FileLoading
                     xmlWriter.WriteAttributeString("sender", x.sender);
                     xmlWriter.WriteAttributeString("subject", x.subject);
                     xmlWriter.WriteAttributeString("time", x.recievedTime.ToString());
+                    xmlWriter.WriteAttributeString("readSetting", x.readSetting.ToString());
                     xmlWriter.WriteString(x.text);
                     xmlWriter.WriteEndElement();
                 }
@@ -145,6 +146,7 @@ public class FileLoading
                     xmlWriter.WriteAttributeString("sender", x.sender);
                     xmlWriter.WriteAttributeString("subject", x.subject);
                     xmlWriter.WriteAttributeString("time", x.recievedTime.ToString());
+                    xmlWriter.WriteAttributeString("readSetting", x.readSetting.ToString());
                     xmlWriter.WriteString(x.text);
                     xmlWriter.WriteEndElement();
                 }
@@ -208,7 +210,7 @@ public class FileLoading
             {
                 foreach (XmlNode child in mainDataNode["Emails"].ChildNodes)
                 {
-                    LaptopHandler.AddEmail(child.Attributes["sender"].Value, child.Attributes["subject"].Value, child.InnerText, System.DateTime.Parse(child.Attributes["time"].Value),true);
+                    LaptopHandler.AddEmail(child.Attributes["sender"].Value, child.Attributes["subject"].Value, child.InnerText, System.DateTime.Parse(child.Attributes["time"].Value),true,byte.Parse(child.Attributes["readSetting"].Value));
                 }
             }
 
@@ -216,7 +218,7 @@ public class FileLoading
             {
                 foreach (XmlNode child in mainDataNode["EmailsQueue"].ChildNodes)
                 {
-                    LaptopHandler.emailQueue.Enqueue(new Email(child.Attributes["sender"].Value, child.Attributes["subject"].Value, child.InnerText, System.DateTime.Parse(child.Attributes["time"].Value)));
+                    LaptopHandler.emailQueue.Enqueue(new Email(child.Attributes["sender"].Value, child.Attributes["subject"].Value, child.InnerText, System.DateTime.Parse(child.Attributes["time"].Value), byte.Parse(child.Attributes["readSetting"].Value)));
                 }
             }
 

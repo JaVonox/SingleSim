@@ -198,7 +198,7 @@ public class LaptopConsole
         if(args.Length < 4) { consoleStorage.Enqueue("<color=#B80e20>Insufficient Parameters</color>"); }
         else
         {
-            LaptopHandler.AddEmail(args[1], args[2], args[3],false);
+            LaptopHandler.AddEmail(args[1], args[2], args[3],false,2);
             consoleStorage.Enqueue("<color=#FFFFFF>Added email</color>");
         }
     }

@@ -492,6 +492,13 @@ public class LaptopHandler : MonoBehaviour
                 itemBox.Find("SubjectLine").GetComponent<Text>().text = "Subject: " + emails[i].subject;
                 itemBox.Find("OpenEmail").GetComponent<Button>().onClick.RemoveAllListeners();
                 string emailIDstorage = i.ToString();
+
+                //Set email colours based on if they have been read and how important they are
+
+                if(emails[i].readSetting == 0) { itemBox.GetComponent<Image>().color = Color.black; }
+                else if (emails[i].readSetting == 1) { itemBox.GetComponent<Image>().color = new Color(0.2f,0.2f,0.2f); }
+                else if (emails[i].readSetting == 2) { itemBox.GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f); }
+
                 itemBox.Find("OpenEmail").GetComponent<Button>().onClick.AddListener(() => LoadSpecificEmail(emailIDstorage));
 
 
@@ -508,8 +515,7 @@ public class LaptopHandler : MonoBehaviour
         emailContents.text = emails[index].text;
         returnEmailsSpecific.onClick.RemoveAllListeners();
         returnEmailsSpecific.onClick.AddListener(() => SwitchMode("emailMode"));
-        //RectTransform pfrt = (RectTransform)scrollableSpecificEmail.transform; //emails rect
-        //pfrt.sizeDelta = new Vector2(pfrt.sizeDelta.x, pfrt.sizeDelta.y+ 10000);
+        emails[index] = new Email(emails[index], true); //Update the flag for if an email is read or not
         SwitchMode("specificEmailMode");
     }
     public static bool DoesEmailExist(string subjectName) //Checks if a specific email is queued or not
@@ -544,6 +550,7 @@ public class LaptopHandler : MonoBehaviour
             "Signal 1 Text:\n" + alien1.GetAlienText() + "\n\n" +
             "Signal 2 Text:\n" + alien2.GetAlienText() + "\n\n"+
             "Final Report:\n\n" + processedText;
+        rEmail.readSetting = 1;
         emailQueue.Enqueue(rEmail);
     }
     string GenerateReviewText(Alien alien1,Alien alien2)
@@ -684,9 +691,9 @@ public class LaptopHandler : MonoBehaviour
         consoleInput.ActivateInputField();
     }
 
-    public static void AddEmail(string sender, string title, string body, bool isSilent)
+    public static void AddEmail(string sender, string title, string body, bool isSilent, byte readSetting)
     {
-        emails.Add(new Email(sender,title,body));
+        emails.Add(new Email(sender,title,body, readSetting));
         if (!isSilent) { AudioHandler.EmailNotification(); } //Play an email notification sound  
     }
     public static void AddEmail(Email sendEmail, bool isSilent)
@@ -694,9 +701,9 @@ public class LaptopHandler : MonoBehaviour
         emails.Add(sendEmail);
         if (!isSilent) { AudioHandler.EmailNotification(); } //Play an email notification sound  
     }
-    public static void AddEmail(string sender, string title, string body, System.DateTime time, bool isSilent)
+    public static void AddEmail(string sender, string title, string body, System.DateTime time, bool isSilent, byte readSetting)
     {
-        emails.Add(new Email(sender, title, body,time));
+        emails.Add(new Email(sender, title, body,time,readSetting));
         if (!isSilent) { AudioHandler.EmailNotification(); } //Play an email notification sound  
     }
 
@@ -715,20 +722,32 @@ public struct Email
     public string sender;
     public string subject;
     public string text;
-
-    public Email(string newSender, string newTitle, string newBody)
+    public byte readSetting; //0 is read, 1 is unimportant, 2 is important
+    public Email(string newSender, string newTitle, string newBody, byte nReadSetting)
     {
         sender = newSender;
         subject = newTitle;
         text = newBody;
         recievedTime = System.DateTime.Now;
+        readSetting = nReadSetting;
     }
 
-    public Email(string newSender, string newTitle, string newBody, System.DateTime time)
+    public Email(string newSender, string newTitle, string newBody, System.DateTime time, byte nReadSetting)
     {
         sender = newSender;
         subject = newTitle;
         text = newBody;
         recievedTime = time;
+        readSetting = nReadSetting;
+    }
+
+    public Email(Email copyEmail, bool isRead)
+    {
+        recievedTime = copyEmail.recievedTime;
+        sender = copyEmail.sender;
+        subject = copyEmail.subject;
+        text = copyEmail.text;
+        if (isRead) { readSetting = 0; }
+        else { readSetting = copyEmail.readSetting; }
     }
 }

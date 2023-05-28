@@ -6,7 +6,7 @@ using System.Linq;
 public class Gameplay : MonoBehaviour
 {
 
-    public static readonly string gameVersion = "V0.1";
+    public static readonly string gameVersion = "V0.1.1";
 
 
     public static float scanSpeed = 0.05f; //How fast scanning occurs
@@ -217,7 +217,7 @@ public class Gameplay : MonoBehaviour
                     "Assuming installations did their job correctly, directly left of the server rack should be your scanner console - we use this to download client signals. Press the" +
                     " 'perform scan' button to load some signals onto the console, you should see some immediately appear on the system. Most likely, you'll find these signals are outside the frequency catchment range, so you'll have" +
                     " to keep scanning at different frequencies until you find the right one. You'll know when you're getting close when a signal starts to get greener. When the signal enters your search range you can click it to load it into the decoder."
-                    ));
+                    ,2));
                 break;
             case 1:
                 break;
@@ -226,14 +226,14 @@ public class Gameplay : MonoBehaviour
                     "Using the decoder",
                     "Alright, the signal now should be loaded into the decoder.\n\nYou can find the decoder to the left of the scanner. We use this machine to process the raw signal data into client profiles. This part is easy but it takes" +
                     " a little bit of time. Simply press the 'Begin Decoding' button and wait as the system processes the signal.\n\nAfter some time it'll print the profile data and allow you to upload it into your personal signal database."
-                    ));
+                    ,2));
                 break;
             case 3:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
                     "Finding a match",
                     "Customer satisfaction dept. says we arent allowed to judge clients even in private emails anymore, so i'll bite my tongue and not say that this guy seems a little desperate. Next all we need to do is find him a partner.\n\n"+
                     "All this entails is loading up the scanner again and searching for a new signal - same as before."
-                    ));
+                    ,2));
                 break;
             case 4:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
@@ -241,7 +241,7 @@ public class Gameplay : MonoBehaviour
                     "Okay, now just boot up the decoder again and let it decode the new signal.\n\nAlso, you probably noticed by now but you can see any signals you've downloaded in the profiles screen. We'll get back to that in a moment but for now just"+
                     " wait for the decoder to finish running and upload the signal like before.\n\n"
                     +"If you're feeling like doing something while you wait, you can start searching for another signal in the meantime. I've disabled signal replacing for now though so you wont be able to load in a new signal until this one is done."
-                    ));
+                    ,2));
                 break;
             case 5:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
@@ -252,7 +252,7 @@ public class Gameplay : MonoBehaviour
                     "In this menu, you can start comparing matches by pressing the 'Find Match' button. Once this is done, simply select another profile to enter the comparison view.\n"+
                     "Its our job to compare these different profiles and match the ones we think fit the clients needs best. You'll be rewarded on how compatable the two clients are, so make sure you look through the details carefully "+
                     "before matching two profiles up. \n\nThese two profiles seem like a pretty perfect match, so we dont need to search for new signals. Try matching them now."
-                    ));
+                    ,2));
                 break;
             case 6:
                 LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc",
@@ -262,7 +262,7 @@ public class Gameplay : MonoBehaviour
                     " purchase upgrades for your devices, so it'd be wise to look through the stock carefully before wasting your credits.\n\n"+
                     "Anyway, thats everything done, you've learned everything I can teach you - just start downloading more signals and finding matches!\n\n"+
                     "I'll be watching your performance, but I have to say it's pretty odd having my old boss as an subordinate. Why did you transfer from head of frontend development to this low-pay position anyway? Regardless, it'll be nice having you on the team, doctor!"
-                    ));
+                    ,2));
                 break;
             default:
                 Debug.LogError("invalid tutorial state message");
@@ -278,12 +278,12 @@ public class Gameplay : MonoBehaviour
             LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "Quick Tip!",
                 "One last thing I forgot to mention. You might have noticed by now that some clients get a little vague at times. There's usually two reasons for this. The first is if they have no specific preference for a particular field -" +
                 " if they have no body type preferences they'll likely not mention it on their profile. The other is about unemployment. People get weird about saying 'unemployed' so they'll usually try and use different language. I've seen everything from 'job hunter'"+
-                " to 'welfare check examiner'. The point is, if you see something highlighted that you dont recognise, it could mean either they have no preference for something or they dont want to say the u word."));
+                " to 'welfare check examiner'. The point is, if you see something highlighted that you dont recognise, it could mean either they have no preference for something or they dont want to say the u word.",2));
         }
         if(lifetimeCredits > 300 && !LaptopHandler.DoesEmailExist("^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa"))
         {
-            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "u&@aQ/\v;!)^#s(=9{amb2}#Id7u//l_Tr(pVjkp(Gem#@H<XYGxDxkc^i:Z{3(Qo: 0KH0tfZG1P | 7:3s % J ^$QPQ - _ |.'N(!$+*x1 <| V!.) >.[d{v+7P}v/>lI^oN/"));
-            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "RE:^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "Sorry, why did you send me this? If this is a 'cat on your keyboard' situation, you should know its against company policy to have pets near the machinery."));
+            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "u&@aQ/;!)^#s(=9{amb2}#Id7u//l_Tr(pVjkp(Gem#@H<XYGxDxkc^i:Z{3(Qo: 0KH0tfZG1P | 7:3s % J ^$QPQ - _ |.'N(!$+*x1 <| V!.) >.[d{v+7P}v/>lI^oN/",2));
+            LaptopHandler.emailQueue.Enqueue(new Email("Y.Hans441@Internal.yc", "RE:^e&IuuI=%=f(Jo)witoO}BWiz|HxfVa", "Sorry, why did you send me this? If this is a 'cat on your keyboard' situation, you should know its against company policy to have pets near the machinery.",2));
         }
     }
     void Update()
@@ -296,17 +296,6 @@ public class Gameplay : MonoBehaviour
             SetDecoderState(decoderState);
             HandleTutorialIcons(Gameplay.storyState);
             isSetup = false;
-        }
-
-        if (storyState == 5 && ScannerControls.currentState != ScanState.Disabled) //If in the matching state of the tutorial, disable the scanner
-        {
-            ScannerControls.currentState = ScanState.Disabled;
-            SetScannerState("idle");
-        }
-        else if(ScannerControls.currentState == ScanState.Disabled && storyState == 6)
-        {
-            ScannerControls.currentState = ScanState.IdleConsole;
-            SetScannerState("idle");
         }
 
         float dt = Time.deltaTime;
@@ -322,6 +311,18 @@ public class Gameplay : MonoBehaviour
 
         if (secsSinceLastUpdate >= 0.2f)
         {
+
+            if (storyState == 5 && ScannerControls.currentState != ScanState.Disabled) //If in the matching state of the tutorial, disable the scanner
+            {
+                ScannerControls.currentState = ScanState.Disabled;
+                SetScannerState("idle");
+            }
+            else if (ScannerControls.currentState == ScanState.Disabled && storyState == 6)
+            {
+                ScannerControls.currentState = ScanState.IdleConsole;
+                SetScannerState("idle");
+            }
+
             if (tutorialStateUpdateNeeded) { HandleTutorialStateChange(); }
 
             if (ScannerControls.currentState != ScanState.Disabled)

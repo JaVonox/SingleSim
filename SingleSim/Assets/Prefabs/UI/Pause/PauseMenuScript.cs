@@ -79,7 +79,9 @@ public class PauseMenuScript : MonoBehaviour
                 reallyExitPanel.SetActive(false);
                 createSave.interactable = false;
                 saveName.text = Gameplay.prevSaveName;
+                createSave.onClick.RemoveAllListeners();
                 createSave.onClick.AddListener(() => AttemptSave());
+                cancelSave.onClick.RemoveAllListeners();
                 cancelSave.onClick.AddListener(() => SwitchState(PauseState.Default));
                 saveName.onValueChanged.AddListener((x) => UpdateSaveErrorText(x));
                 UpdateSaveErrorText(saveName.text);
@@ -92,12 +94,18 @@ public class PauseMenuScript : MonoBehaviour
 
     public void AttemptSave()
     {
+        this.gameObject.GetComponent<UIDestroy>().enabled = false;
+        Time.timeScale = 0;
+
         if (FileLoading.IsValidFilename(saveName.text))
         {
             FileLoading.CreateSave(saveName.text, false);
             Gameplay.prevSaveName = saveName.text;
             SwitchState(PauseState.Default);
         }
+
+        Time.timeScale = 1;
+        this.gameObject.GetComponent<UIDestroy>().enabled = true;
     }
 
     public void UpdateSaveErrorText(string newVal)
@@ -155,6 +163,6 @@ public class PauseMenuScript : MonoBehaviour
 
     void Update()
     {
-        
+
     }
 }
