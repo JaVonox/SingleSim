@@ -761,7 +761,7 @@ public class Alien //The alien generated when a scanspot is selected. Informatio
         replacementWords.Add("[pref_age]", "`" +(preferenceParams.age == AgeType.NoPref ? noPrefReplacements[typeof(AgeType)] : preferenceParams.age.ToString()) + "");
         replacementWords.Add("[self_job]", "" + (selfParams.job == OccupationType.unemployed ? selfUnemployedReplacement : selfParams.job.ToString()) + "");
         replacementWords.Add("[pref_job]", "`" +(preferenceParams.job == OccupationType.unemployed ? prefUnemployedReplacement : (preferenceParams.job == OccupationType.NoPref ? noPrefReplacements[typeof(OccupationType)] : preferenceParams.job.ToString()))+ "");
-        replacementWords.Add("[pref_goal]", "" + (preferenceParams.relationshipGoal == GoalsType.NoPref ? noPrefReplacements[typeof(GoalsType)] : preferenceParams.relationshipGoal.ToString()) + "");
+        replacementWords.Add("[pref_goal]", "`" + (preferenceParams.relationshipGoal == GoalsType.NoPref ? noPrefReplacements[typeof(GoalsType)] : preferenceParams.relationshipGoal.ToString()) + "");
         //pref goal should always match self goal so theres no need for it
         foreach(string match in replacementStrings) //iterate through match words and replace with the appropriate replacement
         {

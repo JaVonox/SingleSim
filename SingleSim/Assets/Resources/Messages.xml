@@ -51,7 +51,40 @@
 			<replacement type="pref_job">anyone</replacement>
 			<replacement type="pref_goal">love me</replacement>
 			<replacement type="self_unemployed">nojob</replacement>
-			<replacement type="pref_unemployed">love</replacement>
+			<replacement type="pref_unemployed">housework</replacement>
+		</replacements>
+	</message>
+	<message type="humanoid">
+		<body>local booty near you i hope?? am [self_body] aged [self_age] who just want big [pref_goal] with you!! I want for [pref_body] maybe [pref_age] and want sexy [pref_job]! I support us with [self_job]work</body>
+		<replacements>
+			<replacement type="pref_body">anyone</replacement>
+			<replacement type="pref_age">alive</replacement>
+			<replacement type="pref_job">person</replacement>
+			<replacement type="pref_goal">time</replacement>
+			<replacement type="self_unemployed">no </replacement>
+			<replacement type="pref_unemployed">free sprit!</replacement>
+		</replacements>
+	</message>
+	<message type="humanoid">
+		<body>you want me already. you want to press the sex button. I am [self_body]. irresistible [self_age] [self_job]. You - [pref_body] [pref_age]. you work beutful [pref_job]. we make [pref_goal].</body>
+		<replacements>
+			<replacement type="pref_body">someone</replacement>
+			<replacement type="pref_age">person</replacement>
+			<replacement type="pref_job">for us</replacement>
+			<replacement type="pref_goal">love</replacement>
+			<replacement type="self_unemployed">workless</replacement>
+			<replacement type="pref_unemployed">at home</replacement>
+		</replacements>
+	</message>
+	<message type="humanoid">
+		<body>I have pet cute. this should be enough for us [pref_goal]. If not mayeb you should be [pref_body] [pref_age] sexy? should [pref_job]. Pet not [self_body] [self_age] because that me. would be strange. also [self_job].</body>
+		<replacements>
+			<replacement type="pref_body">very</replacement>
+			<replacement type="pref_age">cool</replacement>
+			<replacement type="pref_job">bnice</replacement>
+			<replacement type="pref_goal">sexytime</replacement>
+			<replacement type="self_unemployed">got fired</replacement>
+			<replacement type="pref_unemployed">have plenty of sextime</replacement>
 		</replacements>
 	</message>
 	<message type="automaton">
@@ -161,7 +194,7 @@
 			<replacement type="pref_job">beast</replacement>
 			<replacement type="pref_goal">date</replacement>
 			<replacement type="self_unemployed">intercourse</replacement>
-			<replacement type="pref_unemployed">soul</replacement>
+			<replacement type="pref_unemployed">free soul</replacement>
 		</replacements>
 	</message>
 	<message type="insectoid">
@@ -195,6 +228,28 @@
 			<replacement type="pref_goal">DATE</replacement>
 			<replacement type="self_unemployed">UNPRODUCTIVE</replacement>
 			<replacement type="pref_unemployed">FREEDOM</replacement>
+		</replacements>
+	</message>
+	<message type="insectoid">
+		<body>LOOK FOR WEAK STUPID [pref_body] FOR STUPID AND sexy [pref_goal]! muist be TO [pref_age] AND [pref_job]! OFFER OF intelligent SEexcarE [self_body] [self_age] (ME) employED [self_job]</body>
+		<replacements>
+			<replacement type="pref_body">IDIOT</replacement>
+			<replacement type="pref_age">FUCK</replacement>
+			<replacement type="pref_job">JOBHAVE</replacement>
+			<replacement type="pref_goal">LOVE</replacement>
+			<replacement type="self_unemployed">NO</replacement>
+			<replacement type="pref_unemployed">FREE TIme FOR MATING</replacement>
+		</replacements>
+	</message>
+	<message type="insectoid">
+		<body>[self_body] NOT FIND PARTNER FOR [pref_goal] IN BREEDING SEASON. YOU BE PARTNER. LOOK FOR [pref_body] [pref_age] look ESPECIAL FOR [pref_job]. AM extremelyy [self_age] [self_job]</body>
+		<replacements>
+			<replacement type="pref_body">mate</replacement>
+			<replacement type="pref_age">sex</replacement>
+			<replacement type="pref_job">BIG BOOTY</replacement>
+			<replacement type="pref_goal">PARTNER</replacement>
+			<replacement type="self_unemployed">JOBLESS</replacement>
+			<replacement type="pref_unemployed">FREETIME</replacement>
 		</replacements>
 	</message>
 </messagesList>
