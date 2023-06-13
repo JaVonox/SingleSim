@@ -6,7 +6,7 @@ using System.Linq;
 public class Gameplay : MonoBehaviour
 {
 
-    public static readonly string gameVersion = "V0.1.1";
+    public static readonly string gameVersion = "V0.1.2";
 
 
     public static float scanSpeed = 0.05f; //How fast scanning occurs

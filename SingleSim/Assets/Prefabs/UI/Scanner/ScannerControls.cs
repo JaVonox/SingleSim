@@ -40,6 +40,7 @@ public class ScannerControls : MonoBehaviour
     public Button cancelReplace;
 
     public GameObject disabledPanel;
+    public TextMeshProUGUI disabledText;
     public Button retryDisabled;
 
     public static ScanState currentState;
@@ -115,6 +116,9 @@ public class ScannerControls : MonoBehaviour
         loadedScanSpots.Clear();
         Gameplay.scanProg = -1;
         Gameplay.scannerState = "idle";
+
+        if (Gameplay.storyState == 0) { disabledText.text = "Scanner is currently disabled by admin. Message: 'Check my email!'"; }
+        else if (Gameplay.storyState == 5) { disabledText.text = "Scanner is currently disabled by admin. Message: 'Match the signals first!'"; }
         Gameplay.scanSpotsAreAvailable = false;
         retryDisabled.onClick.RemoveAllListeners();
         retryDisabled.onClick.AddListener(() => CheckDisabledMode(true));
@@ -123,7 +127,7 @@ public class ScannerControls : MonoBehaviour
 
     void CheckDisabledMode(bool isRefresh)
     {
-        if(Gameplay.storyState == 5)
+        if(Gameplay.storyState == 5 || Gameplay.storyState == 0)
         {
             SwitchState(ScanState.Disabled);
         }

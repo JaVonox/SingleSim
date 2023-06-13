@@ -2367,6 +2367,7 @@ MonoBehaviour:
   replaceSignal: {fileID: 7203554233933459167}
   cancelReplace: {fileID: 8761635056280331463}
   disabledPanel: {fileID: 3446597538812156675}
+  disabledText: {fileID: 5275119571632261061}
   retryDisabled: {fileID: 2898268212152536268}
 --- !u!1 &5977925650268962810
 GameObject:
@@ -2433,7 +2434,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Scanner is currently disabled by admin. Message: "Match the signals first!"'
+  m_text: Scanner may need refreshing to function - please select 'Refresh'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b7cb3febbd36f364e8b5efa80feadbea, type: 2}
   m_sharedMaterial: {fileID: 5621335765684268451, guid: b7cb3febbd36f364e8b5efa80feadbea, type: 2}
