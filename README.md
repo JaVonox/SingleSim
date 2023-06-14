@@ -10,12 +10,12 @@ This is intended to be a far more relaxed experience, while still maintaining th
 
 This list is not a definitive list of all planned features and versions, nor is it a promise of features. 
 
-- [x] V.0.1
+- [x] V0.1
 	- [x] Core gameplay loop - downloading and matching signals
 	- [x] Credit shop
 	- [x] Primary species - Humanoid, Automaton, Cephalopod and Insectoid
 	- [x] Primary attributes - Species, Age, Occupation and Relationship Goals
-- [x] V.0.1.1
+- [x] V0.1.1
 	- [x] Saving and loading of games
 	- [x] Title screen
 	- [x] Audio
@@ -24,13 +24,13 @@ This list is not a definitive list of all planned features and versions, nor is 
 	- [x] Small number of profiles for each species
 	- [x] Small number of unique text messages for each species
 	- [x] Syntax highlighting
-- [ ] V.0.1.2
+- [ ] V0.1.2
 	- [ ] Atleast five of each species profile image
 	- [ ] Atleast five of each species text message
 	- [ ] Story Signals
 	- [ ] Credit score algorithm rework
 	- [ ] Audio mixing fixes
-- [ ] V.0.2
+- [ ] V0.2
 	- [ ] Additional breaker room in the house
 	- [ ] Additional interactable
 	
