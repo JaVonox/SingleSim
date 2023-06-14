@@ -8,30 +8,30 @@ This is intended to be a far more relaxed experience, while still maintaining th
  
 ## Project Goals
 
-Completed goals and versions will be highlighted in bold. This list is not a definitive list of all planned features and versions, nor is it a promise of features. 
+This list is not a definitive list of all planned features and versions, nor is it a promise of features. 
 
--**V.0.1**
-	-**Core gameplay loop - downloading and matching signals**
-	-**Credit shop**
-	-**Primary species - Humanoid, Automaton, Cephalopod and Insectoid**
-	-**Primary attributes - Species, Age, Occupation and Relationship Goals**
--**V.0.1.1**
-	-**Saving and loading of games**
-	-**Title screen**
-	-**Audio**
-	-**Emails**
-	-**Tutorial**
-	-**Small number of profiles for each species**
-	-**Small number of unique text messages for each species**
-	-**Syntax highlighting**
--V.0.1.2
-	-Atleast five of each species profile image
-	-Atleast five of each species text message
-	-Story Signals
-	-Credit score algorithm rework
-	-Audio mixing fixes
--V.0.2
-	-Additional breaker room in the house
-	-Additional interactable
+- [x] V.0.1
+	- [x] Core gameplay loop - downloading and matching signals
+	- [x] Credit shop
+	- [x] Primary species - Humanoid, Automaton, Cephalopod and Insectoid
+	- [x] Primary attributes - Species, Age, Occupation and Relationship Goals
+- [x] V.0.1.1
+	- [x] Saving and loading of games
+	- [x] Title screen
+	- [x] Audio
+	- [x] Emails
+	- [x] Tutorial
+	- [x] Small number of profiles for each species
+	- [x] Small number of unique text messages for each species
+	- [x] Syntax highlighting
+- [ ] V.0.1.2
+	- [ ] Atleast five of each species profile image
+	- [ ] Atleast five of each species text message
+	- [ ] Story Signals
+	- [ ] Credit score algorithm rework
+	- [ ] Audio mixing fixes
+- [ ] V.0.2
+	- [ ] Additional breaker room in the house
+	- [ ] Additional interactable
 	
  
